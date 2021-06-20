@@ -7,3 +7,5 @@ project ("OneControl")
 
 # Include sub-projects.
 add_subdirectory ("OneControl")
+
+set(CMAKE_SUPPRESS_REGENERATION true)

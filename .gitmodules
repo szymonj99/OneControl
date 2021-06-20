@@ -1,3 +1,0 @@
-[submodule "OneControl/asio"]
-	path = OneControl/asio
-	url = https://github.com/chriskohlhoff/asio

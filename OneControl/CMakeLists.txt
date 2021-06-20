@@ -7,3 +7,5 @@ cmake_minimum_required (VERSION 3.8)
 add_executable (OneControl "OneControl.cpp" "OneControl.h")
 
 # TODO: Add tests and install targets if needed.
+
+set(CMAKE_SUPPRESS_REGENERATION true)
