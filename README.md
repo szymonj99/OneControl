@@ -8,6 +8,7 @@ Easily control all your additional devices seamlessly with one keyboard and mous
 
 # How-To
 - Include install instructions here.
+- Install ASIO using VCPKG.
 
 # Contribute
 - Include Contribution info here.
