@@ -11,9 +11,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\Programming\OneControl\OneControl\CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{4EBAD9FE-15FA-30E9-B07E-5C27E4FF487B}</UniqueIdentifier>
     </Filter>
