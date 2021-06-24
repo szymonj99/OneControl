@@ -8,7 +8,15 @@ Easily control all your additional devices seamlessly with one keyboard and mous
 
 # How-To
 - Include install instructions here.
-- Install ASIO using VCPKG.
+- Install SFML using VCPKG.
+- Install OpenSSL using VCPKG.
+- Install Boost using VCPKG.
+- Install CryptopPP using VCPKG.
+- Install Botan using VCPKG.
+
+For now, the plan is as follows:
+- Launch application.
+- Pick between server and client.
 
 # Contribute
 - Include Contribution info here.
