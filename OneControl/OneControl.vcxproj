@@ -257,11 +257,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="E:\Programming\OneControl\OneControl\OneControl.cpp" />
-    <ClCompile Include="RSA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="RSA.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

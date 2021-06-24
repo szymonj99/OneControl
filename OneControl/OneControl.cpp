@@ -19,9 +19,11 @@
 #include <string>
 #include <string_view>
 #include <SFML/Network.hpp>
+#include <botan/botan.h>
+#include <cryptopp/rsa.h>
+#include <openssl/rsa.h>
 
 #include "Constants.h"
-#include "RSA.h"
 
 namespace oc
 {
@@ -84,7 +86,7 @@ namespace oc
 	public:
 		friend std::wostream& operator << (std::wostream& os, const cMessage& msg)
 		{
-			os << std::wstring_view(L"ID: ") << msg.m_Header.getID();
+			os << L"ID: " << msg.m_Header.getID();
 			return os;
 		}
 	};
@@ -120,90 +122,60 @@ namespace oc
 	}
 
 	class OneControl
-	{
-		using vClients = std::vector<sf::TcpSocket*>;
+	{		
 	private:
+		using vClients = std::vector<sf::TcpSocket*>;
 		eMachineState m_State;
 		vClients m_vpClients;
 		sf::TcpSocket* m_pClient;
 		eMachineState m_eState;
 
-
-
 	public:
-
-		//eMachineState GetMachineState()
-		//{
-		//	uint32_t input;
-
-		//	while (true)
-		//	{
-		//		std::wcout << std::wstring_view(L"Is this machine a Server or a Client?\n1. Server\n2. Client\n");
-		//		std::wstring temp;				
-		//		std::wcin >> temp;
-
-		//		//strtoi
-
-		//		bool isInt = false;
-		//		for (auto c : temp)
-		//		{
-		//			if (c >= 0 && c <= 9)
-		//			{
-		//				//std::cout << c;
-		//				isInt = true;
-		//			}
-		//			else
-		//			{
-		//				isInt = false;
-		//				break;
-		//			}
-		//		}
-
-		//		if (isInt)
-		//		{
-		//			input = std::stoi(temp);
-		//			break;
-		//		}				
-		//	}
-
-		//	return eMachineState::Client;
-		//}
-
-		void SetSeed()
+		eMachineState GetMachineState()
 		{
-			constexpr uint32_t loops = 50000;
-			srand(0);
-			for (uint32_t loop = 0; loop < loops; loop++)
+			int32_t input = 0;
+			std::wcout << L"Is this machine a Server or a Client?\n";
+			std::vector<std::wstring> options{ L"1. Server", L"2. Client" };
+			for (const auto& option : options)
 			{
-				srand(static_cast<uint32_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count() * rand()));
+				std::wcout << std::wstring_view(option) << "\n";
 			}
+			do
+			{
+				std::wstring temp = std::wstring();
+				std::getline(std::wcin, temp);
+				try
+				{
+					input = std::stoi(temp);
+				}
+				catch (const std::invalid_argument& e)
+				{
+					std::wcout << L"Invalid input. Try again and stop trying to break this.\n";
+					input = -1;
+				}
+				catch (const std::out_of_range& e)
+				{
+					std::wcout << L"Invalid number chosen. Try again and stop trying to break this.\n";
+					input = -1;
+				}
+				// This caused me an hours worth of headaches
+				// We need to cast size_t to int32_t else -1 is somehow bigger than options.size().
+				if (input > static_cast<int32_t>(options.size()) || input == 0)
+				{
+					std::wcout << L"Invalid number chosen. Try again.\n";
+					input = -1;
+				}
+				
+				std::wcin.clear();
+			} while (input <= 0 || input > static_cast<int32_t>(options.size()));
 
-			for (int i = 0; i < 10; i++)
-			{
-				std::cout << GetRandom() << " " << GetRandom() << "\n";
-			}
-			
-			for (int i = 0; i < 10; i++)
-			{
-				auto x = GetRandom();
-				std::cout << GetCubanPrime(x / 1000, (x / 1000)- 2) << "\n";
-			}
-			
+			return eMachineState::Client;
 		}
 
 		void Start()
 		{
-			// Set the seed for random numbers
-			SetSeed();
+			m_eState = GetMachineState();
 
-			////GetMachineState();
-			//auto prime = oc::GetCubanPrime(6000, 5898);
-			//prime *= prime;
-			//prime *= prime;
-			//prime *= prime;
-			////std::cout << std::to_string();
-			//std::cout << prime << "\n";
-			//std::cout << "115792089237316195423570985008687907853269984665640564039457584007913129639935\n";
 		}
 
 		void Stop()
@@ -211,19 +183,17 @@ namespace oc
 			// Clean-up here.
 		}
 	};
-
-
 }
 
 
 int main()
 {	
 	{
-		std::wcout << std::wstring_view(L"OneControl is starting.\n");
+		std::wcout << L"OneControl is starting.\n";
 		auto oneControl = std::make_unique<oc::OneControl>();
 		oneControl->Start();
 	}
-	std::wcout << std::wstring_view(L"Program finished. Press enter to exit.");
+	std::wcout << L"Program finished. Press enter to exit.";
 	std::cin.get();
 	return 0;	
 }

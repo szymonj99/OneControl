@@ -4,9 +4,6 @@
     <ClCompile Include="E:\Programming\OneControl\OneControl\OneControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RSA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -18,9 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RSA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
