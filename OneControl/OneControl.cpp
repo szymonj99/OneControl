@@ -166,20 +166,14 @@ namespace oc
 
 		void m_StartServer()
 		{
-			std::thread listenerThread([&]
-				{
-					CreateListener();
-				});
+			std::thread listenerThread([&] { CreateListener(); });
 			listenerThread.join();
+			std::wcout << L"Listener thread finished.\n";
 		}
 
 		void m_StartClient()
 		{
-
-			std::thread clientThread([&]
-				{
-					CreateClient();
-				});			
+			std::thread clientThread([&] { CreateClient(); });			
 			clientThread.join();
 			std::wcout << L"Client thread finished.\n";
 		}
@@ -203,11 +197,15 @@ namespace oc
 			return static_cast<eMachineState>(userInt - 1);
 		}
 
+		std::unique_ptr<sf::TcpSocket>& GetClient()
+		{
+			return m_pClient;
+		}
+
 		void Start()
 		{
 			m_eState = GetMachineState();
 			ClearConsole();
-
 			m_StartService();
 		}
 
@@ -222,8 +220,7 @@ namespace oc
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
 				sf::Packet pkt;
-				pkt.append("hello", sizeof("Hello"));
-				
+				pkt.append("Hello", sizeof("Hello"));				
 			}
 		}
 
@@ -241,14 +238,15 @@ namespace oc
 			// Else we are connected to the server!
 			std::wcout << L"Connected to server successfully.\n";
 
-			{[&]
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
-					sf::Packet pkt;
-					pkt.append("hello", sizeof("Hello"));
-					socket->send(pkt);
-					std::wcout << L"I am client. I send packet to server.\n";
-				};
+			while (true)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
+				sf::Packet pkt;
+				pkt << std::wstring(L"Hello");
+				socket->send(pkt);
+				std::wstring str;
+				pkt >> str;
+				std::wcout << L"I'm a client. Sending packet to server. Packet: " << str << L"\n";
 			}
 		}
 
@@ -280,16 +278,26 @@ namespace oc
 			std::wcout << L"We have a client! IP: " << client->getRemoteAddress().toString().c_str() << L"\n";
 			SetClient(client);
 
-			{[&]
-				{
-					while (true)
-					{
-						sf::Packet pkt;
-						client->receive(pkt);
-						std::wcout << pkt.getData();
-					}
-				};
+			if (GetClient()->isBlocking() == 1)
+			{
+				std::wcout << L"Server will wait for whole packet before reading the data.\n";
 			}
+
+			//GetClient()->setBlocking(true);
+			std::wcout << L"We receive client messages here.\n";
+
+			while (true)
+			{
+				sf::Packet pkt = sf::Packet();
+				if (GetClient()->receive(pkt) != sf::Socket::Status::Done)
+				{
+					std::wcout << L"Client disconnected.\nGracefully quitting.\n";
+					return;
+				}
+				std::wstring data;
+				pkt >> data;
+				std::wcout << data << L"\n";
+			}					
 		}
 	};
 }
