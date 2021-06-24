@@ -4,11 +4,9 @@
     <ClCompile Include="E:\Programming\OneControl\OneControl\OneControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="E:\Programming\OneControl\OneControl\OneControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="RSA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -17,5 +15,13 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{543F24A7-2559-3520-8CD3-91DFD9EE622E}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
