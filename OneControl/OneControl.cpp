@@ -103,7 +103,7 @@ namespace oc
 	{
 		sf::TcpListener listener;
 
-		if (listener.listen(oc::port) != sf::Socket::Done)
+		if (listener.listen(oc::port) != sf::Socket::Status::Done)
 		{
 			// Error here.
 		}
@@ -121,6 +121,39 @@ namespace oc
 		// Else add client 
 	}
 
+	int32_t GetUserInt(const std::wstring_view& msg, const int32_t min, const int32_t max)
+	{
+		int32_t input = 0;
+		std::wcout << msg;
+		do
+		{
+			std::wstring inputString = std::wstring();
+			std::getline(std::wcin, inputString);
+			try
+			{
+				input = std::stoi(inputString);
+			}
+			catch (const std::invalid_argument& e)
+			{
+				std::wcout << L"Invalid input. Try again and stop trying to break this.\n";
+				input = -1;
+			}
+			catch (const std::out_of_range& e)
+			{
+				std::wcout << L"Invalid number chosen. Try again and stop trying to break this.\n";
+				input = -1;
+			}
+			if (input > max || input == 0)
+			{
+				std::wcout << L"Invalid number chosen. Try again.\n";
+				input = -1;
+			}
+
+			std::wcin.clear();
+		} while (input < min || input > max);
+		return input;
+	}
+
 	class OneControl
 	{		
 	private:
@@ -133,49 +166,13 @@ namespace oc
 	public:
 		eMachineState GetMachineState()
 		{
-			int32_t input = 0;
-			std::wcout << L"Is this machine a Server or a Client?\n";
-			std::vector<std::wstring> options{ L"1. Server", L"2. Client" };
-			for (const auto& option : options)
-			{
-				std::wcout << std::wstring_view(option) << "\n";
-			}
-			do
-			{
-				std::wstring temp = std::wstring();
-				std::getline(std::wcin, temp);
-				try
-				{
-					input = std::stoi(temp);
-				}
-				catch (const std::invalid_argument& e)
-				{
-					std::wcout << L"Invalid input. Try again and stop trying to break this.\n";
-					input = -1;
-				}
-				catch (const std::out_of_range& e)
-				{
-					std::wcout << L"Invalid number chosen. Try again and stop trying to break this.\n";
-					input = -1;
-				}
-				// This caused me an hours worth of headaches
-				// We need to cast size_t to int32_t else -1 is somehow bigger than options.size().
-				if (input > static_cast<int32_t>(options.size()) || input == 0)
-				{
-					std::wcout << L"Invalid number chosen. Try again.\n";
-					input = -1;
-				}
-				
-				std::wcin.clear();
-			} while (input <= 0 || input > static_cast<int32_t>(options.size()));
-
-			return eMachineState::Client;
+			const auto userInt = GetUserInt(const std::wstring_view(L"Is this machine a Server or a Client?\n1. Server\n2. Client\n"), 1, 2);
+			return static_cast<eMachineState>(userInt);
 		}
 
 		void Start()
 		{
 			m_eState = GetMachineState();
-
 		}
 
 		void Stop()
@@ -184,7 +181,6 @@ namespace oc
 		}
 	};
 }
-
 
 int main()
 {	
