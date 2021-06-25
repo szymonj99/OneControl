@@ -1,5 +1,8 @@
 #pragma once
-class Server
-{
-};
 
+namespace oc
+{
+	class Server
+	{
+	};
+}

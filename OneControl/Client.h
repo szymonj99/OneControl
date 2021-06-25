@@ -1,5 +1,8 @@
 #pragma once
-class Client
-{
-};
 
+namespace oc
+{
+	class Client
+	{
+	};
+}
