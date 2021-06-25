@@ -99,10 +99,39 @@ namespace oc
 	class ocVersion
 	{
 	private:
-		uint8_t m_Major = 0;
-		uint8_t m_Minor = 0;
-		uint8_t m_Revision = 1;
+		uint32_t m_Major = 0;
+		uint32_t m_Minor = 0;
+		uint32_t m_Revision = 1;
+
+	public:
+		ocVersion() {};
+		ocVersion(const uint32_t major, const uint32_t minor, const uint32_t revision)
+		{
+			m_Major = major;
+			m_Minor = minor;
+			m_Revision = revision;
+		}
+
+		std::wstring GetVersionStringView() const
+		{
+			return L"" + std::to_wstring(m_Major) + L"." + std::to_wstring(m_Minor) + L"." + std::to_wstring(m_Revision);
+		}
+
+		uint32_t GetMajor() const
+		{
+			return m_Major;
+		}
+		uint32_t GetMinor() const
+		{
+			return m_Minor;
+		}
+		uint32_t GetRevision() const
+		{
+			return m_Revision;
+		}
 	};
+
+	static ocVersion Version(0,0,1);
 	
 	int32_t GetUserInt(const std::wstring_view& msg, const int32_t min, const int32_t max)
 	{
@@ -161,7 +190,6 @@ namespace oc
 		//using vClients = std::vector<sf::TcpSocket*>;
 		//vClients m_vpClients;
 		std::unique_ptr<sf::TcpSocket> m_pClient;
-		//sf::TcpSocket* m_pClient;
 		eMachineState m_eState;
 
 		void m_StartServer()
@@ -214,16 +242,6 @@ namespace oc
 			m_pClient = std::move(client);
 		}
 
-		void MaintainClientLink()
-		{
-			while (true)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
-				sf::Packet pkt;
-				pkt.append("Hello", sizeof("Hello"));				
-			}
-		}
-
 		void CreateClient()
 		{
 			auto socket = std::make_unique<sf::TcpSocket>();
@@ -238,12 +256,30 @@ namespace oc
 			// Else we are connected to the server!
 			std::wcout << L"Connected to server successfully.\n";
 
+			// Authentication packet
+			{
+
+				auto authenticationPkt = sf::Packet();
+				
+				authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
+				if (socket->send(authenticationPkt) != sf::Socket::Status::Done)
+				{
+					socket->disconnect();
+				}
+				std::wcout << L"Client authentication successful.\n";
+			}
+
 			while (true)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
 				sf::Packet pkt;
 				pkt << std::wstring(L"Hello");
-				socket->send(pkt);
+				if (socket->send(pkt) != sf::Socket::Status::Done)
+				{
+					socket->disconnect();
+					std::wcout << L"Client lost connection with server.\nQuitting.\n";
+					return;
+				}
 				std::wstring str;
 				pkt >> str;
 				std::wcout << L"I'm a client. Sending packet to server. Packet: " << str << L"\n";
@@ -270,21 +306,34 @@ namespace oc
 				return;
 			}
 
-			// Check the client validity (client version)
-			// And boot them off if versions do not match.
-
-			// Else add client
 			// c_str() looks ugly but can't convert from string to wstring.
 			std::wcout << L"We have a client! IP: " << client->getRemoteAddress().toString().c_str() << L"\n";
 			SetClient(client);
-
-			if (GetClient()->isBlocking() == 1)
-			{
-				std::wcout << L"Server will wait for whole packet before reading the data.\n";
-			}
-
-			//GetClient()->setBlocking(true);
 			std::wcout << L"We receive client messages here.\n";
+
+			// Authenticate client with program version
+			// If initial packet containing the version doesn't match server version, kick the client.
+			// Else, receive packets in while loop.
+
+			{
+				auto authenticationPkt = sf::Packet();
+				if (GetClient()->receive(authenticationPkt) != sf::Socket::Status::Done)
+				{
+					std::wcout << L"Failed at getting authentication packet.\nQuitting.\n";
+					return;
+				}
+				std::uint32_t major, minor, revision;				
+				authenticationPkt >> major >> minor >> revision;
+
+				ocVersion version(major, minor, revision);
+				if (version.GetVersionStringView() != Version.GetVersionStringView())
+				{
+					std::wcout << L"Version mismatch!!!\nClient version: " + std::wstring(version.GetVersionStringView()) + L"\n";
+					std::wcout << L"Server version: " + std::wstring(Version.GetVersionStringView()) + L"\nKicking client.\n";
+					GetClient()->disconnect();
+				}
+				std::wcout << "Client authentication successful.\n";
+			}			
 
 			while (true)
 			{
