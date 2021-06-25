@@ -141,7 +141,7 @@ bool oc::OneControl::m_SendAuthenticationPacket(std::unique_ptr<sf::TcpSocket>& 
 	authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
 	if (socket->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
-		socket->disconnect();
+		std::wcout << L"Client authentication FAILED.\n";
 		return false;
 	}
 	std::wcout << L"Client authentication successful.\n";
@@ -180,12 +180,16 @@ void oc::OneControl::CreateClient()
 	if (status != sf::Socket::Status::Done)
 	{
 		std::wcout << L"Client can't connect to server.\n";
+		std::wcin.get();
+		return;
 	}
 
 	std::wcout << L"Connected to server successfully.\n";
 
 	if (!m_SendAuthenticationPacket(socket))
 	{
+		socket->disconnect();
+		std::wcin.get();
 		return;
 	}
 
@@ -198,6 +202,7 @@ void oc::OneControl::CreateClient()
 		{
 			socket->disconnect();
 			std::wcout << L"Client lost connection with server.\nQuitting.\n";
+			std::wcin.get();
 			return;
 		}
 		std::wstring str;
