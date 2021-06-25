@@ -218,6 +218,43 @@ namespace oc
 			}
 		}
 
+		bool m_ReceiveAuthenticationPacket()
+		{		
+			auto authenticationPkt = sf::Packet();
+			if (GetClient()->receive(authenticationPkt) != sf::Socket::Status::Done)
+			{
+				std::wcout << L"Failed at getting authentication packet.\nQuitting.\n";
+				return false;
+			}
+			std::uint32_t major, minor, revision;
+			authenticationPkt >> major >> minor >> revision;
+
+			ocVersion version(major, minor, revision);
+			if (version.GetVersionStringView() != Version.GetVersionStringView())
+			{
+				std::wcout << L"Version mismatch!!!\nClient version: " + std::wstring(version.GetVersionStringView()) + L"\n";
+				std::wcout << L"Server version: " + std::wstring(Version.GetVersionStringView()) + L"\nKicking client.\n";
+				GetClient()->disconnect();
+				return false;
+			}
+			std::wcout << "Client authentication successful.\n";
+			return true;
+		}
+
+		bool m_SendAuthenticationPacket(std::unique_ptr<sf::TcpSocket>& socket)
+		{
+			auto authenticationPkt = sf::Packet();
+
+			authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
+			if (socket->send(authenticationPkt) != sf::Socket::Status::Done)
+			{
+				socket->disconnect();
+				return false;
+			}
+			std::wcout << L"Client authentication successful.\n";
+			return true;
+		}
+
 	public:
 		eMachineState GetMachineState()
 		{
@@ -253,20 +290,11 @@ namespace oc
 				std::wcout << L"Client can't connect to server.\n";
 			}
 
-			// Else we are connected to the server!
 			std::wcout << L"Connected to server successfully.\n";
 
-			// Authentication packet
+			if (!m_SendAuthenticationPacket(socket))
 			{
-
-				auto authenticationPkt = sf::Packet();
-				
-				authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
-				if (socket->send(authenticationPkt) != sf::Socket::Status::Done)
-				{
-					socket->disconnect();
-				}
-				std::wcout << L"Client authentication successful.\n";
+				return;
 			}
 
 			while (true)
@@ -311,30 +339,11 @@ namespace oc
 			SetClient(client);
 			std::wcout << L"We receive client messages here.\n";
 
-			// Authenticate client with program version
-			// If initial packet containing the version doesn't match server version, kick the client.
-			// Else, receive packets in while loop.
-
+			if (!m_ReceiveAuthenticationPacket())
 			{
-				auto authenticationPkt = sf::Packet();
-				if (GetClient()->receive(authenticationPkt) != sf::Socket::Status::Done)
-				{
-					std::wcout << L"Failed at getting authentication packet.\nQuitting.\n";
-					return;
-				}
-				std::uint32_t major, minor, revision;				
-				authenticationPkt >> major >> minor >> revision;
-
-				ocVersion version(major, minor, revision);
-				if (version.GetVersionStringView() != Version.GetVersionStringView())
-				{
-					std::wcout << L"Version mismatch!!!\nClient version: " + std::wstring(version.GetVersionStringView()) + L"\n";
-					std::wcout << L"Server version: " + std::wstring(Version.GetVersionStringView()) + L"\nKicking client.\n";
-					GetClient()->disconnect();
-				}
-				std::wcout << "Client authentication successful.\n";
-			}			
-
+				return;
+			}
+			
 			while (true)
 			{
 				sf::Packet pkt = sf::Packet();
