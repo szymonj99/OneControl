@@ -1,6 +1,5 @@
 ﻿#include "OneControl.h"
 
-// Sort this out
 void oc::OneControl::m_StartService()
 {
 	if (m_eState == eMachineState::Server)

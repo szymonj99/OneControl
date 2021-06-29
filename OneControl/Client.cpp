@@ -55,7 +55,7 @@ void oc::ocClient::StartReceivingPacketStream()
 	while (true)
 	{
 		auto pkt = sf::Packet();
-		if (!m_pServer->receive(pkt) != sf::Socket::Status::Done)
+		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
 		{
 			m_pServer->disconnect();
 			std::wcout << L"Client lost connection with server.\nQuitting.\n";

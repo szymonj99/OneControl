@@ -109,6 +109,7 @@ void oc::ocServer::StartSendingPacketStream()
 			std::wcout << L"Client disconnected.\nGracefully quitting.\n";
 			return;
 		}
+		std::wcout << L"Finished sending a packet to the client.\n";
 		std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
 	}
 }
