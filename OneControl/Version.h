@@ -20,4 +20,7 @@ namespace oc
 		uint32_t GetMinor() const;
 		uint32_t GetRevision() const;
 	};
+
+	// The version of the application.
+	static oc::ocVersion Version(0, 0, 1);
 }

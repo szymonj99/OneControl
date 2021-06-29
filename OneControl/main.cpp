@@ -19,8 +19,7 @@ int main()
 {
 	{
 		std::wcout << L"OneControl is starting.\n";
-		auto oneControl = std::make_unique<oc::OneControl>();
-		oneControl->Start();
+		std::make_unique<oc::OneControl>()->Start();
 	}
 	std::wcout << L"Program finished. Press enter to exit.";
 	std::wcin.get();

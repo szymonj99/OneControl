@@ -260,6 +260,7 @@
     <ClCompile Include="E:\Programming\OneControl\OneControl\OneControl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Version.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
@@ -267,6 +268,8 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="OneControl.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="StaticHelpers.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
