@@ -1,33 +1,13 @@
 ﻿#include "OneControl.h"
+#include "Version.h"
 
 // The version of the application.
 static oc::ocVersion Version(0, 0, 1);
 
-oc::ocVersion::ocVersion(const uint32_t major, const uint32_t minor, const uint32_t revision)
+void oc::ClearConsole()
 {
-	m_Major = major;
-	m_Minor = minor;
-	m_Revision = revision;
+	std::wcout << L"\033c";
 }
-
-std::wstring oc::ocVersion::GetVersionStringView() const
-{
-	return L"" + std::to_wstring(m_Major) + L"." + std::to_wstring(m_Minor) + L"." + std::to_wstring(m_Revision);
-}
-
-uint32_t oc::ocVersion::GetMajor() const
-{
-	return m_Major;
-}
-uint32_t oc::ocVersion::GetMinor() const
-{
-	return m_Minor;
-}
-uint32_t oc::ocVersion::GetRevision() const
-{
-	return m_Revision;
-}
-
 
 int32_t oc::GetUserInt(const std::wstring_view& msg, const int32_t min, const int32_t max)
 {
@@ -80,17 +60,7 @@ sf::IpAddress oc::GetUserIP(const std::wstring_view& msg)
 	return input;
 }
 
-void oc::ClearConsole()
-{
-	std::wcout << L"\033c";
-}
 
-void oc::OneControl::m_StartServer()
-{
-	std::thread listenerThread([&] { CreateListener(); });
-	listenerThread.join();
-	std::wcout << L"Listener thread finished.\n";
-}
 
 void oc::OneControl::m_StartClient()
 {
@@ -166,10 +136,7 @@ void oc::OneControl::Start()
 	m_StartService();
 }
 
-void oc::OneControl::SetClient(std::unique_ptr<sf::TcpSocket>& client)
-{
-	m_pClient = std::move(client);
-}
+
 
 void oc::OneControl::CreateClient()
 {
@@ -211,46 +178,3 @@ void oc::OneControl::CreateClient()
 	}
 }
 
-void oc::OneControl::CreateListener()
-{
-	auto listener = std::make_unique<sf::TcpListener>();
-
-	if (listener->listen(oc::port) != sf::Socket::Status::Done)
-	{
-		std::wcout << L"Can't create TCP listener on port " << oc::port << L"\n";
-		return;
-	}
-
-	auto client = std::make_unique<sf::TcpSocket>();
-
-	std::wcout << L"Waiting for client.\n";
-
-	if (listener->accept(*client) != sf::Socket::Status::Done)
-	{
-		std::wcout << L"Can't create client on port " << oc::port << L"\n";
-		return;
-	}
-
-	// c_str() looks ugly but can't convert from string to wstring.
-	std::wcout << L"We have a client! IP: " << client->getRemoteAddress().toString().c_str() << L"\n";
-	SetClient(client);
-	std::wcout << L"We receive client messages here.\n";
-
-	if (!m_ReceiveAuthenticationPacket())
-	{
-		return;
-	}
-
-	while (true)
-	{
-		sf::Packet pkt = sf::Packet();
-		if (GetClient()->receive(pkt) != sf::Socket::Status::Done)
-		{
-			std::wcout << L"Client disconnected.\nGracefully quitting.\n";
-			return;
-		}
-		std::wstring data;
-		pkt >> data;
-		std::wcout << data << L"\n";
-	}
-}
