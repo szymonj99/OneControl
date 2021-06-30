@@ -258,7 +258,11 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="E:\Programming\OneControl\OneControl\OneControl.cpp" />
+    <ClCompile Include="IMouse.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MouseLinux.cpp" />
+    <ClCompile Include="MouseMac.cpp" />
+    <ClCompile Include="MouseWin.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Version.cpp" />
   </ItemGroup>
@@ -266,6 +270,10 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Enums.h" />
+    <ClInclude Include="IMouse.h" />
+    <ClInclude Include="MouseLinux.h" />
+    <ClInclude Include="MouseMac.h" />
+    <ClInclude Include="MouseWin.h" />
     <ClInclude Include="OneControl.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="StaticHelpers.h" />
