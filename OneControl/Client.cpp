@@ -8,19 +8,19 @@ void oc::ocClient::Start()
 		if (!m_SendAuthenticationPacket())
 		{
 			m_pServer->disconnect();
-			std::wcin.get();
+			std::cin.get();
 			return;
 		}
 		StartReceivingPacketStream();
 		});
 	clientThread.join();
-	std::wcout << L"Client thread finished.\n";
+	std::cout << "Client thread finished.\n";
 }
 
 void oc::ocClient::Create()
 {
 	m_pServer = std::make_unique<sf::TcpSocket>();
-	m_ServerIP = GetUserIP(std::wstring_view(L"Insert server IP\n"));
+	m_ServerIP = GetUserIP(std::string_view("Insert server IP\n"));
 }
 
 void oc::ocClient::ConnectToServer()
@@ -29,11 +29,11 @@ void oc::ocClient::ConnectToServer()
 
 	if (status != sf::Socket::Status::Done)
 	{
-		std::wcout << L"Client can't connect to server.\n";
-		std::wcin.get();
+		std::cout << "Client can't connect to server.\n";
+		std::cin.get();
 		return;
 	}
-	std::wcout << L"Connected to server successfully.\n";
+	std::cout << "Connected to server successfully.\n";
 }
 
 bool oc::ocClient::m_SendAuthenticationPacket()
@@ -43,10 +43,10 @@ bool oc::ocClient::m_SendAuthenticationPacket()
 	authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
 	if (m_pServer->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
-		std::wcout << L"Client authentication FAILED.\n";
+		std::cout << "Client authentication FAILED.\n";
 		return false;
 	}
-	std::wcout << L"Client authentication successful.\n";
+	std::cout << "Client authentication successful.\n";
 	return true;
 }
 
@@ -58,12 +58,12 @@ void oc::ocClient::StartReceivingPacketStream()
 		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
 		{
 			m_pServer->disconnect();
-			std::wcout << L"Client lost connection with server.\nQuitting.\n";
-			std::wcin.get();
+			std::cout << "Client lost connection with server.\nQuitting.\n";
+			std::cin.get();
 			return;
 		}
-		std::wstring str;
+		std::string str;
 		pkt >> str;
-		std::wcout << L"I'm a client. Received packet from server. Packet wstring: " << str << L"\n";
+		std::cout << "I'm a client. Received packet from server. Packet string: " << str << "\n";
 	}
 }
