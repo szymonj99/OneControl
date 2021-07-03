@@ -25,7 +25,7 @@ void oc::ocClient::Create()
 
 void oc::ocClient::ConnectToServer()
 {
-	auto status = m_pServer->connect(m_ServerIP.toString(), oc::port);
+	auto status = m_pServer->connect(m_ServerIP, oc::port);
 
 	if (status != sf::Socket::Status::Done)
 	{
