@@ -9,6 +9,8 @@
 #include "Constants.h"
 #include "Version.h"
 
+#include "IMouse.h"
+
 namespace oc
 {
 	class ocServer

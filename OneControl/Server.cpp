@@ -20,6 +20,7 @@ void oc::ocServer::Start()
 			std::cin.get();
 			return;
 		}
+		
 		StartSendingPacketStream();
 		});
 	listenerThread.join();
@@ -101,6 +102,9 @@ bool oc::ocServer::m_ReceiveAuthenticationPacket()
 
 void oc::ocServer::StartSendingPacketStream()
 {
+	auto mouseInterface = std::make_unique<IMouse>();
+	mouseInterface->MoveMouseTo(100, 100);
+
 	while (true)
 	{
 		auto pkt = sf::Packet();
