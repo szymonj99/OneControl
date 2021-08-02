@@ -1,101 +1,41 @@
-name: Main CI
+name: CMake
 
 on:
   push:
-    branches: [ master ]
-    paths:
-      - '.github/workflows/main_ci.yml'
-      - 'cmake/**'
-      - 'examples/**'
-      - 'include/**'
-      - 'src/**'
-      - 'tests/**'
-      - 'CMakeLists.txt'
-      - 'CMakePresets.json'
-      - 'vcpkg.json'
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [ main ]
 
 env:
-  BUILD_TYPE: Debug
-  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          path: OneControl
-          submodules: 'true'
+    - uses: actions/checkout@v2
 
-      - name: Setup Linux
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          echo "CC=gcc-10" >> $GITHUB_ENV
-          echo "CXX=g++-10" >> $GITHUB_ENV
+    - name: run-vcpkg
+      uses: lukka/run-vcpkg@v7.4
 
-          wget https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip
-          unzip ninja-linux.zip
-          sudo mv ninja /usr/local/bin
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-          sudo apt install liblz4-dev zlib1g-dev -y
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-      # - name: Download Catch2
-        # uses: actions/checkout@v2
-        # if: ${{ matrix.os == 'ubuntu-latest' }}
-        # with:
-          # ref: v2.13.6
-          # repository: catchorg/Catch2
-          # path: catch2
-
-      # - name: Install Catch2
-        # if: ${{ matrix.os == 'ubuntu-latest' }}
-        # working-directory: ${{ github.workspace }}/catch2
-        # run: |
-          # cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCATCH_BUILD_TESTING=OFF -DCATCH_ENABLE_WERROR=OFF -DCATCH_INSTALL_DOCS=OFF
-          # cmake --build build --parallel
-          # sudo cmake --install build
-
-      - name: Setup vcpkg
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          mkdir -p ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          cd $env:VCPKG_INSTALLATION_ROOT
-          ./bootstrap-vcpkg.bat
-          ./vcpkg --version > ${{ github.workspace }}/vcpkg-version.txt
-
-      - name: Cache vcpkg
-        if: ${{ matrix.os == 'windows-latest' }}
-        uses: actions/cache@v2
-        id: vcpkg-cache
-        env:
-          cache-name: vcpkg-cache
-        with:
-          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}/*
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('OneControl/**/vcpkg.json', 'vcpkg-version.txt') }}
-
-      - name: Configure CMake
-        working-directory: ${{ github.workspace }}/OneControl
-        run: cmake --preset ${{ matrix.cmake-preset }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DBSA_BUILD_DOCS=OFF
-
-      - name: Build
-        working-directory: ${{ github.workspace }}/OneControl
-        run: cmake --build build
-
-      - name: Test
-        working-directory: ${{ github.workspace }}/OneControl/build
-        run: ctest -C ${{ env.BUILD_TYPE }} -V
-
-      - name: Collect code coverage
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: codecov/codecov-action@v1.5.2
-        with:
-          fail_ci_if_error: true
-          functionalities: coveragepy
-          working-directory: ${{ github.workspace }}/OneControl/build
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # Execute tests defined by the CMake configuration.  
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest -C ${{env.BUILD_TYPE}}
+      
