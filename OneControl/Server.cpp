@@ -89,10 +89,10 @@ bool oc::ocServer::m_ReceiveAuthenticationPacket()
 	authenticationPkt >> major >> minor >> revision;
 
 	ocVersion version(major, minor, revision);
-	if (version.GetVersionStringView() != Version.GetVersionStringView())
+	if (version.GetVersionString() != Version.GetVersionString())
 	{
-		std::cout << "Version mismatch!!!\nClient version: " + std::string(version.GetVersionStringView()) + "\n";
-		std::cout << "Server version: " + std::string(Version.GetVersionStringView()) + "\nKicking client.\n";
+		std::cout << "Version mismatch!!!\nClient version: " + std::string(version.GetVersionString()) + "\n";
+		std::cout << "Server version: " + std::string(Version.GetVersionString()) + "\nKicking client.\n";
 		m_pClient->disconnect();
 		return false;
 	}

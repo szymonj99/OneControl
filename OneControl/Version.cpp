@@ -7,7 +7,7 @@ oc::ocVersion::ocVersion(const uint32_t major, const uint32_t minor, const uint3
 	m_Revision = revision;
 }
 
-std::string oc::ocVersion::GetVersionStringView() const
+std::string oc::ocVersion::GetVersionString() const
 {
 	return std::to_string(m_Major) + "." + std::to_string(m_Minor) + "." + std::to_string(m_Revision);
 }

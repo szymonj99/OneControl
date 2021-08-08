@@ -15,7 +15,7 @@ namespace oc
 	public:
 		ocVersion() {};
 		ocVersion(const uint32_t major, const uint32_t minor, const uint32_t revision);
-		std::string GetVersionStringView() const;
+		std::string GetVersionString() const;
 		uint32_t GetMajor() const;
 		uint32_t GetMinor() const;
 		uint32_t GetRevision() const;
