@@ -15,7 +15,7 @@ namespace oc
 	class ocClient
 	{
 	private:
-		std::unique_ptr<sf::TcpSocket> m_pServer = nullptr;
+		std::unique_ptr<sf::TcpSocket> m_pServer = std::make_unique<sf::TcpSocket>();
 		sf::IpAddress m_ServerIP = sf::IpAddress::None;
 
 		bool m_SendAuthenticationPacket();

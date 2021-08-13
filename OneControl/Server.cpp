@@ -39,9 +39,9 @@ void oc::ocServer::Create()
 	}
 
 	m_pListener = std::make_unique<sf::TcpListener>();
-	if (m_pListener->listen(oc::port) != sf::Socket::Status::Done)
+	if (m_pListener->listen(oc::kPort) != sf::Socket::Status::Done)
 	{
-		std::cout << "Can't create TCP listener on port " << oc::port << "\n";
+		std::cout << "Can't create TCP listener on port " << oc::kPort << "\n";
 		return;
 	}
 
@@ -70,7 +70,7 @@ void oc::ocServer::WaitForClient()
 	std::cout << "Waiting for client.\n";
 	if (m_pListener->accept(*m_pClient) != sf::Socket::Status::Done)
 	{
-		std::cout << "Can't create client on port " << oc::port << "\n";
+		std::cout << "Can't create client on port " << oc::kPort << "\n";
 		return;
 	}
 

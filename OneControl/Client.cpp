@@ -19,13 +19,12 @@ void oc::ocClient::Start()
 
 void oc::ocClient::Create()
 {
-	m_pServer = std::make_unique<sf::TcpSocket>();
 	m_ServerIP = GetUserIP(std::string_view("Insert server IP\n"));
 }
 
 void oc::ocClient::ConnectToServer()
 {
-	auto status = m_pServer->connect(m_ServerIP, oc::port);
+	auto status = m_pServer->connect(m_ServerIP, oc::kPort);
 
 	if (status != sf::Socket::Status::Done)
 	{
@@ -52,9 +51,9 @@ bool oc::ocClient::m_SendAuthenticationPacket()
 
 void oc::ocClient::StartReceivingPacketStream()
 {
+	auto pkt = sf::Packet();
 	while (true)
 	{
-		auto pkt = sf::Packet();
 		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
 		{
 			m_pServer->disconnect();
@@ -65,5 +64,6 @@ void oc::ocClient::StartReceivingPacketStream()
 		std::string str;
 		pkt >> str;
 		std::cout << "I'm a client. Received packet from server. Packet string: " << str << "\n";
+		pkt.clear();
 	}
 }

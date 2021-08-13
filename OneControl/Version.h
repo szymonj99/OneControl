@@ -22,5 +22,5 @@ namespace oc
 	};
 
 	// The version of the application.
-	static oc::ocVersion Version(0, 0, 1);
+	const static oc::ocVersion Version(0, 0, 1);
 }
