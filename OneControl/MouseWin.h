@@ -10,7 +10,7 @@ namespace oc
 	class MouseWin
 	{
 	private:
-		std::unique_ptr<HHOOK> m_pMouseHook = nullptr;
+		POINT m_mousePoint;
 
 	public:
 		void MoveMouseTo(const int32_t x, const int32_t y);
