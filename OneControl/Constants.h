@@ -3,5 +3,5 @@
 
 namespace oc
 {
-	const uint16_t port = 40480;
+	const uint16_t kPort = 40480;
 }
