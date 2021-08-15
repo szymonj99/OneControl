@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef _WIN32
 #include "MouseWin.h"
 #elif __APPLE__

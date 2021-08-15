@@ -1,19 +1,20 @@
 #pragma once
 
-#include <Windows.h>
+#ifdef __linux__
+
 #include <cstdint>
-#include <memory>
-#include <thread>
+#include <utility>
+
+#include <curses.h>
 
 namespace oc
 {
-	class MouseWin
+	class MouseLinux
 	{
-	private:
-		POINT m_mousePoint;
-
 	public:
 		void MoveMouseTo(const int32_t x, const int32_t y);
 		std::pair<int32_t, int32_t> GetMousePosition();
 	};
 }
+
+#endif
