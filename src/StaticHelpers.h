@@ -11,6 +11,8 @@ namespace oc
 	static void ClearConsole()
 	{
 		std::cout << "\033c";
+		std::cout << "\033[2J";
+		printf("\033[2J");
 	}
 
 	static int32_t GetUserInt(const std::string_view& msg, const int32_t min, const int32_t max)
@@ -48,13 +50,13 @@ namespace oc
 
 	static sf::IpAddress GetUserIP(const std::string_view& msg)
 	{
-		auto input = sf::IpAddress::IpAddress();
+		auto input = sf::IpAddress();
 		std::cout << msg;
 		do
 		{
 			std::string inputString = std::string();
 			std::getline(std::cin, inputString);
-			input = sf::IpAddress::IpAddress(inputString);
+			input = sf::IpAddress(inputString);
 			std::cin.clear();
 		}
 		// Limiting to LAN for now (not great at all).

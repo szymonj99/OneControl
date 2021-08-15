@@ -1,5 +1,7 @@
 #include "MouseWin.h"
 
+#ifdef _WIN32
+
 void oc::MouseWin::MoveMouseTo(const int32_t x, const int32_t y)
 {	
 	SetCursorPos(x, y);
@@ -11,3 +13,5 @@ std::pair<int32_t, int32_t> oc::MouseWin::GetMousePosition()
 	GetCursorPos(&m_mousePoint);
 	return { m_mousePoint.x, m_mousePoint.y };
 }
+
+#endif

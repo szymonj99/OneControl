@@ -1,5 +1,3 @@
-#pragma once
-
 #define UNICODE 1
 #ifdef _WIN32
 // Windows 10
