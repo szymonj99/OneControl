@@ -3,7 +3,9 @@
 file(GLOB SOURCE_FILES CONFIGURE_DEPENDS "*.h" "*.cpp")
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+if (UNIX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+endif(UNIX)
 
 include(FetchContent)
 
