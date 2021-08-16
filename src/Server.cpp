@@ -15,12 +15,12 @@ void oc::ocServer::Start()
 	std::thread listenerThread([&] { 
 		Create();
 		WaitForClient();
-		if (!m_ReceiveAuthenticationPacket()) { 
+		if (!m_ReceiveAuthenticationPacket())
+		{ 
 			m_pClient->disconnect();
 			std::cin.get();
 			return;
 		}
-		
 		StartSendingPacketStream();
 		});
 	listenerThread.join();
@@ -91,8 +91,8 @@ bool oc::ocServer::m_ReceiveAuthenticationPacket()
 	ocVersion version(major, minor, revision);
 	if (version.GetVersionString() != Version.GetVersionString())
 	{
-		std::cout << "Version mismatch!!!\nClient version: " + std::string(version.GetVersionString()) + "\n";
-		std::cout << "Server version: " + std::string(Version.GetVersionString()) + "\nKicking client.\n";
+		std::cout << "Version mismatch!!!\nClient version: " << version.GetVersionString() << "\n";
+		std::cout << "Server version: " << Version.GetVersionString() << "\nKicking client.\n";
 		m_pClient->disconnect();
 		return false;
 	}

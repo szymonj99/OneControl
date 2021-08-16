@@ -12,10 +12,10 @@ namespace oc
 	{
 		std::cout << "\033c";
 		std::cout << "\033[2J";
-		printf("\033[2J");
+		//printf("\033[2J");
 	}
 
-	static int32_t GetUserInt(const std::string_view& msg, const int32_t min, const int32_t max)
+	static int32_t GetUserInt(const std::string& msg, const int32_t min, const int32_t max)
 	{
 		int32_t input = 0;
 		std::cout << msg;
@@ -48,27 +48,29 @@ namespace oc
 		return input;
 	}
 
-	static sf::IpAddress GetUserIP(const std::string_view& msg)
+	static sf::IpAddress GetUserIP(const std::string& msg)
 	{
 		auto input = sf::IpAddress();
-		std::cout << msg;
 		do
 		{
+			std::cout << msg;
 			std::string inputString = std::string();
 			std::getline(std::cin, inputString);
-			input = sf::IpAddress(inputString);
+			if (!inputString.empty())
+			{
+				input = sf::IpAddress(inputString);
+			}			
 			std::cin.clear();
 		}
-		// Limiting to LAN for now (not great at all).
-		// Won't work over VPN eg. WireGuard.
-		while (input < sf::IpAddress(192, 168, 1, 1) || input > sf::IpAddress(192, 168, 1, 254));
-
+		while (input == input.None);
+		ClearConsole();
+		std::cout << "Connecting to server IP: " << input.toString() << "\n";
 		return input;
 	}
 
 	static oc::eMachineState GetMachineState()
 	{
-		const auto userInt = GetUserInt(std::string_view("Is this machine a Server or a Client?\n1. Server\n2. Client\n"), 1, 2);
+		const auto userInt = GetUserInt("Is this machine a Server or a Client?\n1. Server\n2. Client\n", 1, 2);
 		return static_cast<eMachineState>(userInt - 1);
 	}
 }
