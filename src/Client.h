@@ -22,7 +22,6 @@ namespace oc
 
 	public:
 		void Start();
-		void Create();
 		void ConnectToServer();
 		void StartReceivingPacketStream();
 	};
