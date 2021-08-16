@@ -16,13 +16,12 @@ namespace oc
 	class ocServer
 	{
 	private:
-		std::unique_ptr<sf::TcpSocket> m_pClient = nullptr;
-		std::unique_ptr<sf::TcpListener> m_pListener = nullptr;
+		std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
+		std::unique_ptr<sf::TcpListener> m_pListener = std::make_unique<sf::TcpListener>();
 
 		bool m_ReceiveAuthenticationPacket();
 
 	public:
-		void Create();
 		void Start();
 		void SetClient(std::unique_ptr<sf::TcpSocket>& client);
 		std::unique_ptr<sf::TcpSocket>& GetClient();
