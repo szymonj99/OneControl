@@ -19,7 +19,7 @@ void oc::ocClient::Start()
 
 void oc::ocClient::Create()
 {
-	m_ServerIP = GetUserIP(std::string_view("Insert server IP\n"));
+	m_ServerIP = GetUserIP("Insert server IP\n");
 }
 
 void oc::ocClient::ConnectToServer()
