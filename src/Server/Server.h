@@ -6,10 +6,9 @@
 #include <iostream>
 #include <SFML/Network.hpp>
 
-#include "Constants.h"
-#include "Version.h"
-
-#include "IMouse.h"
+#include "../Helpers/Constants.h"
+#include "../Version/Version.h"
+#include "../Mouse/Mouse.h"
 
 namespace oc
 {

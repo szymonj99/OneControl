@@ -10,12 +10,12 @@
 //#include <cryptopp/rsa.h>
 //#include <openssl/rsa.h>
 
-#include "Constants.h"
-#include "Enums.h"
-#include "Version.h"
-#include "StaticHelpers.h"
-#include "Server.h"
-#include "Client.h"
+#include "../Helpers/Constants.h"
+#include "../Helpers/Enums.h"
+#include "../Helpers/StaticHelpers.h"
+#include "../Version/Version.h"
+#include "../Server/Server.h"
+#include "../Client/Client.h"
 
 namespace oc
 {
