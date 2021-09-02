@@ -1,11 +1,15 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR) # 3.14 minimum for FetchContent
 
-file(GLOB SOURCE_FILES CONFIGURE_DEPENDS "*.h" "*.cpp")
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+if(UNIX AND NOT APPLE)
+	set(LINUX TRUE)
+endif(UNIX AND NOT APPLE)
 
-if (UNIX)
+if (LINUX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-endif(UNIX)
+endif(LINUX)
+
+file(GLOB SOURCE_FILES CONFIGURE_DEPENDS "./*/*.h" "*.cpp" "./*/*.cpp" "./*/*/*.cpp")
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 include(FetchContent)
 

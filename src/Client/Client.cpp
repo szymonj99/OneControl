@@ -46,7 +46,7 @@ bool oc::ocClient::m_SendAuthenticationPacket()
 void oc::ocClient::StartReceivingPacketStream()
 {
 	auto pkt = sf::Packet();
-	std::string str;
+	std::pair<int32_t, int32_t> relativeMouseMovement = { 0, 0 };
 	while (true)
 	{
 		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
@@ -55,10 +55,10 @@ void oc::ocClient::StartReceivingPacketStream()
 			std::cout << "Client lost connection with server.\nQuitting.\n";
 			std::cin.get();
 			return;
-		}		
-		pkt >> str;
-		std::cout << "I'm a client. Received packet from server. Packet string: " << str << "\n";
+		}
+		
+		pkt >> relativeMouseMovement.first >> relativeMouseMovement.second;
+		std::cout << relativeMouseMovement.first << "  :  " << relativeMouseMovement.second << "\n";
 		pkt.clear();
-		str.clear();
 	}
 }
