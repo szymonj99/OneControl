@@ -1,4 +1,3 @@
-#define UNICODE 1
 #ifdef _WIN32
 // Windows 10
 #define WINVER 0x0A00
@@ -12,13 +11,15 @@
 #error Platform is not known/supported.
 #endif
 
-#include "./Program/OneControl.h"
+#include <fmt/core.h>
+
+#include "Program/OneControl.h"
 
 int main()
 {
-	std::cout << "OneControl is starting.\n";
+	fmt::print("OneControl is starting.\n");
 	std::make_unique<oc::OneControl>()->Start();
-	std::cout << "Program finished. Press enter to exit.";
+	fmt::print("Program finished. Press enter to exit.");
 	std::cin.get();
 	return 0;
 }

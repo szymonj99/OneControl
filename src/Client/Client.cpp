@@ -13,7 +13,7 @@ void oc::ocClient::Start()
 		StartReceivingPacketStream();
 		});
 	clientThread.join();
-	std::cout << "Client thread finished.\n";
+	fmt::print("Client thread finished.\n");
 }
 
 void oc::ocClient::ConnectToServer()
@@ -22,11 +22,11 @@ void oc::ocClient::ConnectToServer()
 	const auto status = m_pServer->connect(m_ServerIP, oc::kPort);
 	if (status != sf::Socket::Status::Done)
 	{
-		std::cout << "Client can't connect to server.\n";
+		fmt::print(fmt::fg(fmt::color::red), "Client can't connect to server.\n");
 		std::cin.get();
 		return;
 	}
-	std::cout << "Connected to server successfully.\n";
+	fmt::print(fmt::fg(fmt::color::green), "Connected to server successfully.\n");
 }
 
 bool oc::ocClient::m_SendAuthenticationPacket()
@@ -36,15 +36,16 @@ bool oc::ocClient::m_SendAuthenticationPacket()
 	authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
 	if (m_pServer->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
-		std::cout << "Client authentication FAILED.\n";
+		fmt::print(fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
 		return false;
 	}
-	std::cout << "Client authentication successful.\n";
+	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
 	return true;
 }
 
 void oc::ocClient::StartReceivingPacketStream()
 {
+	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();
 	std::pair<int32_t, int32_t> relativeMouseMovement = { 0, 0 };
 	while (true)
@@ -52,13 +53,15 @@ void oc::ocClient::StartReceivingPacketStream()
 		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
 		{
 			m_pServer->disconnect();
-			std::cout << "Client lost connection with server.\nQuitting.\n";
+			fmt::print(fmt::fg(fmt::color::red), "Client lost connection with server.\n");
+			fmt::print("Quitting.\n");
 			std::cin.get();
 			return;
 		}
 		
 		pkt >> relativeMouseMovement.first >> relativeMouseMovement.second;
-		std::cout << relativeMouseMovement.first << "  :  " << relativeMouseMovement.second << "\n";
+		fmt::print("{} : {}\n", relativeMouseMovement.first, relativeMouseMovement.second);
+		mouseInterface->MoveMouseRelative(relativeMouseMovement.first, relativeMouseMovement.second);
 		pkt.clear();
 	}
 }
