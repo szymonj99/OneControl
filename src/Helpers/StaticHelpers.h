@@ -1,24 +1,26 @@
 #pragma once
 
+#define UNICODE 1
+
 #include <iostream>
 #include <cstdint>
 #include <string>
 
 #include <SFML/Network.hpp>
+#include <fmt/core.h>
+#include <fmt/color.h>
 
 namespace oc
 {
 	static void ClearConsole()
 	{
-		std::cout << "\033c";
-		std::cout << "\033[2J";
-		//printf("\033[2J");
+		fmt::print("\033c"); // Alternative: "\033[2J"
 	}
 
 	static int32_t GetUserInt(const std::string& msg, const int32_t min, const int32_t max)
 	{
 		int32_t input = 0;
-		std::cout << msg;
+		fmt::print(msg);
 		do
 		{
 			std::string inputString = std::string();
@@ -29,17 +31,17 @@ namespace oc
 			}
 			catch (std::invalid_argument)
 			{
-				std::cout << "Invalid input. Try again and stop trying to break this.\n";
+				fmt::print(fmt::fg(fmt::color::red), "Invalid input. Try again and stop trying to break this.\n");
 				input = -1;
 			}
 			catch (std::out_of_range)
 			{
-				std::cout << "Invalid number chosen. Try again and stop trying to break this.\n";
+				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again and stop trying to break this.\n");
 				input = -1;
 			}
 			if (input > max || input == 0)
 			{
-				std::cout << "Invalid number chosen. Try again.\n";
+				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again.\n");
 				input = -1;
 			}
 
@@ -53,7 +55,7 @@ namespace oc
 		auto input = sf::IpAddress();
 		do
 		{
-			std::cout << msg;
+			fmt::print(msg);
 			std::string inputString = std::string();
 			std::getline(std::cin, inputString);
 			if (!inputString.empty())
@@ -64,7 +66,7 @@ namespace oc
 		}
 		while (input == input.None);
 		ClearConsole();
-		std::cout << "Connecting to server IP: " << input.toString() << "\n";
+		fmt::print("Connecting to server IP: {}\n", input.toString());
 		return input;
 	}
 

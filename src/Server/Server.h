@@ -1,10 +1,14 @@
 #pragma once
 
+#define UNICODE 1
+
 #include <memory>
 #include <thread>
 #include <string>
 #include <iostream>
 #include <SFML/Network.hpp>
+#include <fmt/core.h>
+#include <fmt/color.h>
 
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"

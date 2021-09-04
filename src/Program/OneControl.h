@@ -1,5 +1,7 @@
 #pragma once
 
+#define UNICODE 1
+
 #include <iostream>
 #include <thread>
 #include <chrono>

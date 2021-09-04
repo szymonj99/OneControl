@@ -20,14 +20,12 @@ LRESULT oc::Mouse::RawInputMouseProcedure(const HWND hWnd, const UINT message, c
 			break;
 		}
 		const auto raw = (PRAWINPUT)lpb.get();
-		// No need to check if raw->header.dwType == RIM_TYPEMOUSE
-		// As we have registered the raw input device as a mouse only.
 		oc::Mouse::RelativeMouseMovement = { raw->data.mouse.lLastX , raw->data.mouse.lLastY };
 		return dwSize;
 	}
 	case WM_CLOSE:
 	{
-		std::cout << "Raw input WM_CLOSE received.\n";
+		fmt::print(fmt::fg(fmt::color::red), "Raw input WM_CLOSE received.\n");
 		std::cin.get();
 		PostQuitMessage(0);
 		return 0;
@@ -44,7 +42,7 @@ oc::Mouse::Mouse()
 {
 	// Window class
 	oc::Mouse::RawInputWindowClass.hInstance = (HINSTANCE)1;
-	oc::Mouse::RawInputWindowClass.lpszClassName = "OneControl";
+	oc::Mouse::RawInputWindowClass.lpszClassName = L"OneControl";
 	oc::Mouse::RawInputWindowClass.lpfnWndProc = oc::Mouse::RawInputMouseProcedure;
 	RegisterClass(&oc::Mouse::RawInputWindowClass);
 
@@ -60,7 +58,7 @@ oc::Mouse::Mouse()
 
 	if (!RegisterRawInputDevices(&*m_pRawMouseInput, 1, sizeof(RAWINPUTDEVICE)))
 	{
-		std::cout << "Registering of raw input devices failed.\n";
+		fmt::print(fmt::fg(fmt::color::red), "Registering of raw input devices failed.\n");
 		std::cin.get();
 		std::exit(-1);
 	}
@@ -73,7 +71,7 @@ oc::Mouse::~Mouse()
 	// This acts as unregistering the raw input device: https://gamedev.net/forums/topic/629795-unregistering-raw-input/4970645/
 	if (!RegisterRawInputDevices(&*m_pRawMouseInput, 1, sizeof(RAWINPUTDEVICE)))
 	{
-		std::cout << "Unregistering of raw input devices failed.\n";
+		fmt::print(fmt::fg(fmt::color::red), "Unregistering of raw input devices failed.\n");
 		std::cin.get();
 		std::exit(-1);
 	}

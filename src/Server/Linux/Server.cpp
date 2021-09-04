@@ -12,10 +12,10 @@ void oc::ocServer::StartSendingPacketStream()
 	{
 		if (m_pClient->send(pkt) != sf::Socket::Status::Done)
 		{
-			std::cout << "Client disconnected.\nGracefully quitting.\n";
+			fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\nGracefully quitting.\n");
 			return;
 		}
-		std::cout << "Finished sending a packet to the client.\n";
+		fmt::print(fmt::fg(fmt::color::green), "Finished sending a packet to the client.\n");
 		std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
 	}
 }

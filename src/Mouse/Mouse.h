@@ -1,5 +1,7 @@
 #pragma once
 
+#define UNICODE 1
+
 #ifdef _WIN32
 #include <Windows.h>
 #include <hidusage.h>
@@ -7,7 +9,6 @@
 #include <linux/uinput.h>
 #include <linux/input.h>
 #include <linux/ioctl.h>
-#include <iostream>
 #elif __APPLE__
 
 #endif
@@ -17,6 +18,9 @@
 #include <utility>
 #include <cstdint>
 #include <thread>
+
+#include <fmt/core.h>
+#include <fmt/color.h>
 
 namespace oc
 {
