@@ -18,7 +18,7 @@ jobs:
         
     # I will change this to use matrix.os with an if statement in the future. //shrug
     - name: Download Packages
-      run: sudo apt install libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev
+      run: sudo apt update && sudo apt install libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev
       shell: bash
       
     - name: Configure CMake
