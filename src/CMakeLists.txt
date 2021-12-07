@@ -26,22 +26,30 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 include(FetchContent)
 
 FetchContent_Declare(sfml
-  GIT_REPOSITORY https://github.com/SFML/sfml
-  GIT_TAG master
+  GIT_REPOSITORY https://github.com/SFML/sfml.git
+  GIT_TAG 2.6.x
 )
-FetchContent_MakeAvailable(sfml)
-include_directories(SFML)
 
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc # Release 8.0.1
+)
+
+FetchContent_Declare(spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG eb3220622e73a4889eee355ffa37972b3cac3df5 # Release 1.9.2
+)
+
+FetchContent_Declare(argh
+  GIT_REPOSITORY https://github.com/adishavit/argh.git
   GIT_TAG master
 )
-FetchContent_MakeAvailable(fmt)
-include_directories(fmt)
+
+FetchContent_MakeAvailable(sfml fmt spdlog argh)
+include_directories(SFML fmt spdlog argh)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-window sfml-network sfml-system)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt-header-only)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-window sfml-network sfml-system fmt::fmt-header-only spdlog::spdlog_header_only argh)
