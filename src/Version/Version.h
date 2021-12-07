@@ -7,7 +7,7 @@
 
 namespace oc
 {
-	class ocVersion
+	class Version
 	{
 	private:
 		uint32_t m_Major = 0;
@@ -15,8 +15,8 @@ namespace oc
 		uint32_t m_Revision = 1;
 
 	public:
-		ocVersion() {};
-		ocVersion(const uint32_t major, const uint32_t minor, const uint32_t revision);
+		Version() {};
+		Version(const uint32_t major, const uint32_t minor, const uint32_t revision);
 		std::string GetVersionString() const;
 		uint32_t GetMajor() const;
 		uint32_t GetMinor() const;
@@ -24,5 +24,5 @@ namespace oc
 	};
 
 	// The version of the application.
-	const static oc::ocVersion Version(0, 0, 1);
+	const static oc::Version kVersion(0, 0, 1);
 }

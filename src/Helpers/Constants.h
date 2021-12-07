@@ -1,7 +1,8 @@
 #pragma once
-#include <cstdint>
 
 #define UNICODE 1
+
+#include <cstdint>
 
 namespace oc
 {

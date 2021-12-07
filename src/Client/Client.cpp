@@ -1,6 +1,6 @@
 #include "Client.h"
 
-void oc::ocClient::Start()
+void oc::Client::Start()
 {
 	std::thread clientThread([&] {
 		ConnectToServer();
@@ -16,9 +16,12 @@ void oc::ocClient::Start()
 	fmt::print("Client thread finished.\n");
 }
 
-void oc::ocClient::ConnectToServer()
+void oc::Client::ConnectToServer()
 {
 	m_ServerIP = GetUserIP("Insert server IP\n");
+
+	// Enum class warning
+	#pragma warning(suppress: 26812)
 	const auto status = m_pServer->connect(m_ServerIP, oc::kPort);
 	if (status != sf::Socket::Status::Done)
 	{
@@ -29,11 +32,11 @@ void oc::ocClient::ConnectToServer()
 	fmt::print(fmt::fg(fmt::color::green), "Connected to server successfully.\n");
 }
 
-bool oc::ocClient::m_SendAuthenticationPacket()
+bool oc::Client::m_SendAuthenticationPacket()
 {
 	auto authenticationPkt = sf::Packet();
 
-	authenticationPkt << Version.GetMajor() << Version.GetMinor() << Version.GetRevision();
+	authenticationPkt << oc::kVersion.GetMajor() << oc::kVersion.GetMinor() << oc::kVersion.GetRevision();
 	if (m_pServer->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
@@ -43,7 +46,7 @@ bool oc::ocClient::m_SendAuthenticationPacket()
 	return true;
 }
 
-void oc::ocClient::StartReceivingPacketStream()
+void oc::Client::StartReceivingPacketStream()
 {
 	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();

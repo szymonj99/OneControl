@@ -2,7 +2,7 @@
 
 #include "../Server.h"
 
-void oc::ocServer::StartSendingPacketStream()
+void oc::Server::StartSendingPacketStream()
 {
 	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();

@@ -4,11 +4,11 @@ void oc::OneControl::m_StartService()
 {
 	if (m_eState == eMachineState::Server)
 	{
-		std::make_unique<ocServer>()->Start();
+		std::make_unique<Server>()->Start();
 	}
 	else if (m_eState == eMachineState::Client)
 	{
-		std::make_unique<ocClient>()->Start();
+		std::make_unique<Client>()->Start();
 	}
 }
 
