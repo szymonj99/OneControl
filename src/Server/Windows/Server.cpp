@@ -4,7 +4,7 @@
 
 #include "../Server.h"
 
-void oc::ocServer::StartSendingPacketStream()
+void oc::Server::StartSendingPacketStream()
 {
 	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();
@@ -14,6 +14,9 @@ void oc::ocServer::StartSendingPacketStream()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		pkt << oc::Mouse::RelativeMouseMovement.first << oc::Mouse::RelativeMouseMovement.second;
+
+		// Enum class warning
+		#pragma warning(suppress: 26812)
 		if (m_pClient->send(pkt) != sf::Socket::Status::Done)
 		{
 			fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\n");

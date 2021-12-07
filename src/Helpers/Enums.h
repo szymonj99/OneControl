@@ -6,7 +6,7 @@ namespace oc
 {
 	enum class eMachineState
 	{
-		Server,
+		Server = 0,
 		Client
 	};
 }

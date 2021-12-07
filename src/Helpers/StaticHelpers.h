@@ -23,7 +23,7 @@ namespace oc
 		fmt::print(msg);
 		do
 		{
-			std::string inputString = std::string();
+			std::string inputString;
 			std::getline(std::cin, inputString);
 			try
 			{

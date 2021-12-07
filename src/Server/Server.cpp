@@ -1,16 +1,16 @@
 #include "Server.h"
 
-inline void oc::ocServer::SetClient(std::unique_ptr<sf::TcpSocket>& client)
+inline void oc::Server::SetClient(std::unique_ptr<sf::TcpSocket>& client)
 {
 	m_pClient = std::move(client);
 }
 
-inline std::unique_ptr<sf::TcpSocket>& oc::ocServer::GetClient()
+inline std::unique_ptr<sf::TcpSocket>& oc::Server::GetClient()
 {
 	return m_pClient;
 }
 
-void oc::ocServer::Start()
+void oc::Server::Start()
 {
 	std::thread listenerThread([&] { 
 		WaitForClient();
@@ -26,7 +26,7 @@ void oc::ocServer::Start()
 	fmt::print("Listener thread finished.\n");
 }
 
-void oc::ocServer::WaitForClient()
+void oc::Server::WaitForClient()
 {
 	// This should never be called when client member variable is empty, but it's safe to do a runtime check.
 	if (!m_pClient)
@@ -52,7 +52,7 @@ void oc::ocServer::WaitForClient()
 	fmt::print(fmt::fg(fmt::color::green), "We have a client! IP: {}\n", m_pClient->getRemoteAddress().toString());
 }
 
-bool oc::ocServer::m_ReceiveAuthenticationPacket()
+bool oc::Server::m_ReceiveAuthenticationPacket()
 {
 	auto authenticationPkt = sf::Packet();
 	if (m_pClient->receive(authenticationPkt) != sf::Socket::Status::Done)
@@ -63,12 +63,12 @@ bool oc::ocServer::m_ReceiveAuthenticationPacket()
 	std::uint32_t major, minor, revision;
 	authenticationPkt >> major >> minor >> revision;
 
-	ocVersion version(major, minor, revision);
-	if (version.GetVersionString() != Version.GetVersionString())
+	Version version(major, minor, revision);
+	if (version.GetVersionString() != oc::kVersion.GetVersionString())
 	{
 		fmt::print(fmt::fg(fmt::color::red), "!!!Version mismatch!!!\n");
 		fmt::print("Client version : {}\n", version.GetVersionString());
-		fmt::print("Server version : {}\nKicking client.\n", Version.GetVersionString());
+		fmt::print("Server version : {}\nKicking client.\n", oc::kVersion.GetVersionString());
 		m_pClient->disconnect();
 		return false;
 	}

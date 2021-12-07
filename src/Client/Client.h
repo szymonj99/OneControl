@@ -12,7 +12,7 @@
 
 namespace oc
 {
-	class ocClient
+	class Client
 	{
 	private:
 		std::unique_ptr<sf::TcpSocket> m_pServer = std::make_unique<sf::TcpSocket>();
