@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <string>
 
+#include "../Helpers/Constants.h"
+
 namespace oc
 {
 	class Version
@@ -16,7 +18,7 @@ namespace oc
 
 	public:
 		Version() {};
-		Version(const uint32_t major, const uint32_t minor, const uint32_t revision);
+		Version(const VersionInt major, const VersionInt minor, const VersionInt revision);
 		std::string GetVersionString() const;
 		uint32_t GetMajor() const;
 		uint32_t GetMinor() const;

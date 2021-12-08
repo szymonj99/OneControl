@@ -9,4 +9,20 @@ namespace oc
 		Server = 0,
 		Client
 	};
+
+	enum class eInputType
+	{
+		Mouse = 0,
+		Keyboard
+	};
+
+#ifdef _WIN32
+#define WM_USER 0x0400
+#define WM_APP  0x8000
+	enum class eThreadMessages
+	{
+		Mouse = WM_APP + 1,
+		Keyboard
+	};
+#endif
 }

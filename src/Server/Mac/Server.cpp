@@ -2,22 +2,22 @@
 
 #include "../Server.h"
 
-void oc::Server::StartSendingPacketStream()
+void oc::Server::ServerLoop()
 {
-	auto mouseInterface = std::make_unique<Mouse>();
-	auto pkt = sf::Packet();
-	std::string pktData = "Hello, from the server!.";
-	pkt << pktData;
-	while (true)
+	const auto temporaryLambda = [](oc::Server* server)
 	{
-		if (m_pClient->send(pkt) != sf::Socket::Status::Done)
+		while (true)
 		{
-			fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\nGracefully quitting.\n");
-			return;
+			sf::Packet pkt;
+			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse);
+			oc::MousePair pair{ 0,0 };
+			pkt << pair.first << pair.second;
+			server->SendPacket(pkt);
+			std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 		}
-		fmt::print(fmt::fg(fmt::color::green), "Finished sending a packet to the client.\n");
-		std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
-	}
+	};
+	std::thread temporaryThread(temporaryLambda, this);
+	temporaryThread.join();
 }
 
 #endif

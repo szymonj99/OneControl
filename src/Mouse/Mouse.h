@@ -5,6 +5,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <hidusage.h>
+#include <deque>
 #elif __linux__
 #include <linux/uinput.h>
 #include <linux/input.h>
@@ -22,13 +23,21 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+#include "../Helpers/Constants.h"
+#include "../Server/Server.h"
+#include "../Helpers/Enums.h"
+
 namespace oc
 {
+	class Server;
+
 	class Mouse
 	{
 	private:
+		oc::Server* m_pServer = nullptr;
+
 #ifdef _WIN32
-		std::unique_ptr<RAWINPUTDEVICE> m_pRawMouseInput = std::make_unique<RAWINPUTDEVICE>();
+		HHOOK m_pHook = nullptr;
 #elif __linux__
 
 #elif __APPLE__
@@ -37,20 +46,21 @@ namespace oc
 	public:
 		Mouse();
 		~Mouse();
-		void MoveMouseTo(const int32_t x, const int32_t y);
-		void MoveMouseRelative(const int32_t x, const int32_t y);
-		std::pair<int32_t, int32_t> GetMousePosition();
-		// Used to pass relative mouse movement data from mouse procedure to server.
-		static std::pair<int32_t, int32_t> RelativeMouseMovement;
+		void MoveMouseTo(const oc::MouseInt x, const oc::MouseInt y);
+		void MoveMouseRelative(const oc::MouseInt x, const oc::MouseInt y);
+		oc::MousePair GetMousePosition();
+		void SetServer(oc::Server* server);
 
 #ifdef _WIN32
-		// Static variables!
+		void StartHook();
+		void EndHook();
 
-		// This is what's called every time a raw input event happens.
-		static LRESULT RawInputMouseProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		static WNDCLASS RawInputWindowClass;
-		// Used when registering raw input device.
-		static HWND RawInputMessageWindow;
+		// Static variables!
+		static bool SendToClient;
+		static std::mutex QueueMutex;
+		static std::deque<oc::MousePair> Queue;
+		// This is what's called every time a low-level mouse event happens.
+		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif __linux__
 
 #elif __APPLE__

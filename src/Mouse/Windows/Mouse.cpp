@@ -2,78 +2,81 @@
 
 #include "../Mouse.h"
 
-std::pair<int32_t, int32_t> oc::Mouse::RelativeMouseMovement = { 0,0 };
-WNDCLASS oc::Mouse::RawInputWindowClass;
-HWND oc::Mouse::RawInputMessageWindow;
+bool oc::Mouse::SendToClient = true;
+std::deque<oc::MousePair> oc::Mouse::Queue = std::deque<oc::MousePair>();
+std::mutex oc::Mouse::QueueMutex;
 
-LRESULT oc::Mouse::RawInputMouseProcedure(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam)
+LRESULT CALLBACK oc::Mouse::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	if (nCode < 0)
 	{
-	case WM_INPUT:
+		return CallNextHookEx(0, nCode, wParam, lParam);
+	}
+
+	// if return 1, the mouse movement will be captured and not passed to further windows.
+	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed further to other windows.
+	if (oc::Mouse::SendToClient)
 	{
-		UINT dwSize = 0;
-		GetRawInputData((HRAWINPUT)lParam, RID_INPUT, 0, &dwSize, sizeof(RAWINPUTHEADER));
-		auto lpb = std::make_shared<BYTE[]>(dwSize);
-		if (!lpb || (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb.get(), &dwSize, sizeof(RAWINPUTHEADER)) != dwSize))
-		{
-			break;
-		}
-		const auto raw = (PRAWINPUT)lpb.get();
-		oc::Mouse::RelativeMouseMovement = { raw->data.mouse.lLastX , raw->data.mouse.lLastY };
-		return dwSize;
+		// Process message
+		const auto ms = (MSLLHOOKSTRUCT*)lParam;
+		const oc::MousePair data = { ms->pt.x, ms->pt.y };
+		std::unique_lock<std::mutex> lock(QueueMutex);
+		Queue.push_back(data);
+		lock.unlock();
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, 0);
+		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
 	}
-	case WM_CLOSE:
-	{
-		fmt::print(fmt::fg(fmt::color::red), "Raw input WM_CLOSE received.\n");
-		std::cin.get();
-		PostQuitMessage(0);
-		return 0;
-	}
-	default:
-	{
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	}
-	return 0;
+	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
 oc::Mouse::Mouse()
 {
-	// Window class
-	oc::Mouse::RawInputWindowClass.hInstance = (HINSTANCE)1;
-	oc::Mouse::RawInputWindowClass.lpszClassName = L"OneControl";
-	oc::Mouse::RawInputWindowClass.lpfnWndProc = oc::Mouse::RawInputMouseProcedure;
-	RegisterClass(&oc::Mouse::RawInputWindowClass);
-
-	// Create message window:
-	// Invisible window that we use to get raw input messages.
-	oc::Mouse::RawInputMessageWindow = CreateWindow(oc::Mouse::RawInputWindowClass.lpszClassName, 0, 0, 0, 0, 0, 0, HWND_MESSAGE, 0, oc::Mouse::RawInputWindowClass.hInstance, 0);
-
-	m_pRawMouseInput->usUsagePage = HID_USAGE_PAGE_GENERIC;
-	m_pRawMouseInput->usUsage = HID_USAGE_GENERIC_MOUSE;
-	// RIDEV_INPUTSINK is used so that we can get messages from the raw input device even when the application is no longer in focus.
-	m_pRawMouseInput->dwFlags = RIDEV_NOLEGACY | RIDEV_INPUTSINK; // adds mouse and also ignores legacy mouse messages
-	m_pRawMouseInput->hwndTarget = oc::Mouse::RawInputMessageWindow;
-
-	if (!RegisterRawInputDevices(&*m_pRawMouseInput, 1, sizeof(RAWINPUTDEVICE)))
-	{
-		fmt::print(fmt::fg(fmt::color::red), "Registering of raw input devices failed.\n");
-		std::cin.get();
-		std::exit(-1);
-	}
+	// I will make use of this later.
 }
 
 oc::Mouse::~Mouse()
 {
-	m_pRawMouseInput->dwFlags = RIDEV_REMOVE;
-	m_pRawMouseInput->hwndTarget = NULL;
-	// This acts as unregistering the raw input device: https://gamedev.net/forums/topic/629795-unregistering-raw-input/4970645/
-	if (!RegisterRawInputDevices(&*m_pRawMouseInput, 1, sizeof(RAWINPUTDEVICE)))
+	if (m_pHook)
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Unregistering of raw input devices failed.\n");
-		std::cin.get();
-		std::exit(-1);
+		UnhookWindowsHookEx(m_pHook);
+	}
+}
+
+void oc::Mouse::StartHook()
+{
+	MSG msg;
+	PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE); // Force the system to create a message queue.
+
+	if (m_pHook)
+	{
+		UnhookWindowsHookEx(m_pHook);
+	}
+	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, HookProc, 0, 0);
+
+	sf::Packet pkt;
+	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
+	{
+		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Mouse))
+		{
+			// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
+			std::unique_lock<std::mutex> lock(QueueMutex);
+			pkt << static_cast<uint32_t>(oc::eInputType::Mouse) << oc::Mouse::Queue.at(0).first << oc::Mouse::Queue.at(0).second;
+			Queue.pop_front();
+			lock.unlock();
+			if (!m_pServer->SendPacket(pkt))
+			{
+				return;
+			}
+			pkt.clear();
+		}
+	}
+}
+
+void oc::Mouse::EndHook()
+{
+	if (m_pHook)
+	{
+		UnhookWindowsHookEx(m_pHook);
 	}
 }
 
@@ -100,7 +103,7 @@ void oc::Mouse::MoveMouseRelative(const int32_t x, const int32_t y)
 }
 
 //This returns the cursor position relative to screen coordinates. Call ScreenToClient to map to window coordinates.
-std::pair<int32_t, int32_t> oc::Mouse::GetMousePosition()
+oc::MousePair oc::Mouse::GetMousePosition()
 {
 	POINT mousePoint;
 	GetCursorPos(&mousePoint);
