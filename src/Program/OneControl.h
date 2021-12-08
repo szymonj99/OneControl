@@ -7,10 +7,8 @@
 #include <chrono>
 #include <string>
 #include <string_view>
+
 #include <SFML/Network.hpp>
-//#include <botan/botan.h>
-//#include <cryptopp/rsa.h>
-//#include <openssl/rsa.h>
 
 #include "../Helpers/Constants.h"
 #include "../Helpers/Enums.h"
@@ -21,6 +19,9 @@
 
 namespace oc
 {
+	class Server;
+	class Client;
+
 	class OneControl
 	{
 	private:
@@ -29,5 +30,7 @@ namespace oc
 
 	public:
 		void Start();
+		std::unique_ptr<oc::Client> pClient = nullptr;
+		std::unique_ptr<oc::Server> pServer = nullptr;
 	};
 }

@@ -4,27 +4,17 @@
 
 #include "../Server.h"
 
-void oc::Server::StartSendingPacketStream()
+void oc::Server::ServerLoop()
 {
-	auto mouseInterface = std::make_unique<Mouse>();
-	auto pkt = sf::Packet();
-	MSG msg;
-	while (GetMessage(&msg, oc::Mouse::RawInputMessageWindow, 0, 0))
+	const auto processMouse = [](oc::Server* server)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-		pkt << oc::Mouse::RelativeMouseMovement.first << oc::Mouse::RelativeMouseMovement.second;
-
-		// Enum class warning
-		#pragma warning(suppress: 26812)
-		if (m_pClient->send(pkt) != sf::Socket::Status::Done)
-		{
-			fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\n");
-			fmt::print("Gracefully quitting.\n");
-			return;
-		}
-		pkt.clear();
-	}
+		auto mouseInterface = std::make_unique<Mouse>();
+		mouseInterface->SetServer(server);
+		mouseInterface->StartHook();
+		mouseInterface->EndHook();
+	};
+	std::thread mouseThread(processMouse, this);
+	mouseThread.join();
 }
 
 #endif

@@ -50,7 +50,10 @@ void oc::Client::StartReceivingPacketStream()
 {
 	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();
-	std::pair<int32_t, int32_t> relativeMouseMovement = { 0, 0 };
+	oc::MousePair previous = { 0, 0 };
+	oc::MousePair current = { 0, 0 };
+	oc::MousePair toMove;
+
 	while (true)
 	{
 		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
@@ -62,9 +65,25 @@ void oc::Client::StartReceivingPacketStream()
 			return;
 		}
 		
-		pkt >> relativeMouseMovement.first >> relativeMouseMovement.second;
-		fmt::print("{} : {}\n", relativeMouseMovement.first, relativeMouseMovement.second);
-		mouseInterface->MoveMouseRelative(relativeMouseMovement.first, relativeMouseMovement.second);
+		oc::InputInt packetType;
+		pkt >> packetType;
+		auto type = static_cast<oc::eInputType>(packetType);
+
+		switch (type)
+		{
+		// The first time we receive a mouse packet, previous = {0,0} and current = {x, y} where x and y can be big, e.g. x = 800, y = 600
+		// This results in a big movement spike.
+		case oc::eInputType::Mouse:
+			pkt >> current.first >> current.second;
+			toMove = { current.first - previous.first, current.second - previous.second };
+			mouseInterface->MoveMouseRelative(toMove.first, toMove.second);
+			previous = current;
+			break;
+		case oc::eInputType::Keyboard:
+			break;
+		default:
+			break;
+		}
 		pkt.clear();
 	}
 }

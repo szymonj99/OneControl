@@ -2,10 +2,17 @@
 
 #define UNICODE 1
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #include <memory>
 #include <thread>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <mutex>
+
 #include <SFML/Network.hpp>
 #include <fmt/core.h>
 #include <fmt/color.h>
@@ -16,6 +23,8 @@
 
 namespace oc
 {
+	class Mouse;
+
 	class Server
 	{
 	private:
@@ -29,6 +38,7 @@ namespace oc
 		void SetClient(std::unique_ptr<sf::TcpSocket>& client);
 		std::unique_ptr<sf::TcpSocket>& GetClient();
 		void WaitForClient();
-		void StartSendingPacketStream();
+		bool SendPacket(sf::Packet& packet);
+		void ServerLoop();
 	};
 }

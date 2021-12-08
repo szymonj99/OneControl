@@ -14,13 +14,7 @@ void oc::Server::Start()
 {
 	std::thread listenerThread([&] { 
 		WaitForClient();
-		if (!m_ReceiveAuthenticationPacket())
-		{ 
-			m_pClient->disconnect();
-			std::cin.get();
-			return;
-		}
-		StartSendingPacketStream();
+		ServerLoop();
 		});
 	listenerThread.join();
 	fmt::print("Listener thread finished.\n");
@@ -49,7 +43,14 @@ void oc::Server::WaitForClient()
 		return;
 	}
 
-	fmt::print(fmt::fg(fmt::color::green), "We have a client! IP: {}\n", m_pClient->getRemoteAddress().toString());
+	fmt::print(fmt::fg(fmt::color::green), "We have a client! {}:{}\n", m_pClient->getRemoteAddress().toString(), m_pClient->getRemotePort());
+
+	if (!m_ReceiveAuthenticationPacket())
+	{
+		m_pClient->disconnect();
+		std::cin.get();
+		return;
+	}
 }
 
 bool oc::Server::m_ReceiveAuthenticationPacket()
@@ -73,5 +74,21 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 		return false;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
+	return true;
+}
+
+bool oc::Server::SendPacket(sf::Packet& packet)
+{
+	if (!m_pClient)
+	{
+		fmt::print(fmt::fg(fmt::color::red), "Tried sending packet to client but client is not set.\n");
+		return false;
+	}
+
+	if (m_pClient->send(packet) != sf::Socket::Done)
+	{
+		fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\n");
+		return false;
+	}
 	return true;
 }
