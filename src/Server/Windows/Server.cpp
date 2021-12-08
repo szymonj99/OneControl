@@ -1,7 +1,5 @@
 #ifdef _WIN32
 
-#include <SFML/Window/Mouse.hpp>
-
 #include "../Server.h"
 
 void oc::Server::ServerLoop()
@@ -12,7 +10,7 @@ void oc::Server::ServerLoop()
 		mouseInterface->SetServer(server);
 		mouseInterface->StartHook();
 		mouseInterface->EndHook();
-	};
+	};	
 	std::thread mouseThread(processMouse, this);
 	mouseThread.join();
 }
