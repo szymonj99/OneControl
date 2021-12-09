@@ -1,6 +1,6 @@
 #include "Version.h"
 
-oc::Version::Version(const VersionInt major, const VersionInt minor, const VersionInt revision)
+oc::Version::Version(const oc::VersionInt major, const oc::VersionInt minor, const oc::VersionInt revision)
 {
 	m_Major = major;
 	m_Minor = minor;

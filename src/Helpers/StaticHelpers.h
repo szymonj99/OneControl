@@ -10,6 +10,8 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+#include "Enums.h"
+
 namespace oc
 {
 	static void ClearConsole()

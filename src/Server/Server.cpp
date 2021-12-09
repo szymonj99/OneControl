@@ -61,10 +61,10 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 		fmt::print(fmt::fg(fmt::color::red), "Failed at getting authentication packet.\nQuitting.\n");
 		return false;
 	}
-	std::uint32_t major, minor, revision;
+	oc::VersionInt major, minor, revision;
 	authenticationPkt >> major >> minor >> revision;
 
-	Version version(major, minor, revision);
+	oc::Version version(major, minor, revision);
 	if (version.GetVersionString() != oc::kVersion.GetVersionString())
 	{
 		fmt::print(fmt::fg(fmt::color::red), "!!!Version mismatch!!!\n");

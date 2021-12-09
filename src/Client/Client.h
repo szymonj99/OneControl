@@ -4,11 +4,12 @@
 #include <thread>
 #include <string>
 #include <iostream>
+
 #include <SFML/Network.hpp>
 
+#include "../Helpers/StaticHelpers.h"
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
-#include "../Program/OneControl.h"
 #include "../Mouse/Mouse.h"
 #include "../Keyboard/Keyboard.h"
 
