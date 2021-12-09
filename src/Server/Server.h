@@ -20,10 +20,12 @@
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
 #include "../Mouse/Mouse.h"
+#include "../Keyboard/Keyboard.h"
 
 namespace oc
 {
 	class Mouse;
+	class Keyboard;
 
 	class Server
 	{

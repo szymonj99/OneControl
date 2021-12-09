@@ -12,7 +12,18 @@ void oc::Server::ServerLoop()
 		mouseInterface->EndHook();
 	};	
 	std::thread mouseThread(processMouse, this);
+
+	const auto processKeyboard = [](oc::Server* server)
+	{
+		auto keyboardInterface = std::make_unique<Keyboard>();
+		keyboardInterface->SetServer(server);
+		keyboardInterface->StartHook();
+		keyboardInterface->EndHook();
+	};
+	std::thread keyboardThread(processKeyboard, this);
+
 	mouseThread.join();
+	keyboardThread.join();
 }
 
 #endif

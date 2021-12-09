@@ -48,11 +48,15 @@ bool oc::Client::m_SendAuthenticationPacket()
 
 void oc::Client::StartReceivingPacketStream()
 {
-	auto mouseInterface = std::make_unique<Mouse>();
 	auto pkt = sf::Packet();
-	oc::MousePair previous = { 0, 0 };
-	oc::MousePair current = { 0, 0 };
-	oc::MousePair toMove;
+
+	auto mouseInterface = std::make_unique<Mouse>();
+	oc::MousePair mousePrevious = { 0, 0 };
+	oc::MousePair mouseCurrent = { 0, 0 };
+	oc::MousePair mouseToMove;
+
+	auto keyboardInterface = std::make_unique<Keyboard>();
+	oc::KeyboardPair keyboardPair = { 0,0 };
 
 	while (true)
 	{
@@ -74,12 +78,13 @@ void oc::Client::StartReceivingPacketStream()
 		// The first time we receive a mouse packet, previous = {0,0} and current = {x, y} where x and y can be big, e.g. x = 800, y = 600
 		// This results in a big movement spike.
 		case oc::eInputType::Mouse:
-			pkt >> current.first >> current.second;
-			toMove = { current.first - previous.first, current.second - previous.second };
-			mouseInterface->MoveMouseRelative(toMove.first, toMove.second);
-			previous = current;
+			pkt >> mouseCurrent.first >> mouseCurrent.second;
+			mouseToMove = { mouseCurrent.first - mousePrevious.first, mouseCurrent.second - mousePrevious.second };
+			mousePrevious = mouseCurrent;
 			break;
 		case oc::eInputType::Keyboard:
+			pkt >> keyboardPair.first >> keyboardPair.second;
+			//keyboardInterface->KeyPress(keyboardPair.first, keyboardPair.second);
 			break;
 		default:
 			break;
