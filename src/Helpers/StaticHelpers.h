@@ -19,12 +19,22 @@ namespace oc
 
 	static int32_t GetUserInt(const std::string& msg, const int32_t min, const int32_t max)
 	{
+		// Check if the int and max have proper values
+		if (max < min)
+		{
+			fmt::print(fmt::fg(fmt::color::red), "Incorrect min and max values received.\n");
+			std::cin.get();
+			exit(-1);
+		}
+
 		int32_t input = 0;
 		fmt::print(msg);
 		do
 		{
 			std::string inputString;
 			std::getline(std::cin, inputString);
+			// Exceptions to change flow of code.
+			// Might not be the best way of doing this.
 			try
 			{
 				input = std::stoi(inputString);
@@ -39,7 +49,7 @@ namespace oc
 				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again and stop trying to break this.\n");
 				input = -1;
 			}
-			if (input > max || input == 0)
+			if (input > max || input < min || input == 0)
 			{
 				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again.\n");
 				input = -1;
