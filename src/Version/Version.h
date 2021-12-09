@@ -12,19 +12,19 @@ namespace oc
 	class Version
 	{
 	private:
-		uint32_t m_Major = 0;
-		uint32_t m_Minor = 0;
-		uint32_t m_Revision = 1;
+		VersionInt m_Major = 0;
+		VersionInt m_Minor = 0;
+		VersionInt m_Revision = 1;
 
 	public:
 		Version() {};
 		Version(const VersionInt major, const VersionInt minor, const VersionInt revision);
 		std::string GetVersionString() const;
-		uint32_t GetMajor() const;
-		uint32_t GetMinor() const;
-		uint32_t GetRevision() const;
+		VersionInt GetMajor() const;
+		VersionInt GetMinor() const;
+		VersionInt GetRevision() const;
 	};
 
 	// The version of the application.
-	const static oc::Version kVersion(0, 0, 1);
+	const static Version kVersion(0, 0, 1);
 }
