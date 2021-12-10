@@ -20,13 +20,13 @@ LRESULT CALLBACK oc::Keyboard::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 		// Process message
 		const auto kb = (KBDLLHOOKSTRUCT*)lParam;
 		oc::KeyboardPair keyPress = { kb->vkCode, kb->flags };
-		std::unique_lock<std::mutex> lock(QueueMutex);
-		Queue.push_back(keyPress);
+		std::unique_lock<std::mutex> lock(oc::Keyboard::QueueMutex);
+		oc::Keyboard::Queue.push_back(keyPress);
 		lock.unlock();
 		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, 0);
-		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
+		return 1;
 	}
-	return 1;
+	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
 void oc::Keyboard::StartHook()
@@ -38,15 +38,15 @@ void oc::Keyboard::StartHook()
 	{
 		UnhookWindowsHookEx(m_pHook);
 	}
-	m_pHook = SetWindowsHookEx(WH_KEYBOARD_LL, HookProc, 0, 0);
+	m_pHook = SetWindowsHookEx(WH_KEYBOARD_LL, oc::Keyboard::HookProc, 0, 0);
 
 	sf::Packet pkt;
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
 		// Can try replacing 'oc::Keyboard::Queue.at' with 'oc::Keyboard::Queue[]'.
 		std::unique_lock<std::mutex> lock(QueueMutex);
-		pkt << static_cast<InputInt>(oc::eInputType::Keyboard) << oc::Keyboard::Queue.at(0).first << oc::Keyboard::Queue.at(0).second;
-		Queue.pop_front();
+		pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << oc::Keyboard::Queue.at(0).first << oc::Keyboard::Queue.at(0).second;
+		oc::Keyboard::Queue.pop_front();
 		lock.unlock();
 		if (!m_pServer->SendPacket(pkt))
 		{

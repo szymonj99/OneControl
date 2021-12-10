@@ -20,8 +20,8 @@ LRESULT CALLBACK oc::Mouse::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 		// Process message
 		const auto ms = (MSLLHOOKSTRUCT*)lParam;
 		const oc::MousePair data = { ms->pt.x, ms->pt.y };
-		std::unique_lock<std::mutex> lock(QueueMutex);
-		Queue.push_back(data);
+		std::unique_lock<std::mutex> lock(oc::Mouse::QueueMutex);
+		oc::Mouse::Queue.push_back(data);
 		lock.unlock();
 		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, 0);
 		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
@@ -51,7 +51,7 @@ void oc::Mouse::StartHook()
 	{
 		UnhookWindowsHookEx(m_pHook);
 	}
-	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, HookProc, 0, 0);
+	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::Mouse::HookProc, 0, 0);
 
 	sf::Packet pkt;
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
@@ -59,9 +59,9 @@ void oc::Mouse::StartHook()
 		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Mouse))
 		{
 			// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
-			std::unique_lock<std::mutex> lock(QueueMutex);
-			pkt << static_cast<uint32_t>(oc::eInputType::Mouse) << oc::Mouse::Queue.at(0).first << oc::Mouse::Queue.at(0).second;
-			Queue.pop_front();
+			std::unique_lock<std::mutex> lock(oc::Mouse::QueueMutex);
+			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << oc::Mouse::Queue.at(0).first << oc::Mouse::Queue.at(0).second;
+			oc::Mouse::Queue.pop_front();
 			lock.unlock();
 			if (!m_pServer->SendPacket(pkt))
 			{
@@ -80,7 +80,7 @@ void oc::Mouse::EndHook()
 	}
 }
 
-void oc::Mouse::MoveMouseTo(const int32_t x, const int32_t y)
+void oc::Mouse::MoveMouseTo(const  oc::MouseInt x, const  oc::MouseInt y)
 {
 	INPUT input;
 	input.type = INPUT_MOUSE;
@@ -91,7 +91,7 @@ void oc::Mouse::MoveMouseTo(const int32_t x, const int32_t y)
 	SendInput(1, &input, sizeof(input));
 }
 
-void oc::Mouse::MoveMouseRelative(const int32_t x, const int32_t y)
+void oc::Mouse::MoveMouseRelative(const  oc::MouseInt x, const  oc::MouseInt y)
 {
 	INPUT input;
 	input.type = INPUT_MOUSE;

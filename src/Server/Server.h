@@ -24,9 +24,6 @@
 
 namespace oc
 {
-	class Mouse;
-	class Keyboard;
-
 	class Server
 	{
 	private:

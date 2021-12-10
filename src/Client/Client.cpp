@@ -4,12 +4,6 @@ void oc::Client::Start()
 {
 	std::thread clientThread([&] {
 		ConnectToServer();
-		if (!m_SendAuthenticationPacket())
-		{
-			m_pServer->disconnect();
-			std::cin.get();
-			return;
-		}
 		StartReceivingPacketStream();
 		});
 	clientThread.join();
@@ -30,6 +24,13 @@ void oc::Client::ConnectToServer()
 		return;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Connected to server successfully.\n");
+
+	if (!m_SendAuthenticationPacket())
+	{
+		m_pServer->disconnect();
+		std::cin.get();
+		return;
+	}
 }
 
 bool oc::Client::m_SendAuthenticationPacket()
@@ -50,12 +51,12 @@ void oc::Client::StartReceivingPacketStream()
 {
 	auto pkt = sf::Packet();
 
-	auto mouseInterface = std::make_unique<Mouse>();
+	auto mouseInterface = std::make_unique<oc::Mouse>();
 	oc::MousePair mousePrevious = { 0, 0 };
 	oc::MousePair mouseCurrent = { 0, 0 };
 	oc::MousePair mouseToMove;
 
-	auto keyboardInterface = std::make_unique<Keyboard>();
+	auto keyboardInterface = std::make_unique<oc::Keyboard>();
 	oc::KeyboardPair keyboardPair = { 0,0 };
 
 	while (true)
@@ -71,7 +72,7 @@ void oc::Client::StartReceivingPacketStream()
 		
 		oc::InputInt packetType;
 		pkt >> packetType;
-		auto type = static_cast<oc::eInputType>(packetType);
+		const auto type = static_cast<oc::eInputType>(packetType);
 
 		switch (type)
 		{

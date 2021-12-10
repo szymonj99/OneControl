@@ -12,12 +12,12 @@ oc::Mouse::~Mouse()
 
 }
 
-void oc::Mouse::MoveMouseTo(const MouseInt x, const MouseInt y)
+void oc::Mouse::MoveMouseTo(const oc::MouseInt x, const oc::MouseInt y)
 {
 
 }
 
-void oc::Mouse::MoveMouseRelative(const MouseInt x, const MouseInt y)
+void oc::Mouse::MoveMouseRelative(const oc::MouseInt x, const oc::MouseInt y)
 {
 
 }

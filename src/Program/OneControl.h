@@ -19,9 +19,6 @@
 
 namespace oc
 {
-	class Server;
-	class Client;
-
 	class OneControl
 	{
 	private:
