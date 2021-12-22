@@ -48,8 +48,8 @@ FetchContent_Declare(argh
 FetchContent_MakeAvailable(sfml fmt spdlog argh)
 include_directories(SFML fmt spdlog argh)
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-audio sfml-window sfml-network sfml-system fmt::fmt-header-only spdlog::spdlog_header_only argh)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only spdlog::spdlog_header_only argh)
