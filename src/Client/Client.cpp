@@ -82,6 +82,7 @@ void oc::Client::StartReceivingPacketStream()
 			pkt >> mouseCurrent.first >> mouseCurrent.second;
 			mouseToMove = { mouseCurrent.first - mousePrevious.first, mouseCurrent.second - mousePrevious.second };
 			mousePrevious = mouseCurrent;
+			mouseInterface->MoveMouseRelative(mouseToMove.first, mouseToMove.second);
 			break;
 		case oc::eInputType::Keyboard:
 			pkt >> keyboardPair.first >> keyboardPair.second;

@@ -56,19 +56,16 @@ void oc::Mouse::StartHook()
 	sf::Packet pkt;
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
-		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Mouse))
+		// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
+		std::unique_lock<std::mutex> lock(oc::Mouse::QueueMutex);
+		pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << oc::Mouse::Queue.at(0).first << oc::Mouse::Queue.at(0).second;
+		oc::Mouse::Queue.pop_front();
+		lock.unlock();
+		if (!m_pServer->SendPacket(pkt))
 		{
-			// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
-			std::unique_lock<std::mutex> lock(oc::Mouse::QueueMutex);
-			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << oc::Mouse::Queue.at(0).first << oc::Mouse::Queue.at(0).second;
-			oc::Mouse::Queue.pop_front();
-			lock.unlock();
-			if (!m_pServer->SendPacket(pkt))
-			{
-				return;
-			}
-			pkt.clear();
+			return;
 		}
+		pkt.clear();
 	}
 }
 
@@ -80,7 +77,7 @@ void oc::Mouse::EndHook()
 	}
 }
 
-void oc::Mouse::MoveMouseTo(const  oc::MouseInt x, const  oc::MouseInt y)
+void oc::Mouse::MoveMouseTo(const oc::MouseInt x, const oc::MouseInt y)
 {
 	INPUT input;
 	input.type = INPUT_MOUSE;
@@ -91,7 +88,7 @@ void oc::Mouse::MoveMouseTo(const  oc::MouseInt x, const  oc::MouseInt y)
 	SendInput(1, &input, sizeof(input));
 }
 
-void oc::Mouse::MoveMouseRelative(const  oc::MouseInt x, const  oc::MouseInt y)
+void oc::Mouse::MoveMouseRelative(const oc::MouseInt x, const oc::MouseInt y)
 {
 	INPUT input;
 	input.type = INPUT_MOUSE;
