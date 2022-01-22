@@ -11,6 +11,9 @@
 #error Platform is not known/supported.
 #endif
 
+#define FMT_HEADER_ONLY
+#define UNICODE 1
+
 #include <fmt/core.h>
 
 #include "Program/OneControl.h"

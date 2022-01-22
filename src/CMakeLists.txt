@@ -27,22 +27,22 @@ include(FetchContent)
 
 FetchContent_Declare(sfml
   GIT_REPOSITORY https://github.com/SFML/sfml.git
-  GIT_TAG 2.6.x
+  GIT_TAG 0ad6d1815cb2ee33289aa1b7c38d3831318a5db8
 )
 
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc # Release 8.0.1
+  GIT_TAG 0014024a2c796b708244e9f531788d3e44d65918
 )
 
 FetchContent_Declare(spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG eb3220622e73a4889eee355ffa37972b3cac3df5 # Release 1.9.2
+  GIT_TAG 93f59d04e9a9484f6390983b393fee852b1d6318
 )
 
 FetchContent_Declare(argh
   GIT_REPOSITORY https://github.com/adishavit/argh.git
-  GIT_TAG master
+  GIT_TAG 1e52a8048cdc0b13b829dccfc1172768af3663a0
 )
 
 FetchContent_MakeAvailable(sfml fmt spdlog argh)
@@ -52,4 +52,4 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only spdlog::spdlog_header_only argh)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only spdlog argh)
