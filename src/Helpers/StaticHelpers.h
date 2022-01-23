@@ -21,7 +21,6 @@ namespace oc
 
 	static int32_t GetUserInt(const std::string& msg, const int32_t min, const int32_t max)
 	{
-		// Check if the int and max have proper values
 		if (max < min)
 		{
 			fmt::print(fmt::fg(fmt::color::red), "Incorrect min and max values received.\n");
@@ -29,36 +28,39 @@ namespace oc
 			exit(-1);
 		}
 
-		int32_t input = 0;
 		fmt::print(msg);
+		int32_t input = 0;
+		char* end = nullptr;
+		bool failedToParse = true;		
 		do
 		{
 			std::string inputString;
 			std::getline(std::cin, inputString);
-			// Exceptions to change flow of code.
-			// Might not be the best way of doing this.
-			try
+
+			errno = 0;
+            input = static_cast<int32_t>(strtol(inputString.c_str(), &end, 0));
+			// *end == 0 if we correctly parsed the whole input.
+			// if *end is not null, there were characters that were not parsed.
+			failedToParse = (*end != '\0');
+
+			if (failedToParse)
 			{
-				input = std::stoi(inputString);
+				fmt::print(fmt::fg(fmt::color::red), "The provided input is not a number.\n");
 			}
-			catch (std::invalid_argument)
+			else
 			{
-				fmt::print(fmt::fg(fmt::color::red), "Invalid input. Try again and stop trying to break this.\n");
-				input = -1;
-			}
-			catch (std::out_of_range)
-			{
-				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again and stop trying to break this.\n");
-				input = -1;
-			}
-			if (input > max || input < min || input == 0)
-			{
-				fmt::print(fmt::fg(fmt::color::red), "Invalid number chosen. Try again.\n");
-				input = -1;
+				if (input > max)
+				{
+					fmt::print(fmt::fg(fmt::color::red), "The provided number is too big.\n");
+				}
+				else if (input < min)
+				{
+					fmt::print(fmt::fg(fmt::color::red), "The provided number is too small.\n");
+				}
 			}
 
 			std::cin.clear();
-		} while (input < min || input > max);
+		} while ((input < min || input > max) || failedToParse);
 		return input;
 	}
 
