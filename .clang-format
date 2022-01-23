@@ -1,0 +1,19 @@
+Language: Cpp
+Standard: Cpp11
+
+TabWidth: 4
+IndentWidth: 4
+UseTab: Never
+
+SpacesBeforeTrailingComments: 1
+
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+IndentWrappedFunctionNames: true
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+Cpp11BracedListStyle: true
