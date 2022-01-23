@@ -6,8 +6,8 @@ namespace oc
 {
 	enum class eMachineState
 	{
-		Server = 0,
-		Client
+		Server = 1,
+		Client = 2
 	};
 
 	enum class eInputType

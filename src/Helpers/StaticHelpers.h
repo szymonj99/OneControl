@@ -87,6 +87,6 @@ namespace oc
 	static oc::eMachineState GetMachineState()
 	{
 		const auto userInt = GetUserInt("Is this machine a Server or a Client?\n1. Server\n2. Client\n", 1, 2);
-		return static_cast<eMachineState>(userInt - 1);
+		return static_cast<eMachineState>(userInt);
 	}
 }
