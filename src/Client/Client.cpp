@@ -3,21 +3,20 @@
 void oc::Client::Start()
 {
 	std::thread clientThread([&] {
-		ConnectToServer();
+		const auto kServerIP = GetUserIP("Insert server IP\n");
+		ConnectToServer(kServerIP);
 		StartReceivingPacketStream();
 		});
 	clientThread.join();
 	fmt::print("Client thread finished.\n");
 }
 
-void oc::Client::ConnectToServer()
+void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 {
-	m_ServerIP = GetUserIP("Insert server IP\n");
-
+	
 	// Enum class warning
 	#pragma warning(suppress: 26812)
-	const auto status = m_pServer->connect(m_ServerIP, oc::kPort);
-	if (status != sf::Socket::Status::Done)
+	if (connect(kIPAddress, oc::kPort) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Client can't connect to server.\n");
 		std::cin.get();
@@ -27,7 +26,7 @@ void oc::Client::ConnectToServer()
 
 	if (!m_SendAuthenticationPacket())
 	{
-		m_pServer->disconnect();
+		disconnect();
 		std::cin.get();
 		return;
 	}
@@ -36,9 +35,8 @@ void oc::Client::ConnectToServer()
 bool oc::Client::m_SendAuthenticationPacket()
 {
 	auto authenticationPkt = sf::Packet();
-
 	authenticationPkt << oc::kVersion.GetMajor() << oc::kVersion.GetMinor() << oc::kVersion.GetRevision();
-	if (m_pServer->send(authenticationPkt) != sf::Socket::Status::Done)
+	if (send(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
 		return false;
@@ -61,9 +59,9 @@ void oc::Client::StartReceivingPacketStream()
 
 	while (true)
 	{
-		if (m_pServer->receive(pkt) != sf::Socket::Status::Done)
+		if (receive(pkt) != sf::Socket::Status::Done)
 		{
-			m_pServer->disconnect();
+			disconnect();
 			fmt::print(fmt::fg(fmt::color::red), "Client lost connection with server.\n");
 			fmt::print("Quitting.\n");
 			std::cin.get();

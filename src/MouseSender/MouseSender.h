@@ -34,8 +34,6 @@ namespace oc
 	class MouseSender
 	{
 	private:
-		oc::Server* m_pServer = nullptr;
-
 #ifdef _WIN32
 		HHOOK m_pHook = nullptr;
 #elif __linux__
@@ -46,11 +44,10 @@ namespace oc
 	public:
 		MouseSender();
 		~MouseSender();
-		void SetServer(oc::Server* server);
 
 #ifdef _WIN32
 		void StartHook();
-		void ProcessHook();
+		oc::MousePair GetHookData();
 		void EndHook();
 
 		// Static variables!

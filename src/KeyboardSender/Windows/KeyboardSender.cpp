@@ -6,6 +6,13 @@ bool oc::KeyboardSender::SendToClient = true;
 std::deque<oc::KeyboardPair> oc::KeyboardSender::Queue = std::deque<oc::KeyboardPair>();
 std::mutex oc::KeyboardSender::QueueMutex;
 
+oc::KeyboardSender::KeyboardSender() {};
+
+oc::KeyboardSender::~KeyboardSender()
+{
+	EndHook();
+}
+
 LRESULT CALLBACK oc::KeyboardSender::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode < 0)
@@ -39,28 +46,17 @@ void oc::KeyboardSender::StartHook()
 		UnhookWindowsHookEx(m_pHook);
 	}
 	m_pHook = SetWindowsHookEx(WH_KEYBOARD_LL, oc::KeyboardSender::HookProc, 0, 0);
-
-	ProcessHook();
 }
 
-void oc::KeyboardSender::ProcessHook()
+oc::KeyboardPair oc::KeyboardSender::GetHookData()
 {
 	MSG msg;
-	sf::Packet pkt;
-	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
+	if (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
-		// Can try replacing 'oc::Keyboard::Queue.at' with 'oc::Keyboard::Queue[]'.
-		std::unique_lock<std::mutex> lock(QueueMutex);
-		pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << oc::KeyboardSender::Queue.at(0).first << oc::KeyboardSender::Queue.at(0).second;
-		oc::KeyboardSender::Queue.pop_front();
-		lock.unlock();
-		if (!m_pServer->SendPacketToClient(pkt))
-		{
-			EndHook();
-			return;
-		}
-		pkt.clear();
+		// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
+		return oc::KeyboardSender::Queue.at(0);
 	}
+	return oc::KeyboardPair(-1, -1);
 }
 
 void oc::KeyboardSender::EndHook()
@@ -69,16 +65,6 @@ void oc::KeyboardSender::EndHook()
 	{
 		UnhookWindowsHookEx(m_pHook);
 	}
-}
-
-oc::KeyboardSender::KeyboardSender()
-{
-	// I will make use of this later.
-}
-
-oc::KeyboardSender::~KeyboardSender()
-{
-	EndHook();
 }
 
 #endif

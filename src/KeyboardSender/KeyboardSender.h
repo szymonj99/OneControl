@@ -34,22 +34,20 @@ namespace oc
 	class KeyboardSender
 	{
 	private:
-		oc::Server* m_pServer = nullptr;
-
 #ifdef _WIN32
 		HHOOK m_pHook = nullptr;
 #elif __linux__
 
 #elif __APPLE__
 #endif
+
 	public:
 		KeyboardSender();
 		~KeyboardSender();
-		void SetServer(oc::Server* server);
 
 #ifdef _WIN32
 		void StartHook();
-		void ProcessHook();
+		oc::KeyboardPair GetHookData();
 		void EndHook();
 
 		// Static variables!

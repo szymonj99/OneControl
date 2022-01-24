@@ -15,17 +15,14 @@
 
 namespace oc
 {
-	class Client
+	class Client : sf::TcpSocket
 	{
 	private:
-		std::unique_ptr<sf::TcpSocket> m_pServer = std::make_unique<sf::TcpSocket>();
-		sf::IpAddress m_ServerIP = sf::IpAddress::None;
-
 		bool m_SendAuthenticationPacket();
 
 	public:
 		void Start();
-		void ConnectToServer();
+		void ConnectToServer(const sf::IpAddress& kIPAddress);
 		void StartReceivingPacketStream();
 	};
 }

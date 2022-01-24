@@ -6,7 +6,7 @@ bool oc::MouseSender::SendToClient = true;
 std::deque<oc::MousePair> oc::MouseSender::Queue = std::deque<oc::MousePair>();
 std::mutex oc::MouseSender::QueueMutex;
 
-oc::MouseSender::MouseSender() {} // I will make use of this later.
+oc::MouseSender::MouseSender() {};
 
 oc::MouseSender::~MouseSender()
 {
@@ -46,28 +46,17 @@ void oc::MouseSender::StartHook()
 		UnhookWindowsHookEx(m_pHook);
 	}
 	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::MouseSender::HookProc, 0, 0);
-
-	ProcessHook();
 }
 
-void oc::MouseSender::ProcessHook()
+oc::MousePair oc::MouseSender::GetHookData()
 {
 	MSG msg;
-	sf::Packet pkt;
-	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
+	if (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
 		// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
-		std::unique_lock<std::mutex> lock(oc::MouseSender::QueueMutex);
-		pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << oc::MouseSender::Queue.at(0).first << oc::MouseSender::Queue.at(0).second;
-		oc::MouseSender::Queue.pop_front();
-		lock.unlock();
-		if (!m_pServer->SendPacketToClient(pkt))
-		{
-			EndHook();
-			return;
-		}
-		pkt.clear();
+		return oc::MouseSender::Queue.at(0);
 	}
+	return oc::MousePair(-1, -1);
 }
 
 void oc::MouseSender::EndHook()

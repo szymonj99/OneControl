@@ -24,20 +24,17 @@
 
 namespace oc
 {
-	class Server
+	class Server : sf::TcpSocket
 	{
 	private:
-		std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		std::unique_ptr<sf::TcpListener> m_pListener = std::make_unique<sf::TcpListener>();
-
+		std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		bool m_ReceiveAuthenticationPacket();
 
 	public:
 		void Start();
-		void SetClient(std::unique_ptr<sf::TcpSocket>& client);
-		std::unique_ptr<sf::TcpSocket>& GetClient();
 		void WaitForClient();
-		bool SendPacketToClient(sf::Packet& packet);
 		void ServerLoop();
+		bool SendPacketToClient(sf::Packet& kPacket);
 	};
 }
