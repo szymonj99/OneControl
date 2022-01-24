@@ -16,6 +16,7 @@
 #include "../Version/Version.h"
 #include "../Server/Server.h"
 #include "../Client/Client.h"
+#include "../Helpers/ParsedFlags.h"
 
 namespace oc
 {

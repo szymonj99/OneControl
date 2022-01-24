@@ -6,6 +6,7 @@ endif(UNIX AND NOT APPLE)
 
 if (LINUX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pthread")
 endif(LINUX)
 
 # Full optimisations for release, none for debug.
@@ -32,12 +33,12 @@ FetchContent_Declare(sfml
 
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 0014024a2c796b708244e9f531788d3e44d65918
+  GIT_TAG a7aecbfcaa0e1586da9cf8175bd8d1c4383acd8c
 )
 
 FetchContent_Declare(spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG 93f59d04e9a9484f6390983b393fee852b1d6318
+  GIT_TAG 8fb112158a64afe1bd58c82c06bf6a142c9b3823
 )
 
 FetchContent_Declare(argh

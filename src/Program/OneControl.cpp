@@ -2,7 +2,14 @@
 
 void oc::OneControl::Start()
 {
-	m_eState = GetMachineState();
+	if (oc::customState)
+	{
+		m_eState = oc::parsedState;
+	}
+	else
+	{
+		m_eState = GetMachineState();
+	}	
 	ClearConsole();
 	m_StartService();
 }
