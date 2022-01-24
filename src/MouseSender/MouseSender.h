@@ -50,6 +50,7 @@ namespace oc
 
 #ifdef _WIN32
 		void StartHook();
+		void ProcessHook();
 		void EndHook();
 
 		// Static variables!

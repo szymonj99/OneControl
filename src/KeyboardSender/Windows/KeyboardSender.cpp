@@ -40,6 +40,12 @@ void oc::KeyboardSender::StartHook()
 	}
 	m_pHook = SetWindowsHookEx(WH_KEYBOARD_LL, oc::KeyboardSender::HookProc, 0, 0);
 
+	ProcessHook();
+}
+
+void oc::KeyboardSender::ProcessHook()
+{
+	MSG msg;
 	sf::Packet pkt;
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
@@ -50,6 +56,7 @@ void oc::KeyboardSender::StartHook()
 		lock.unlock();
 		if (!m_pServer->SendPacketToClient(pkt))
 		{
+			EndHook();
 			return;
 		}
 		pkt.clear();

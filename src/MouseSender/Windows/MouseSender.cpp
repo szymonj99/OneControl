@@ -47,6 +47,12 @@ void oc::MouseSender::StartHook()
 	}
 	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::MouseSender::HookProc, 0, 0);
 
+	ProcessHook();
+}
+
+void oc::MouseSender::ProcessHook()
+{
+	MSG msg;
 	sf::Packet pkt;
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
@@ -57,6 +63,7 @@ void oc::MouseSender::StartHook()
 		lock.unlock();
 		if (!m_pServer->SendPacketToClient(pkt))
 		{
+			EndHook();
 			return;
 		}
 		pkt.clear();
