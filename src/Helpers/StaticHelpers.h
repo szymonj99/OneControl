@@ -13,7 +13,6 @@
 
 #include "Enums.h"
 #include "Constants.h"
-#include "ParsedFlags.h"
 
 namespace oc
 {
@@ -148,8 +147,6 @@ namespace oc
 					std::exit(0);
 				}
 
-				oc::customPort = true;
-				oc::parsedPort = port;
 				output += fmt::format("Port: {}\n", port);
 			}
 
@@ -168,8 +165,6 @@ namespace oc
 					{
 						validString = true;
 						output += fmt::format("Type: {}\n", typeInput == "c" || typeInput == "client" ? "Client" : "Server");
-						oc::customState = true;
-						oc::parsedState = (typeInput == "c" || typeInput == "client") ? oc::eMachineState::Client : oc::eMachineState::Server;
 						break;
 					}
 				}
@@ -202,8 +197,6 @@ namespace oc
 						std::exit(0);
 					}
 
-					oc::customAddress = true;
-					oc::parsedAddress = ipAddress;
 					output += fmt::format("Server: {}\n", ipAddress.toString());
 				}
 				else

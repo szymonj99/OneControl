@@ -25,11 +25,9 @@
 #include <fmt/core.h>
 
 #include "Program/OneControl.h"
-#include "Helpers/StaticHelpers.h"
 
 int main(int argc, char* argv[])
 {
-	oc::ParseFlags(argc, argv);
 	std::make_unique<oc::OneControl>()->Start();
 	fmt::print("Program finished. Press enter to exit.");
 	std::cin.get();

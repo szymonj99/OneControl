@@ -15,6 +15,7 @@ oc::MouseSender::~MouseSender()
 
 LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+	fmt::print("nCode: {}\n", nCode);
 	if (nCode < 0)
 	{
 		return CallNextHookEx(0, nCode, wParam, lParam);

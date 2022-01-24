@@ -13,7 +13,7 @@ void oc::Server::Start()
 void oc::Server::WaitForClient()
 {
 	// This should never be called when client member variable is empty, but it's safe to do a runtime check.
-	if (m_pClient->getRemoteAddress() == sf::IpAddress::None)
+	if (m_pClient == nullptr)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Tried to wait for a client which was not set.\nPress enter to exit.\n");
 		std::cin.get();

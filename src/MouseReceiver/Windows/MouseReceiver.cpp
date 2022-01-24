@@ -2,6 +2,8 @@
 
 #include "../MouseReceiver.h"
 
+#define DEBUG_MOUSE_MOVE 1
+
 oc::MouseReceiver::MouseReceiver(){}
 
 oc::MouseReceiver::~MouseReceiver(){}

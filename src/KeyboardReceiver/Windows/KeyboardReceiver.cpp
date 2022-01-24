@@ -2,6 +2,8 @@
 
 #include "../KeyboardReceiver.h"
 
+#define DEBUG_KEYBOARD_INPUT 1
+
 oc::KeyboardReceiver::KeyboardReceiver() {}
 
 oc::KeyboardReceiver::~KeyboardReceiver() {}
