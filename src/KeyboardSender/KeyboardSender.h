@@ -23,14 +23,15 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
-#include "../Server/Server.h"
 #include "../Helpers/Constants.h"
+#include "../Server/Server.h"
+#include "../Helpers/Enums.h"
 
 namespace oc
 {
 	class Server;
 
-	class Keyboard
+	class KeyboardSender
 	{
 	private:
 		oc::Server* m_pServer = nullptr;
@@ -42,8 +43,8 @@ namespace oc
 #elif __APPLE__
 #endif
 	public:
-		Keyboard();
-		~Keyboard();
+		KeyboardSender();
+		~KeyboardSender();
 		void SetServer(oc::Server* server);
 
 #ifdef _WIN32
@@ -56,7 +57,7 @@ namespace oc
 		static std::mutex QueueMutex;
 		static std::deque<KeyboardPair> Queue;
 		// This is what's called every time a raw input event happens.
-		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);		
+		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif __linux__
 
 #elif __APPLE__

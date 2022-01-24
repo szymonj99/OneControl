@@ -12,7 +12,7 @@ void oc::Server::ServerLoop()
 			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse);
 			oc::MousePair pair{ 0,0 };
 			pkt << pair.first << pair.second;
-			server->SendPacket(pkt);
+			server->SendPacketToClient(pkt);
 			std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 		}
 	};

@@ -77,7 +77,7 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 	return true;
 }
 
-bool oc::Server::SendPacket(sf::Packet& packet)
+bool oc::Server::SendPacketToClient(sf::Packet& packet)
 {
 	if (!m_pClient)
 	{

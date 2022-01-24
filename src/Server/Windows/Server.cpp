@@ -6,7 +6,7 @@ void oc::Server::ServerLoop()
 {
 	const auto processMouse = [](oc::Server* server)
 	{
-		auto mouseInterface = std::make_unique<Mouse>();
+		auto mouseInterface = std::make_unique<oc::MouseSender>();
 		mouseInterface->SetServer(server);
 		mouseInterface->StartHook();
 		mouseInterface->EndHook();
@@ -15,7 +15,7 @@ void oc::Server::ServerLoop()
 
 	const auto processKeyboard = [](oc::Server* server)
 	{
-		auto keyboardInterface = std::make_unique<Keyboard>();
+		auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
 		keyboardInterface->SetServer(server);
 		keyboardInterface->StartHook();
 		keyboardInterface->EndHook();

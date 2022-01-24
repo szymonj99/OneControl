@@ -31,7 +31,7 @@ namespace oc
 {
 	class Server;
 
-	class Mouse
+	class MouseSender
 	{
 	private:
 		oc::Server* m_pServer = nullptr;
@@ -44,11 +44,8 @@ namespace oc
 #endif
 
 	public:
-		Mouse();
-		~Mouse();
-		void MoveMouseTo(const oc::MouseInt x, const oc::MouseInt y);
-		void MoveMouseRelative(const oc::MouseInt x, const oc::MouseInt y);
-		oc::MousePair GetMousePosition();
+		MouseSender();
+		~MouseSender();
 		void SetServer(oc::Server* server);
 
 #ifdef _WIN32

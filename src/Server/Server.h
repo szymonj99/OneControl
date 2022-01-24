@@ -19,8 +19,8 @@
 
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
-#include "../Mouse/Mouse.h"
-#include "../Keyboard/Keyboard.h"
+#include "../MouseSender/MouseSender.h"
+#include "../KeyboardSender/KeyboardSender.h"
 
 namespace oc
 {
@@ -37,7 +37,7 @@ namespace oc
 		void SetClient(std::unique_ptr<sf::TcpSocket>& client);
 		std::unique_ptr<sf::TcpSocket>& GetClient();
 		void WaitForClient();
-		bool SendPacket(sf::Packet& packet);
+		bool SendPacketToClient(sf::Packet& packet);
 		void ServerLoop();
 	};
 }

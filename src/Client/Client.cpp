@@ -51,12 +51,12 @@ void oc::Client::StartReceivingPacketStream()
 {
 	auto pkt = sf::Packet();
 
-	auto mouseInterface = std::make_unique<oc::Mouse>();
+	auto mouseInterface = std::make_unique<oc::MouseReceiver>();
 	oc::MousePair mousePrevious = { 0, 0 };
 	oc::MousePair mouseCurrent = { 0, 0 };
 	oc::MousePair mouseToMove;
 
-	auto keyboardInterface = std::make_unique<oc::Keyboard>();
+	auto keyboardInterface = std::make_unique<oc::KeyboardReceiver>();
 	oc::KeyboardPair keyboardPair = { 0,0 };
 
 	while (true)
@@ -86,7 +86,7 @@ void oc::Client::StartReceivingPacketStream()
 			break;
 		case oc::eInputType::Keyboard:
 			pkt >> keyboardPair.first >> keyboardPair.second;
-			//keyboardInterface->KeyPress(keyboardPair.first, keyboardPair.second);
+			keyboardInterface->KeyPress(keyboardPair.first, keyboardPair.second);
 			break;
 		default:
 			break;

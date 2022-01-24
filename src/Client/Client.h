@@ -10,8 +10,8 @@
 #include "../Helpers/StaticHelpers.h"
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
-#include "../Mouse/Mouse.h"
-#include "../Keyboard/Keyboard.h"
+#include "../MouseReceiver/MouseReceiver.h"
+#include "../KeyboardReceiver/KeyboardReceiver.h"
 
 namespace oc
 {
