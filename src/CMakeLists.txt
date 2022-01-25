@@ -47,7 +47,8 @@ FetchContent_Declare(argh
 )
 
 FetchContent_MakeAvailable(sfml fmt spdlog argh)
-include_directories(SFML fmt spdlog argh)
+
+target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt spdlog argh interception)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
