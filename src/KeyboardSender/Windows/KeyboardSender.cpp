@@ -3,8 +3,6 @@
 #include "../KeyboardSender.h"
 
 bool oc::KeyboardSender::SendToClient = true;
-std::deque<oc::KeyboardPair> oc::KeyboardSender::Queue = std::deque<oc::KeyboardPair>();
-std::mutex oc::KeyboardSender::QueueMutex;
 
 oc::KeyboardSender::KeyboardSender() {};
 
@@ -25,12 +23,8 @@ LRESULT CALLBACK oc::KeyboardSender::HookProc(int nCode, WPARAM wParam, LPARAM l
 	if (oc::KeyboardSender::SendToClient)
 	{
 		// Process message
-		const auto kb = (KBDLLHOOKSTRUCT*)lParam;
-		oc::KeyboardPair keyPress = { kb->vkCode, kb->flags };
-		std::unique_lock<std::mutex> lock(oc::KeyboardSender::QueueMutex);
-		oc::KeyboardSender::Queue.push_back(keyPress);
-		lock.unlock();
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, 0);
+		const auto kb = (KBDLLHOOKSTRUCT*) lParam;
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, (LPARAM) kb);
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -53,8 +47,8 @@ oc::KeyboardPair oc::KeyboardSender::GetHookData()
 	MSG msg;
 	if (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
-		// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
-		return oc::KeyboardSender::Queue.at(0);
+		const auto kb = (KBDLLHOOKSTRUCT*) msg.lParam;
+		return { kb->vkCode, kb->flags };
 	}
 	return oc::KeyboardPair(-1, -1);
 }

@@ -52,8 +52,6 @@ namespace oc
 
 		// Static variables!
 		static bool SendToClient;
-		static std::mutex QueueMutex;
-		static std::deque<oc::MousePair> Queue;
 		// This is what's called every time a low-level mouse event happens.
 		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif __linux__

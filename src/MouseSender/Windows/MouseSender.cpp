@@ -3,8 +3,6 @@
 #include "../MouseSender.h"
 
 bool oc::MouseSender::SendToClient = true;
-std::deque<oc::MousePair> oc::MouseSender::Queue = std::deque<oc::MousePair>();
-std::mutex oc::MouseSender::QueueMutex;
 
 oc::MouseSender::MouseSender() {};
 
@@ -15,7 +13,6 @@ oc::MouseSender::~MouseSender()
 
 LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	fmt::print("nCode: {}\n", nCode);
 	if (nCode < 0)
 	{
 		return CallNextHookEx(0, nCode, wParam, lParam);
@@ -26,12 +23,8 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	if (oc::MouseSender::SendToClient)
 	{
 		// Process message
-		const auto ms = (MSLLHOOKSTRUCT*)lParam;
-		const oc::MousePair data = { ms->pt.x, ms->pt.y };
-		std::unique_lock<std::mutex> lock(oc::MouseSender::QueueMutex);
-		oc::MouseSender::Queue.push_back(data);
-		lock.unlock();
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, 0);
+		const auto ms = (MSLLHOOKSTRUCT*) lParam;
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, (LPARAM) ms);
 		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -54,8 +47,9 @@ oc::MousePair oc::MouseSender::GetHookData()
 	MSG msg;
 	if (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
-		// Can try replacing 'oc::Mouse::Queue.at' with 'oc::Mouse::Queue[]'.
-		return oc::MouseSender::Queue.at(0);
+		// msg.lParam is going to be whatever we set as the last argument in PostThreadMessage
+		const auto ms = (MSLLHOOKSTRUCT*) msg.lParam;
+		return { ms->pt.x, ms->pt.y };
 	}
 	return oc::MousePair(-1, -1);
 }

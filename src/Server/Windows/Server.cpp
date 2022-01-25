@@ -13,11 +13,7 @@ void oc::Server::ServerLoop()
 			sf::Packet pkt;
 
 			const auto kMousePair = mouseInterface->GetHookData();
-			std::unique_lock<std::mutex> lock(oc::MouseSender::QueueMutex);
 			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << kMousePair.first << kMousePair.second;
-			oc::MouseSender::Queue.pop_front();
-			lock.unlock();
-
 			server->SendPacketToClient(pkt);
 		}
 		mouseInterface->EndHook();
@@ -33,11 +29,7 @@ void oc::Server::ServerLoop()
 			sf::Packet pkt;
 
 			const auto kKeyboardPair = keyboardInterface->GetHookData();
-			std::unique_lock<std::mutex> lock(oc::KeyboardSender::QueueMutex);
 			pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << kKeyboardPair.first << kKeyboardPair.second;
-			oc::KeyboardSender::Queue.pop_front();
-			lock.unlock();
-
 			server->SendPacketToClient(pkt);
 		}
 		keyboardInterface->EndHook();

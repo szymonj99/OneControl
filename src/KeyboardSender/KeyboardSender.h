@@ -53,8 +53,6 @@ namespace oc
 		// Static variables!
 
 		static bool SendToClient;
-		static std::mutex QueueMutex;
-		static std::deque<KeyboardPair> Queue;
 		// This is what's called every time a raw input event happens.
 		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif __linux__
