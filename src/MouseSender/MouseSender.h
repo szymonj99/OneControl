@@ -24,13 +24,10 @@
 #include <fmt/color.h>
 
 #include "../Helpers/Constants.h"
-#include "../Server/Server.h"
 #include "../Helpers/Enums.h"
 
 namespace oc
 {
-	class Server;
-
 	class MouseSender
 	{
 	private:

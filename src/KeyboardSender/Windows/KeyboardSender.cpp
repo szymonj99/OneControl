@@ -22,9 +22,7 @@ LRESULT CALLBACK oc::KeyboardSender::HookProc(int nCode, WPARAM wParam, LPARAM l
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed along further
 	if (oc::KeyboardSender::SendToClient)
 	{
-		// Process message
-		const auto kb = (KBDLLHOOKSTRUCT*) lParam;
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, (LPARAM) kb);
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, lParam);
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -45,12 +43,34 @@ void oc::KeyboardSender::StartHook()
 oc::KeyboardPair oc::KeyboardSender::GetHookData()
 {
 	MSG msg;
-	if (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
+	// Not as pretty as I would like it to be.
+	if (GetMessage(&msg, 0, WM_TIMER, static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
-		const auto kb = (KBDLLHOOKSTRUCT*) msg.lParam;
-		return { kb->vkCode, kb->flags };
+		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Keyboard))
+		{
+			if (msg.lParam != 0)
+			{
+				// msg.lParam is going to be whatever we set as the last argument in PostThreadMessage
+				const auto kb = (KBDLLHOOKSTRUCT*) msg.lParam;
+				return { kb->vkCode, kb->flags };
+			}
+			else
+			{
+				return oc::KeyboardPair(INT32_MIN, INT32_MIN);
+			}
+		}
+		else if (msg.message == WM_TIMER)
+		{
+			fmt::print("Keyboard timer.\n");
+			return oc::KeyboardPair(INT32_MIN, INT32_MIN);
+		}
+		else if (msg.message == WM_QUIT)
+		{
+			fmt::print("Keyboard hook quitting.\n");
+			return oc::KeyboardPair(INT32_MIN, INT32_MIN);
+		}
 	}
-	return oc::KeyboardPair(-1, -1);
+	return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 }
 
 void oc::KeyboardSender::EndHook()

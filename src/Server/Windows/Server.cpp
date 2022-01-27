@@ -8,31 +8,41 @@ void oc::Server::ServerLoop()
 	{
 		auto mouseInterface = std::make_unique<oc::MouseSender>();
 		mouseInterface->StartHook();
+		auto timer = SetTimer(0, 0, 1000, 0);
 		while (true)
 		{
 			sf::Packet pkt;
-
+			
 			const auto kMousePair = mouseInterface->GetHookData();
-			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << kMousePair.first << kMousePair.second;
-			server->SendPacketToClient(pkt);
+			if (kMousePair != oc::MousePair(INT32_MIN, INT32_MIN))
+			{
+				pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << kMousePair.first << kMousePair.second;
+				server->SendPacketToClient(pkt);
+			}
 		}
 		mouseInterface->EndHook();
-	};	
+		KillTimer(0, timer);
+	};
 	std::thread mouseThread(processMouse, this);
 
 	const auto processKeyboard = [](oc::Server* server)
 	{
 		auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
 		keyboardInterface->StartHook();
+		auto timer = SetTimer(0, 0, 1000, 0);
 		while (true)
 		{
 			sf::Packet pkt;
 
 			const auto kKeyboardPair = keyboardInterface->GetHookData();
-			pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << kKeyboardPair.first << kKeyboardPair.second;
-			server->SendPacketToClient(pkt);
+			if (kKeyboardPair != oc::KeyboardPair(INT32_MIN, INT32_MIN))
+			{
+				pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << kKeyboardPair.first << kKeyboardPair.second;
+				server->SendPacketToClient(pkt);
+			}
 		}
 		keyboardInterface->EndHook();
+		KillTimer(0, timer);
 	};
 	std::thread keyboardThread(processKeyboard, this);
 
