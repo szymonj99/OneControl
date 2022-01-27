@@ -21,7 +21,8 @@ namespace oc
 #define WM_APP  0x8000
 	enum class eThreadMessages
 	{
-		Mouse = WM_APP + 1,
+		Empty = WM_APP + 1,
+		Mouse,
 		Keyboard
 	};
 #endif
