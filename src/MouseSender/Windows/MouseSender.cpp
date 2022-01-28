@@ -22,7 +22,9 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed further to other windows.
 	if (oc::MouseSender::SendToClient)
 	{
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, lParam);
+		const auto ptr = (MSLLHOOKSTRUCT*)lParam;
+		const auto ms = new MSLLHOOKSTRUCT(*ptr);
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, (LPARAM)ms);
 		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -43,30 +45,32 @@ void oc::MouseSender::StartHook()
 oc::MousePair oc::MouseSender::GetHookData()
 {
 	MSG msg;
-	// Not as pretty as I would like it to be.
-	if (GetMessage(&msg, 0, WM_TIMER, static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
+
+	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
-		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Mouse))
+		switch (msg.message)
 		{
-			if (msg.lParam != 0)
-			{
-				// msg.lParam is going to be whatever we set as the last argument in PostThreadMessage
-				const auto ms = (MSLLHOOKSTRUCT*) msg.lParam;
-				return { ms->pt.x, ms->pt.y };
-			}
-			else
+		case static_cast<UINT>(oc::eThreadMessages::Mouse):
+		{
+			const auto ms = (MSLLHOOKSTRUCT*) msg.lParam;
+
+			if (ms == nullptr)
 			{
 				return oc::MousePair(INT32_MIN, INT32_MIN);
 			}
+
+			const auto output = oc::MousePair(ms->pt.x, ms->pt.y);
+			delete (MSLLHOOKSTRUCT*)msg.lParam;
+
+			return { output.first, output.second };
 		}
-		else if (msg.message == WM_TIMER)
+
+		case WM_QUIT:
 		{
-			fmt::print("Mouse timer.\n");
 			return oc::MousePair(INT32_MIN, INT32_MIN);
 		}
-		else if (msg.message == WM_QUIT)
-		{
-			fmt::print("Mouse hook quitting.\n");
+
+		default:
 			return oc::MousePair(INT32_MIN, INT32_MIN);
 		}
 	}

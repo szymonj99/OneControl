@@ -4,6 +4,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#include "../Windows/MessageTimer/MessageTimer.h"
 #endif
 
 #include <memory>

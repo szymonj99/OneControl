@@ -22,7 +22,9 @@ LRESULT CALLBACK oc::KeyboardSender::HookProc(int nCode, WPARAM wParam, LPARAM l
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed along further
 	if (oc::KeyboardSender::SendToClient)
 	{
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, lParam);
+		const auto ptr = (KBDLLHOOKSTRUCT*)lParam;
+		const auto kb = new KBDLLHOOKSTRUCT(*ptr);
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, (LPARAM)kb);
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -43,33 +45,36 @@ void oc::KeyboardSender::StartHook()
 oc::KeyboardPair oc::KeyboardSender::GetHookData()
 {
 	MSG msg;
-	// Not as pretty as I would like it to be.
-	if (GetMessage(&msg, 0, WM_TIMER, static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
+
+	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Keyboard), static_cast<UINT>(oc::eThreadMessages::Keyboard)) > 0)
 	{
-		if (msg.message == static_cast<UINT>(oc::eThreadMessages::Keyboard))
+		switch (msg.message)
 		{
-			if (msg.lParam != 0)
-			{
-				// msg.lParam is going to be whatever we set as the last argument in PostThreadMessage
-				const auto kb = (KBDLLHOOKSTRUCT*) msg.lParam;
-				return { kb->vkCode, kb->flags };
-			}
-			else
+		case static_cast<UINT>(oc::eThreadMessages::Keyboard):
+		{
+			const auto kb = (KBDLLHOOKSTRUCT*)msg.lParam;
+
+			if (kb == nullptr)
 			{
 				return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 			}
+
+			const auto output = oc::KeyboardPair(kb->vkCode, kb->flags);
+			delete (KBDLLHOOKSTRUCT*)msg.lParam;
+
+			return { output.first, output.second };
 		}
-		else if (msg.message == WM_TIMER)
+
+		case WM_QUIT:
 		{
-			fmt::print("Keyboard timer.\n");
 			return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 		}
-		else if (msg.message == WM_QUIT)
-		{
-			fmt::print("Keyboard hook quitting.\n");
+
+		default:
 			return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 		}
 	}
+
 	return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 }
 

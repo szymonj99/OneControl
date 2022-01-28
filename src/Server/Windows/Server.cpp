@@ -4,47 +4,47 @@
 
 void oc::Server::ServerLoop()
 {
-	const auto processMouse = [](oc::Server* server)
+	const auto processMouse = [&]
 	{
-		auto mouseInterface = std::make_unique<oc::MouseSender>();
+		const auto mouseInterface = std::make_unique<oc::MouseSender>();
 		mouseInterface->StartHook();
-		auto timer = SetTimer(0, 0, 1000, 0);
+		const auto timer = std::make_unique<oc::MessageTimer>(1000, oc::eThreadMessages::Mouse, GetCurrentThreadId());
 		while (true)
 		{
 			sf::Packet pkt;
-			
 			const auto kMousePair = mouseInterface->GetHookData();
+
 			if (kMousePair != oc::MousePair(INT32_MIN, INT32_MIN))
 			{
 				pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << kMousePair.first << kMousePair.second;
-				server->SendPacketToClient(pkt);
+				SendPacketToClient(pkt);
 			}
 		}
 		mouseInterface->EndHook();
-		KillTimer(0, timer);
+		timer->~MessageTimer();
 	};
-	std::thread mouseThread(processMouse, this);
+	std::thread mouseThread(processMouse);
 
-	const auto processKeyboard = [](oc::Server* server)
+	const auto processKeyboard = [&]
 	{
-		auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
+		const auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
 		keyboardInterface->StartHook();
-		auto timer = SetTimer(0, 0, 1000, 0);
+		const auto timer = std::make_unique<oc::MessageTimer>(1000, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
 		while (true)
 		{
 			sf::Packet pkt;
-
 			const auto kKeyboardPair = keyboardInterface->GetHookData();
+
 			if (kKeyboardPair != oc::KeyboardPair(INT32_MIN, INT32_MIN))
 			{
 				pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << kKeyboardPair.first << kKeyboardPair.second;
-				server->SendPacketToClient(pkt);
+				SendPacketToClient(pkt);
 			}
 		}
 		keyboardInterface->EndHook();
-		KillTimer(0, timer);
+		timer->~MessageTimer();
 	};
-	std::thread keyboardThread(processKeyboard, this);
+    std::thread keyboardThread(processKeyboard);
 
 	mouseThread.join();
 	keyboardThread.join();
