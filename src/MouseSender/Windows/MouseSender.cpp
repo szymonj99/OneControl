@@ -4,11 +4,29 @@
 
 bool oc::MouseSender::SendToClient = true;
 
-oc::MouseSender::MouseSender() {};
+oc::MouseSender::MouseSender()
+{
+	m_StartHook();
+}
+
+void oc::MouseSender::m_StartHook()
+{
+	MSG msg;
+	PeekMessage(&msg, 0, WM_USER, WM_USER, PM_NOREMOVE); // Force the system to create a message queue.
+	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::MouseSender::HookProc, 0, 0);
+}
 
 oc::MouseSender::~MouseSender()
 {
-	EndHook();
+	m_EndHook();
+}
+
+void oc::MouseSender::m_EndHook()
+{
+	if (m_pHook)
+	{
+		UnhookWindowsHookEx(m_pHook);
+	}
 }
 
 LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -22,8 +40,12 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed further to other windows.
 	if (oc::MouseSender::SendToClient)
 	{
+		POINT point;
+		GetCursorPos(&point);
 		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
 		std::unique_ptr<MSLLHOOKSTRUCT> msPtr(new MSLLHOOKSTRUCT(*(MSLLHOOKSTRUCT*)lParam));
+		msPtr->pt.x -= point.x;
+		msPtr->pt.y -= point.y;
 
 		if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(msPtr.get())))
 		{
@@ -36,18 +58,6 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-void oc::MouseSender::StartHook()
-{
-	MSG msg;
-	PeekMessage(&msg, 0, WM_USER, WM_USER, PM_NOREMOVE); // Force the system to create a message queue.
-
-	if (m_pHook)
-	{
-		UnhookWindowsHookEx(m_pHook);
-	}
-	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::MouseSender::HookProc, 0, 0);
-}
-
 oc::MousePair oc::MouseSender::GetHookData()
 {
 	MSG msg;
@@ -58,6 +68,11 @@ oc::MousePair oc::MouseSender::GetHookData()
 		{
 		case static_cast<UINT>(oc::eThreadMessages::Mouse):
 		{
+			if ((oc::eThreadMessages)msg.lParam == oc::eThreadMessages::KeepAlive)
+			{
+				return oc::MousePair(INT32_MAX, INT32_MAX);
+			}
+
 			// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
 			std::unique_ptr<MSLLHOOKSTRUCT> ms(reinterpret_cast<MSLLHOOKSTRUCT*>(msg.lParam));
 
@@ -81,14 +96,6 @@ oc::MousePair oc::MouseSender::GetHookData()
 		}
 	}
 	return oc::MousePair(INT32_MIN, INT32_MIN);
-}
-
-void oc::MouseSender::EndHook()
-{
-	if (m_pHook)
-	{
-		UnhookWindowsHookEx(m_pHook);
-	}
 }
 
 #endif

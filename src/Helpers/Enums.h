@@ -12,7 +12,8 @@ namespace oc
 
 	enum class eInputType
 	{
-		Mouse = 0,
+		KeepAlive = 1,
+		Mouse,
 		Keyboard
 	};
 
@@ -23,7 +24,8 @@ namespace oc
 	{
 		Empty = WM_APP + 1,
 		Mouse,
-		Keyboard
+		Keyboard,
+		KeepAlive
 	};
 #endif
 }

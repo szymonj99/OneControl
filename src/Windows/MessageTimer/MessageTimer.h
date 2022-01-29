@@ -21,12 +21,12 @@ namespace oc
 		bool m_EndThread = false;
 		oc::eThreadMessages m_Message = oc::eThreadMessages::Empty;
 		DWORD m_ThreadID = 0;
+		uint32_t m_iDivisions = 0;
+		void Function();
 		
 	public:
-		MessageTimer(const uint32_t milliseconds, const oc::eThreadMessages messageToSend, const DWORD threadID);
+		MessageTimer(const uint32_t milliseconds, const oc::eThreadMessages messageToSend, const DWORD threadID, const uint32_t divisions = 10);
 		~MessageTimer();
-
-		void Function();
 	};
 }
 

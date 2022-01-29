@@ -71,5 +71,5 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 
 bool oc::Server::SendPacketToClient(sf::Packet& kPacket)
 {
-	return m_pClient->send(kPacket);
+	return m_pClient->send(kPacket) == sf::Socket::Status::Done;
 }

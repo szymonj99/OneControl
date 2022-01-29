@@ -33,6 +33,8 @@ namespace oc
 	private:
 #ifdef _WIN32
 		HHOOK m_pHook = nullptr;
+		void m_StartHook();
+		void m_EndHook();
 #elif __linux__
 
 #elif __APPLE__
@@ -43,9 +45,7 @@ namespace oc
 		~KeyboardSender();
 
 #ifdef _WIN32
-		void StartHook();
 		oc::KeyboardPair GetHookData();
-		void EndHook();
 
 		// Static variables!
 

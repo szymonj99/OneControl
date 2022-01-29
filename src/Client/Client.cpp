@@ -50,8 +50,6 @@ void oc::Client::StartReceivingPacketStream()
 	auto pkt = sf::Packet();
 
 	auto mouseInterface = std::make_unique<oc::MouseReceiver>();
-	oc::MousePair mousePrevious = { 0, 0 };
-	oc::MousePair mouseCurrent = { 0, 0 };
 	oc::MousePair mouseToMove;
 
 	auto keyboardInterface = std::make_unique<oc::KeyboardReceiver>();
@@ -77,14 +75,14 @@ void oc::Client::StartReceivingPacketStream()
 		// The first time we receive a mouse packet, previous = {0,0} and current = {x, y} where x and y can be big, e.g. x = 800, y = 600
 		// This results in a big movement spike.
 		case oc::eInputType::Mouse:
-			pkt >> mouseCurrent.first >> mouseCurrent.second;
-			mouseToMove = { mouseCurrent.first - mousePrevious.first, mouseCurrent.second - mousePrevious.second };
-			mousePrevious = mouseCurrent;
+			pkt >> mouseToMove.first >> mouseToMove.second;
 			mouseInterface->MoveMouseRelative(mouseToMove.first, mouseToMove.second);
 			break;
 		case oc::eInputType::Keyboard:
 			pkt >> keyboardPair.first >> keyboardPair.second;
 			keyboardInterface->KeyPress(keyboardPair.first, keyboardPair.second);
+			break;
+		case oc::eInputType::KeepAlive:
 			break;
 		default:
 			break;
