@@ -31,7 +31,7 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 			// The pointer will be recreated in the GetHookData function, and will gain full ownership.
 			msPtr.release();
 		}
-		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
+		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
