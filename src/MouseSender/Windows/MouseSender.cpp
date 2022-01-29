@@ -22,9 +22,15 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed further to other windows.
 	if (oc::MouseSender::SendToClient)
 	{
-		const auto ptr = (MSLLHOOKSTRUCT*)lParam;
-		const auto ms = new MSLLHOOKSTRUCT(*ptr);
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, (LPARAM)ms);
+		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
+		std::unique_ptr<MSLLHOOKSTRUCT> msPtr(new MSLLHOOKSTRUCT(*(MSLLHOOKSTRUCT*)lParam));
+
+		if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(msPtr.get())))
+		{
+			// Release the ownership of this smart pointer.
+			// The pointer will be recreated in the GetHookData function, and will gain full ownership.
+			msPtr.release();
+		}
 		return CallNextHookEx(0, nCode, wParam, lParam); //return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -52,7 +58,8 @@ oc::MousePair oc::MouseSender::GetHookData()
 		{
 		case static_cast<UINT>(oc::eThreadMessages::Mouse):
 		{
-			const auto ms = (MSLLHOOKSTRUCT*) msg.lParam;
+			// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
+			std::unique_ptr<MSLLHOOKSTRUCT> ms(reinterpret_cast<MSLLHOOKSTRUCT*>(msg.lParam));
 
 			if (ms == nullptr)
 			{
@@ -60,7 +67,6 @@ oc::MousePair oc::MouseSender::GetHookData()
 			}
 
 			const auto output = oc::MousePair(ms->pt.x, ms->pt.y);
-			delete (MSLLHOOKSTRUCT*)msg.lParam;
 
 			return { output.first, output.second };
 		}

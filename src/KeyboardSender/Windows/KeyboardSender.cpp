@@ -22,9 +22,15 @@ LRESULT CALLBACK oc::KeyboardSender::HookProc(int nCode, WPARAM wParam, LPARAM l
 	// if return CallNextHookEx(0, nCode, wParam, lParam), the movement will be passed along further
 	if (oc::KeyboardSender::SendToClient)
 	{
-		const auto ptr = (KBDLLHOOKSTRUCT*)lParam;
-		const auto kb = new KBDLLHOOKSTRUCT(*ptr);
-		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, (LPARAM)kb);
+		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
+		std::unique_ptr<KBDLLHOOKSTRUCT> kbPtr(new KBDLLHOOKSTRUCT(*(KBDLLHOOKSTRUCT*)lParam));
+
+		if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Keyboard), 0, reinterpret_cast<LPARAM>(kbPtr.get())))
+		{
+			// Release the ownership of this smart pointer.
+		// The pointer will be recreated in the GetHookData function, and will gain full ownership.
+			kbPtr.release();
+		}
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -52,7 +58,8 @@ oc::KeyboardPair oc::KeyboardSender::GetHookData()
 		{
 		case static_cast<UINT>(oc::eThreadMessages::Keyboard):
 		{
-			const auto kb = (KBDLLHOOKSTRUCT*)msg.lParam;
+			// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
+			std::unique_ptr<KBDLLHOOKSTRUCT> kb(reinterpret_cast<KBDLLHOOKSTRUCT*>(msg.lParam));
 
 			if (kb == nullptr)
 			{
@@ -60,7 +67,6 @@ oc::KeyboardPair oc::KeyboardSender::GetHookData()
 			}
 
 			const auto output = oc::KeyboardPair(kb->vkCode, kb->flags);
-			delete (KBDLLHOOKSTRUCT*)msg.lParam;
 
 			return { output.first, output.second };
 		}
