@@ -9,7 +9,7 @@ void oc::Server::ServerLoop()
 		const auto mouseInterface = std::make_unique<oc::MouseSender>();
 		mouseInterface->StartHook();
 		const auto timer = std::make_unique<oc::MessageTimer>(1000, oc::eThreadMessages::Mouse, GetCurrentThreadId());
-		while (true)
+		while (oc::MouseSender::SendToClient)
 		{
 			sf::Packet pkt;
 			const auto kMousePair = mouseInterface->GetHookData();
@@ -30,7 +30,7 @@ void oc::Server::ServerLoop()
 		const auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
 		keyboardInterface->StartHook();
 		const auto timer = std::make_unique<oc::MessageTimer>(1000, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
-		while (true)
+		while (oc::KeyboardSender::SendToClient)
 		{
 			sf::Packet pkt;
 			const auto kKeyboardPair = keyboardInterface->GetHookData();
