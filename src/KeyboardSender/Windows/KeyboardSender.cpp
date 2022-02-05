@@ -78,9 +78,7 @@ oc::KeyboardPair oc::KeyboardSender::GetHookData()
 				return oc::KeyboardPair(INT32_MIN, INT32_MIN);
 			}
 
-			const auto output = oc::KeyboardPair(kb->vkCode, kb->flags);
-
-			return { output.first, output.second };
+			return oc::KeyboardPair(kb->vkCode, kb->flags);
 		}
 
 		case WM_QUIT:

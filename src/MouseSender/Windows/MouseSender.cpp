@@ -81,9 +81,7 @@ oc::MousePair oc::MouseSender::GetHookData()
 				return oc::MousePair(INT32_MIN, INT32_MIN);
 			}
 
-			const auto output = oc::MousePair(ms->pt.x, ms->pt.y);
-
-			return { output.first, output.second };
+			return oc::MousePair(ms->pt.x, ms->pt.y);
 		}
 
 		case WM_QUIT:
