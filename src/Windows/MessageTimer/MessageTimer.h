@@ -25,7 +25,7 @@ namespace oc
 		void Function();
 		
 	public:
-		MessageTimer(const uint32_t milliseconds, const oc::eThreadMessages messageToSend, const DWORD threadID, const uint32_t divisions = 10);
+		MessageTimer(const uint32_t milliseconds, const oc::eThreadMessages messageToSend, const DWORD threadID);
 		~MessageTimer();
 	};
 }
