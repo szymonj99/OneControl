@@ -17,11 +17,9 @@ namespace oc
 	{
 	private:
 		std::chrono::milliseconds m_Duration = std::chrono::milliseconds{0};
-		std::unique_ptr<std::thread> m_pThread = nullptr;
-		bool m_EndThread = false;
+		std::unique_ptr<std::jthread> m_pThread = nullptr;
 		oc::eThreadMessages m_Message = oc::eThreadMessages::Empty;
 		DWORD m_ThreadID = 0;
-		uint32_t m_iDivisions = 0;
 		void Function();
 		
 	public:

@@ -28,17 +28,17 @@ include(FetchContent)
 
 FetchContent_Declare(sfml
   GIT_REPOSITORY https://github.com/SFML/sfml.git
-  GIT_TAG 0ad6d1815cb2ee33289aa1b7c38d3831318a5db8
+  GIT_TAG ef8d6ee7f710fff9bdaf69c6bb3660fa4d3a8958
 )
 
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG a7aecbfcaa0e1586da9cf8175bd8d1c4383acd8c
+  GIT_TAG afbcf1e8eafc5d7f27e29c7397f22521eaa33fac
 )
 
 FetchContent_Declare(spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG 8fb112158a64afe1bd58c82c06bf6a142c9b3823
+  GIT_TAG 0b48976be49a69d8ee30b9b153b261704bbc02a0
 )
 
 FetchContent_Declare(argh

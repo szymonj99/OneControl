@@ -16,7 +16,7 @@ void oc::Server::ServerLoop()
 			std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 		}
 	};
-	std::thread temporaryThread(temporaryLambda, this);
+	std::jthread temporaryThread(temporaryLambda, this);
 	temporaryThread.join();
 }
 

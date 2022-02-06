@@ -31,7 +31,7 @@ namespace oc
 			exit(-1);
 		}
 
-		fmt::print(msg);
+		fmt::print(fmt::runtime(msg));
 		T input = 0;
 		char* end = nullptr;
 		bool failedToParse = true;		
@@ -72,7 +72,7 @@ namespace oc
 		auto input = sf::IpAddress();
 		do
 		{
-			fmt::print(msg);
+			fmt::print(fmt::runtime(msg));
 			std::string inputString = std::string();
 			std::getline(std::cin, inputString);
 			if (!inputString.empty())

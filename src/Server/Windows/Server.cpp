@@ -36,7 +36,7 @@ void oc::Server::ServerLoop()
 			}
 		}
 	};
-	std::thread mouseThread(processMouse);
+	std::jthread mouseThread(processMouse);
 
 	const auto processKeyboard = [&]
 	{
@@ -69,7 +69,7 @@ void oc::Server::ServerLoop()
 			}
 		}
 	};
-    std::thread keyboardThread(processKeyboard);
+    std::jthread keyboardThread(processKeyboard);
 
 	mouseThread.join();
 	keyboardThread.join();

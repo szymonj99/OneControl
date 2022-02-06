@@ -2,7 +2,7 @@
 
 void oc::Client::Start()
 {
-	std::thread clientThread([&] {
+	std::jthread clientThread([&] {
 		const auto kServerIP = GetUserIP("Insert server IP\n");
 		ConnectToServer(kServerIP);
 		StartReceivingPacketStream();
@@ -72,8 +72,6 @@ void oc::Client::StartReceivingPacketStream()
 
 		switch (type)
 		{
-		// The first time we receive a mouse packet, previous = {0,0} and current = {x, y} where x and y can be big, e.g. x = 800, y = 600
-		// This results in a big movement spike.
 		case oc::eInputType::Mouse:
 			pkt >> mouseToMove.first >> mouseToMove.second;
 			mouseInterface->MoveMouseRelative(mouseToMove.first, mouseToMove.second);
