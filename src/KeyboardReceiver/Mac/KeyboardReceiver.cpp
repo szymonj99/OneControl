@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+#ifdef OS_APPLE
 
 #include "../KeyboardReceiver.h"
 

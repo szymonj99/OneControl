@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 
 #include "../Server.h"
 
@@ -35,7 +35,7 @@ void oc::Server::ServerLoop()
 			}
 		}
 	};
-	std::jthread mouseThread(processMouse);
+	std::thread mouseThread(processMouse);
 
 	const auto processKeyboard = [&]
 	{
@@ -68,7 +68,7 @@ void oc::Server::ServerLoop()
 			}
 		}
 	};
-    std::jthread keyboardThread(processKeyboard);
+    std::thread keyboardThread(processKeyboard);
 
 	mouseThread.join();
 	keyboardThread.join();

@@ -2,7 +2,7 @@
 
 void oc::Server::Start()
 {
-	std::jthread listenerThread([&] {
+	std::thread listenerThread([&] {
 		WaitForClient();
 		ServerLoop();
 		});

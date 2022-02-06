@@ -2,7 +2,7 @@
 
 void oc::Client::Start()
 {
-	std::jthread clientThread([&] {
+	std::thread clientThread([&] {
 		const auto kServerIP = GetUserIP("Insert server IP\n");
 		ConnectToServer(kServerIP);
 		StartReceivingPacketStream();
@@ -13,7 +13,6 @@ void oc::Client::Start()
 
 void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 {
-	
 	// Enum class warning
 	#pragma warning(suppress: 26812)
 	if (connect(kIPAddress, oc::kPort) != sf::Socket::Status::Done)

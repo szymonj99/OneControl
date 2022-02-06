@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+#ifdef OS_APPLE
 
 #include "../Server.h"
 
@@ -8,7 +8,7 @@ void oc::Server::ServerLoop()
 	{
 		while (true)
 		{
-			oc::ocPacket pkt;
+			oc::Packet pkt;
 			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse);
 			oc::MousePair pair{ 0,0 };
 			pkt << pair.first << pair.second;
@@ -16,7 +16,7 @@ void oc::Server::ServerLoop()
 			std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 		}
 	};
-	std::jthread temporaryThread(temporaryLambda, this);
+	std::thread temporaryThread(temporaryLambda, this);
 	temporaryThread.join();
 }
 

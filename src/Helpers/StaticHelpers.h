@@ -1,7 +1,5 @@
 #pragma once
 
-#define UNICODE 1
-
 #include <iostream>
 #include <cstdint>
 #include <string>

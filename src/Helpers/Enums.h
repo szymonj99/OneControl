@@ -1,12 +1,11 @@
 #pragma once
 
-#define UNICODE 1
-
 namespace oc
 {
 	enum class eMachineState : uint32_t
 	{
-		Server = 1,
+		Uninitialised = 1,
+		Server,
 		Client
 	};
 
@@ -17,7 +16,7 @@ namespace oc
 		Keyboard
 	};
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #define WM_USER 0x0400
 #define WM_APP  0x8000
 	enum class eThreadMessages : uint32_t

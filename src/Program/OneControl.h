@@ -1,7 +1,5 @@
 #pragma once
 
-#define UNICODE 1
-
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -20,7 +18,7 @@ namespace oc
 	class OneControl
 	{
 	private:
-		eMachineState m_eState;
+		eMachineState m_eState = eMachineState::Uninitialised;
 		void m_StartService();
 
 	public:
