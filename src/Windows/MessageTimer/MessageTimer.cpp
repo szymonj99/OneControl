@@ -21,13 +21,14 @@ void oc::MessageTimer::Function()
 		{
 			if (m_pThread->get_stop_token().stop_requested())
 			{
+				m_pThread->request_stop();
 				return;
 			}
 
 			std::this_thread::sleep_for(m_Duration / kDivisions);
 		}
 
-		if (PostThreadMessage(m_ThreadID, static_cast<UINT>(m_Message), 0, (LPARAM) oc::eThreadMessages::KeepAlive) == 0)
+		if (m_pThread->get_stop_token().stop_requested() || PostThreadMessage(m_ThreadID, static_cast<UINT>(m_Message), 0, (LPARAM) oc::eThreadMessages::KeepAlive) == 0)
 		{
 			m_pThread->request_stop();
 			return;
