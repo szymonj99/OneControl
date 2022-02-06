@@ -4,25 +4,28 @@
 
 namespace oc
 {
-	enum class eMachineState
+	enum class eMachineState : uint32_t
 	{
-		Server = 0,
+		Server = 1,
 		Client
 	};
 
-	enum class eInputType
+	enum class eInputType : uint32_t
 	{
-		Mouse = 0,
+		KeepAlive = 1,
+		Mouse,
 		Keyboard
 	};
 
 #ifdef _WIN32
 #define WM_USER 0x0400
 #define WM_APP  0x8000
-	enum class eThreadMessages
+	enum class eThreadMessages : uint32_t
 	{
-		Mouse = WM_APP + 1,
-		Keyboard
+		Empty = WM_APP + 1,
+		Mouse,
+		Keyboard,
+		KeepAlive
 	};
 #endif
 }

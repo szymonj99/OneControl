@@ -1,18 +1,8 @@
 #include "Server.h"
 
-inline void oc::Server::SetClient(std::unique_ptr<sf::TcpSocket>& client)
-{
-	m_pClient = std::move(client);
-}
-
-inline std::unique_ptr<sf::TcpSocket>& oc::Server::GetClient()
-{
-	return m_pClient;
-}
-
 void oc::Server::Start()
 {
-	std::thread listenerThread([&] { 
+	std::jthread listenerThread([&] {
 		WaitForClient();
 		ServerLoop();
 		});
@@ -23,13 +13,15 @@ void oc::Server::Start()
 void oc::Server::WaitForClient()
 {
 	// This should never be called when client member variable is empty, but it's safe to do a runtime check.
-	if (!m_pClient)
+	if (m_pClient == nullptr)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Tried to wait for a client which was not set.\nPress enter to exit.\n");
 		std::cin.get();
 		std::exit(-1);
 	}
 
+	// Enum class warning
+    #pragma warning(suppress: 26812)
 	if (m_pListener->listen(oc::kPort) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Can't listen using TCP listener on port {}\n", oc::kPort);
@@ -43,7 +35,7 @@ void oc::Server::WaitForClient()
 		return;
 	}
 
-	fmt::print(fmt::fg(fmt::color::green), "We have a client! {}:{}\n", m_pClient->getRemoteAddress().toString(), m_pClient->getRemotePort());
+	fmt::print(fmt::fg(fmt::color::green), "We have a client! {}:{}\n", m_pClient->getRemoteAddress().toString(), std::to_string(m_pClient->getRemotePort()));
 
 	if (!m_ReceiveAuthenticationPacket())
 	{
@@ -77,18 +69,7 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 	return true;
 }
 
-bool oc::Server::SendPacket(sf::Packet& packet)
+bool oc::Server::SendPacketToClient(sf::Packet& kPacket)
 {
-	if (!m_pClient)
-	{
-		fmt::print(fmt::fg(fmt::color::red), "Tried sending packet to client but client is not set.\n");
-		return false;
-	}
-
-	if (m_pClient->send(packet) != sf::Socket::Done)
-	{
-		fmt::print(fmt::fg(fmt::color::red), "Client disconnected.\n");
-		return false;
-	}
-	return true;
+	return m_pClient->send(kPacket) == sf::Socket::Status::Done;
 }

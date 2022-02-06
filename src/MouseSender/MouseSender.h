@@ -23,40 +23,34 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
-#include "../Server/Server.h"
 #include "../Helpers/Constants.h"
+#include "../Helpers/Enums.h"
 
 namespace oc
 {
-	class Server;
-
-	class Keyboard
+	class MouseSender
 	{
 	private:
-		oc::Server* m_pServer = nullptr;
-
 #ifdef _WIN32
 		HHOOK m_pHook = nullptr;
+		void m_StartHook();
+		void m_EndHook();
 #elif __linux__
 
 #elif __APPLE__
 #endif
+
 	public:
-		Keyboard();
-		~Keyboard();
-		void SetServer(oc::Server* server);
+		MouseSender();
+		~MouseSender();
 
 #ifdef _WIN32
-		void StartHook();
-		void EndHook();
+		oc::MousePair GetHookData();
 
 		// Static variables!
-
 		static bool SendToClient;
-		static std::mutex QueueMutex;
-		static std::deque<KeyboardPair> Queue;
-		// This is what's called every time a raw input event happens.
-		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);		
+		// This is what's called every time a low-level mouse event happens.
+		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif __linux__
 
 #elif __APPLE__

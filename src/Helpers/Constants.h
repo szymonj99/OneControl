@@ -3,6 +3,7 @@
 #define UNICODE 1
 
 #include <cstdint>
+#include <utility>
 
 namespace oc
 {

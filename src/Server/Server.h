@@ -4,6 +4,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#include "../Windows/MessageTimer/MessageTimer.h"
 #endif
 
 #include <memory>
@@ -19,25 +20,22 @@
 
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
-#include "../Mouse/Mouse.h"
-#include "../Keyboard/Keyboard.h"
+#include "../MouseSender/MouseSender.h"
+#include "../KeyboardSender/KeyboardSender.h"
 
 namespace oc
 {
-	class Server
+	class Server : sf::TcpSocket
 	{
 	private:
-		std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		std::unique_ptr<sf::TcpListener> m_pListener = std::make_unique<sf::TcpListener>();
-
+		std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		bool m_ReceiveAuthenticationPacket();
 
 	public:
 		void Start();
-		void SetClient(std::unique_ptr<sf::TcpSocket>& client);
-		std::unique_ptr<sf::TcpSocket>& GetClient();
 		void WaitForClient();
-		bool SendPacket(sf::Packet& packet);
 		void ServerLoop();
+		bool SendPacketToClient(sf::Packet& kPacket);
 	};
 }

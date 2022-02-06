@@ -12,7 +12,7 @@ void oc::OneControl::m_StartService()
 	if (m_eState == eMachineState::Server)
 	{
 		pServer = move(std::make_unique<oc::Server>());
-		std::thread serverThread([&] {
+		std::jthread serverThread([&] {
 			pServer->Start();
 			});
 
@@ -21,7 +21,7 @@ void oc::OneControl::m_StartService()
 	else if (m_eState == eMachineState::Client)
 	{
 		pClient = move(std::make_unique<oc::Client>());
-		std::thread clientThread([&] {
+		std::jthread clientThread([&] {
 			pClient->Start();
 			});
 
