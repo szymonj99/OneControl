@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-#include <SFML/Network.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <fmt/core.h>
 #include <fmt/color.h>
 #include <argh.h>

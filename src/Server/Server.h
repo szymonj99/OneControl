@@ -14,10 +14,12 @@
 #include <vector>
 #include <mutex>
 
-#include <SFML/Network.hpp>
 #include <fmt/core.h>
 #include <fmt/color.h>
+#include <SFML/Network/TcpSocket.hpp>
+#include <SFML/Network/TcpListener.hpp>
 
+#include "../Packet/Packet.h"
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
 #include "../MouseSender/MouseSender.h"
@@ -36,6 +38,6 @@ namespace oc
 		void Start();
 		void WaitForClient();
 		void ServerLoop();
-		bool SendPacketToClient(sf::Packet& kPacket);
+		bool SendPacketToClient(oc::Packet& kPacket);
 	};
 }

@@ -47,7 +47,7 @@ void oc::Server::WaitForClient()
 
 bool oc::Server::m_ReceiveAuthenticationPacket()
 {
-	auto authenticationPkt = sf::Packet();
+	auto authenticationPkt = oc::Packet();
 	if (m_pClient->receive(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Failed at getting authentication packet.\nQuitting.\n");
@@ -69,7 +69,7 @@ bool oc::Server::m_ReceiveAuthenticationPacket()
 	return true;
 }
 
-bool oc::Server::SendPacketToClient(sf::Packet& kPacket)
+bool oc::Server::SendPacketToClient(oc::Packet& kPacket)
 {
 	return m_pClient->send(kPacket) == sf::Socket::Status::Done;
 }

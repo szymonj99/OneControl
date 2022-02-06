@@ -9,10 +9,9 @@ void oc::Server::ServerLoop()
 		const auto mouseInterface = std::make_unique<oc::MouseSender>();
 		// This will also act as a keep alive "feature".
 		const auto timer = std::make_unique<oc::MessageTimer>(3000, oc::eThreadMessages::Mouse, GetCurrentThreadId());
-		oc::MousePair previous = {0,0};
 		while (oc::MouseSender::SendToClient)
 		{
-			sf::Packet pkt;
+			oc::Packet pkt;
 			const auto kMousePair = mouseInterface->GetHookData();
 
 			if (kMousePair == oc::MousePair(INT32_MIN, INT32_MIN))
@@ -45,7 +44,7 @@ void oc::Server::ServerLoop()
 		const auto timer = std::make_unique<oc::MessageTimer>(3000, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
 		while (oc::KeyboardSender::SendToClient)
 		{
-			sf::Packet pkt;
+			oc::Packet pkt;
 			const auto kKeyboardPair = keyboardInterface->GetHookData();
 
 			if (kKeyboardPair == oc::KeyboardPair(INT32_MIN, INT32_MIN))

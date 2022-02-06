@@ -5,8 +5,9 @@
 #include <string>
 #include <iostream>
 
-#include <SFML/Network.hpp>
+#include <SFML/Network/TcpSocket.hpp>
 
+#include "../Packet/Packet.h"
 #include "../Helpers/StaticHelpers.h"
 #include "../Helpers/Constants.h"
 #include "../Version/Version.h"
