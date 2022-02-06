@@ -8,8 +8,6 @@
 #include <string>
 #include <string_view>
 
-#include <SFML/Network.hpp>
-
 #include "../Helpers/Constants.h"
 #include "../Helpers/Enums.h"
 #include "../Helpers/StaticHelpers.h"

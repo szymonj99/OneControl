@@ -50,7 +50,7 @@ FetchContent_MakeAvailable(sfml fmt spdlog argh)
 
 target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt spdlog argh interception)
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 

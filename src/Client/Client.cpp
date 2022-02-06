@@ -34,7 +34,7 @@ void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 
 bool oc::Client::m_SendAuthenticationPacket()
 {
-	auto authenticationPkt = sf::Packet();
+	auto authenticationPkt = oc::Packet();
 	authenticationPkt << oc::kVersion.GetMajor() << oc::kVersion.GetMinor() << oc::kVersion.GetRevision();
 	if (send(authenticationPkt) != sf::Socket::Status::Done)
 	{
@@ -47,7 +47,7 @@ bool oc::Client::m_SendAuthenticationPacket()
 
 void oc::Client::StartReceivingPacketStream()
 {
-	auto pkt = sf::Packet();
+	auto pkt = oc::Packet();
 
 	auto mouseInterface = std::make_unique<oc::MouseReceiver>();
 	oc::MousePair mouseToMove;

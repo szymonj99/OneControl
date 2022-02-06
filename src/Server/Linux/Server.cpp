@@ -8,7 +8,7 @@ void oc::Server::ServerLoop()
 	{
 		while (true)
 		{
-			sf::Packet pkt;
+			oc::ocPacket pkt;
 			pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse);
 			oc::MousePair pair{ 0,0 };
 			pkt << pair.first << pair.second;
