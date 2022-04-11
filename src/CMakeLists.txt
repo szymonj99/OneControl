@@ -53,5 +53,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt spdlog argh intercep
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only spdlog argh)
