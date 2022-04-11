@@ -6,12 +6,16 @@
 Easily control all your additional devices seamlessly with one keyboard and mouse.
 
 # How-To
-```
+
+```zsh
 git clone https://github.com/szymonj99/OneControl
 cd OneControl
-cmake .
-cmake --build .
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
+
+To change the build type, replace `Release` with one of the available CMake options available [here](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html).
+
 Then run `./src/OneControl` as an administrator.
 
 # Linux Permissions
