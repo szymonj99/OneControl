@@ -1,4 +1,6 @@
-#ifdef _WIN32
+#ifdef OS_WINDOWS
+
+#pragma once
 
 #include <Windows.h>
 
@@ -17,10 +19,11 @@ namespace oc
 	{
 	private:
 		std::chrono::milliseconds m_Duration = std::chrono::milliseconds{0};
-		std::unique_ptr<std::jthread> m_pThread = nullptr;
+		std::unique_ptr<std::thread> m_pThread = nullptr;
 		oc::eThreadMessages m_Message = oc::eThreadMessages::Empty;
 		DWORD m_ThreadID = 0;
 		void Function();
+		bool m_StopRequested = false;
 		
 	public:
 		MessageTimer(const uint32_t milliseconds, const oc::eThreadMessages messageToSend, const DWORD threadID);

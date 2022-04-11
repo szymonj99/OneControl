@@ -1,17 +1,13 @@
 #pragma once
 
-#define UNICODE 1
-
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <Windows.h>
 #include <hidusage.h>
-#include <deque>
-#elif __linux__
+#elif OS_LINUX
 #include <linux/uinput.h>
 #include <linux/input.h>
 #include <linux/ioctl.h>
-#elif __APPLE__
-
+#elif OS_APPLE
 #endif
 
 #include <memory>
@@ -31,29 +27,28 @@ namespace oc
 	class MouseSender
 	{
 	private:
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 		HHOOK m_pHook = nullptr;
 		void m_StartHook();
 		void m_EndHook();
-#elif __linux__
-
-#elif __APPLE__
+#elif OS_LINUX
+#elif OS_APPLE
 #endif
 
 	public:
 		MouseSender();
 		~MouseSender();
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 		oc::MousePair GetHookData();
 
 		// Static variables!
 		static bool SendToClient;
 		// This is what's called every time a low-level mouse event happens.
 		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
-#elif __linux__
+#elif OS_LINUX
 
-#elif __APPLE__
+#elif OS_APPLE
 #endif
 	};
 }

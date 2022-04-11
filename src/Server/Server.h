@@ -1,8 +1,6 @@
 #pragma once
 
-#define UNICODE 1
-
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <Windows.h>
 #include "../Windows/MessageTimer/MessageTimer.h"
 #endif

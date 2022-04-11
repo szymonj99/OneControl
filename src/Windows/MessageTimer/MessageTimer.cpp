@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 
 #include "MessageTimer.h"
 
@@ -8,29 +8,27 @@ oc::MessageTimer::MessageTimer(const uint32_t milliseconds, const oc::eThreadMes
 	m_ThreadID = threadID;
 	m_Message = messageToSend;
 
-	m_pThread = std::make_unique<std::jthread>([&] { Function(); });
+	m_pThread = std::make_unique<std::thread>([&] { Function(); });
 }
 
 void oc::MessageTimer::Function()
 {
-	while (!m_pThread->get_stop_token().stop_requested())
+	while (!m_StopRequested)
 	{
 		// To make the program feel more responsive, we check if stop_requested more often than once every few seconds.
 		const auto kDivisions = 5;
-		for (auto i = 0; i < kDivisions && !m_pThread->get_stop_token().stop_requested(); i++)
+		for (auto i = 0; i < kDivisions && !m_StopRequested; i++)
 		{
-			if (m_pThread->get_stop_token().stop_requested())
+			if (m_StopRequested)
 			{
-				m_pThread->request_stop();
 				return;
 			}
 
 			std::this_thread::sleep_for(m_Duration / kDivisions);
 		}
 
-		if (m_pThread->get_stop_token().stop_requested() || PostThreadMessage(m_ThreadID, static_cast<UINT>(m_Message), 0, (LPARAM) oc::eThreadMessages::KeepAlive) == 0)
+		if (m_StopRequested || PostThreadMessage(m_ThreadID, static_cast<UINT>(m_Message), 0, (LPARAM) oc::eThreadMessages::KeepAlive) == 0)
 		{
-			m_pThread->request_stop();
 			return;
 		}
 	}
@@ -38,7 +36,7 @@ void oc::MessageTimer::Function()
 
 oc::MessageTimer::~MessageTimer()
 {
-	m_pThread->request_stop();
+	m_StopRequested = true;
 	m_pThread->join();
 }
 
