@@ -8,22 +8,22 @@ include(FetchContent)
 
 FetchContent_Declare(sfml
   GIT_REPOSITORY https://github.com/SFML/sfml.git
-  GIT_TAG fab2c93d7a56e85f60e26f065c051630ffff420e # 70eeba5067d02b8e617989c90311a866a7bacd9f - `Add Vector2 extension methods (inspired from Thor)` seems to throw a compiler error in VS 2022, documented here: https://github.com/SFML/SFML/issues/2039
+  GIT_TAG f8c1ec283ad81b693d5c99b2c579173256f92693
 )
 
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 9a1beab5747d5afadcc4d29bf8fe50f119484a5d
+  GIT_TAG ffb5e6a7328986706b48c3b4964ec596026f5e01
 )
 
 FetchContent_Declare(argh
   GIT_REPOSITORY https://github.com/adishavit/argh.git
-  GIT_TAG 01b6a4a3b0991dc2f29e4ab55eb7da90c8189f80
+  GIT_TAG d17062c870b5919f6d1eae7fe12879869a893b32
 )
 
 FetchContent_Declare(spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG b1478d98f017f3a7644e6e3a16fab6a47a5c26ba
+  GIT_TAG b3ce5ed379ed01d9147b079e605e84dd408a0c19
 )
 
 FetchContent_MakeAvailable(sfml fmt argh spdlog)
