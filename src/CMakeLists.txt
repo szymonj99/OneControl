@@ -8,6 +8,7 @@ CPMAddPackage("gh:SFML/sfml#3ae85854e4674debe3b30ae2f6cf9d9926738789")
 CPMAddPackage("gh:fmtlib/fmt#7e4ad40171aa552d38cb99a5c181a0d7b150facc")
 CPMAddPackage("gh:adishavit/argh#d17062c870b5919f6d1eae7fe12879869a893b32")
 CPMAddPackage("gh:gabime/spdlog#b3ce5ed379ed01d9147b079e605e84dd408a0c19")
+CPMAddPackage("gh:ArthurSonzogni/FTXUI#764c24ef4046fbfd3cb1a25d0cb8a47a84e82d3a")
 
 set(SOURCE_FILES "./main.cpp" "./Client/Client.h" "./Client/Client.cpp" "./Helpers/Constants.h" "./Helpers/Enums.h" "./Helpers/StaticHelpers.h" "./KeyboardReceiver/KeyboardReceiver.h" "./KeyboardSender/KeyboardSender.h"
 "./MouseReceiver/MouseReceiver.h" "./MouseSender/MouseSender.h" "./Packet/Packet.h" "./Packet/Packet.cpp" "./Program/OneControl.h" "./Program/OneControl.cpp"
@@ -45,7 +46,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only argh spdlog::spdlog_header_only)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only argh spdlog::spdlog_header_only ftxui::screen ftxui::dom ftxui::component)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE=1)
 
