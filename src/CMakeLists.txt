@@ -1,32 +1,13 @@
-﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR) # 3.14 minimum for FetchContent
+﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 	set(CMAKE_HOST_LINUX TRUE)
 endif()
 
-include(FetchContent)
-
-FetchContent_Declare(sfml
-  GIT_REPOSITORY https://github.com/SFML/sfml.git
-  GIT_TAG f8c1ec283ad81b693d5c99b2c579173256f92693
-)
-
-FetchContent_Declare(fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG ffb5e6a7328986706b48c3b4964ec596026f5e01
-)
-
-FetchContent_Declare(argh
-  GIT_REPOSITORY https://github.com/adishavit/argh.git
-  GIT_TAG d17062c870b5919f6d1eae7fe12879869a893b32
-)
-
-FetchContent_Declare(spdlog
-  GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG b3ce5ed379ed01d9147b079e605e84dd408a0c19
-)
-
-FetchContent_MakeAvailable(sfml fmt argh spdlog)
+CPMAddPackage("gh:SFML/sfml#3ae85854e4674debe3b30ae2f6cf9d9926738789")
+CPMAddPackage("gh:fmtlib/fmt#7e4ad40171aa552d38cb99a5c181a0d7b150facc")
+CPMAddPackage("gh:adishavit/argh#d17062c870b5919f6d1eae7fe12879869a893b32")
+CPMAddPackage("gh:gabime/spdlog#b3ce5ed379ed01d9147b079e605e84dd408a0c19")
 
 set(SOURCE_FILES "./main.cpp" "./Client/Client.h" "./Client/Client.cpp" "./Helpers/Constants.h" "./Helpers/Enums.h" "./Helpers/StaticHelpers.h" "./KeyboardReceiver/KeyboardReceiver.h" "./KeyboardSender/KeyboardSender.h"
 "./MouseReceiver/MouseReceiver.h" "./MouseSender/MouseSender.h" "./Packet/Packet.h" "./Packet/Packet.cpp" "./Program/OneControl.h" "./Program/OneControl.cpp"
