@@ -4,10 +4,10 @@ if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 	set(CMAKE_HOST_LINUX TRUE)
 endif()
 
-CPMAddPackage("gh:SFML/sfml#3ae85854e4674debe3b30ae2f6cf9d9926738789")
-CPMAddPackage("gh:fmtlib/fmt#7e4ad40171aa552d38cb99a5c181a0d7b150facc")
-CPMAddPackage("gh:adishavit/argh#d17062c870b5919f6d1eae7fe12879869a893b32")
-CPMAddPackage("gh:gabime/spdlog#b3ce5ed379ed01d9147b079e605e84dd408a0c19")
+CPMAddPackage("gh:SFML/sfml#1e6dc823043b25cdec77f5e1e52cad0b3e35e0a6")
+CPMAddPackage("gh:fmtlib/fmt#147e8ca58076e94cd86430328f6b8b3f844b4439")
+CPMAddPackage("gh:adishavit/argh#39b9a00046143f6b300dcf98ea989486cf62097d")
+CPMAddPackage("gh:gabime/spdlog#9e8e52c0488706986c76eeb4225286ac02fb1ee9")
 
 set(SOURCE_FILES "./main.cpp" "./Client/Client.h" "./Client/Client.cpp" "./Helpers/Constants.h" "./Helpers/Enums.h" "./Helpers/StaticHelpers.h" "./KeyboardReceiver/KeyboardReceiver.h" "./KeyboardSender/KeyboardSender.h"
 "./MouseReceiver/MouseReceiver.h" "./MouseSender/MouseSender.h" "./Packet/Packet.h" "./Packet/Packet.cpp" "./Program/OneControl.h" "./Program/OneControl.cpp"
