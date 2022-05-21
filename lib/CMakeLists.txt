@@ -1,17 +1,20 @@
-﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
-project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.1)
+project(${LIBRARY_NAME} LANGUAGES CXX VERSION 0.0.1)
 
-message(STATUS "OneControl Version: ${PROJECT_VERSION}")
+message(STATUS "OneControl Library version: ${PROJECT_VERSION}")
+
+CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
+CPMAddPackage("gh:fmtlib/fmt#48b7e3dafb27ece02cd6addc8bd1041c79d59c2c")
+CPMAddPackage("gh:adishavit/argh#39b9a00046143f6b300dcf98ea989486cf62097d")
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "*.h" "*.cpp")
 
-# I need to remember that we 'add_library' first, then set the target options afterwards.
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib/include SFML fmt argh)
+target_include_directories(${PROJECT_NAME} PUBLIC SFML fmt argh "include")
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARY_NAME})
+target_link_libraries(${PROJECT_NAME} PUBLIC sfml-network fmt::fmt-header-only argh)
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT result)
