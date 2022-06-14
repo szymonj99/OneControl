@@ -10,7 +10,7 @@ namespace oc
 	{
 	private:
 		std::queue<T> m_queue = std::queue<T>();
-		std::mutex m_mutex = std::mutex();
+		mutable std::mutex m_mutex = std::mutex();
 		std::size_t m_maxSize = SIZE_MAX; // Limit of how many elements can be stored in the queue. If this is reached, the next `push` will get rid of the first element.
 		void m_emptyNonBlocking() const;
 
@@ -21,6 +21,7 @@ namespace oc
 		T pop(); // Get the first element from the queue AND remove it from the queue.
 		void push(const T& t); // Push an element onto the back queue.
 		void setMaxSize(const std::size_t size); // Set the new maximum size of the internal queue. If smaller than current size, the first x elements will be dropped.
+		std::size_t size() const;
 	};
 
 	// Constructors
@@ -74,9 +75,9 @@ namespace oc
 	template<typename T>
 	inline void Queue<T>::push(const T& t)
 	{
-		std::unique_lock lock(m_mutex);
+		std::unique_lock lock(this->m_mutex);
 
-		if (this->m_queue.size == this->m_maxSize)
+		if (this->m_queue.size() == this->m_maxSize)
 		{
 			this->m_queue.pop();
 		}
@@ -100,5 +101,13 @@ namespace oc
 		{
 			this->m_queue.pop();
 		}
+	}
+
+	template<typename T>
+	inline std::size_t Queue<T>::size() const
+	{
+		std::unique_lock lock(this->m_mutex);
+
+		return this->m_queue.size();
 	}
 }

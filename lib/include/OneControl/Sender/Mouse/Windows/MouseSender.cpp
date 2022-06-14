@@ -40,17 +40,27 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 	{
 		POINT point;
 		GetCursorPos(&point);
-		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
-		std::unique_ptr<MSLLHOOKSTRUCT> msPtr(new MSLLHOOKSTRUCT(*(MSLLHOOKSTRUCT*)lParam));
-		msPtr->pt.x -= point.x;
-		msPtr->pt.y -= point.y;
 
-		if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(msPtr.get())))
-		{
-			// Release the ownership of this smart pointer.
-			// The pointer will be recreated in the GetHookData function, and will gain full ownership.
-			msPtr.release();
-		}
+		const auto hookStruct = *(MSLLHOOKSTRUCT*)lParam;
+
+		oc::Input input;
+		input.mouse.x = hookStruct.pt.x - point.x;
+		input.mouse.y = hookStruct.pt.y - point.y;
+
+		oc::MouseSender::MessageQueue.push(input);
+		fmt::print("Total Mouse Queue size: {}\n", oc::MouseSender::MessageQueue.size());
+
+		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
+		/*std::unique_ptr<MSLLHOOKSTRUCT> msPtr(new MSLLHOOKSTRUCT(*(MSLLHOOKSTRUCT*)lParam));
+		msPtr->pt.x -= point.x;
+		msPtr->pt.y -= point.y;*/
+
+		//if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(msPtr.get())))
+		//{
+		//	// Release the ownership of this smart pointer.
+		//	// The pointer will be recreated in the GetHookData function, and will gain full ownership.
+		//	msPtr.release();
+		//}
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
