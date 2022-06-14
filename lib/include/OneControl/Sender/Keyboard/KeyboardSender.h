@@ -21,6 +21,8 @@
 
 #include <OneControl/Constants.h>
 #include <OneControl/Enums.h>
+#include <OneControl/Queue/Queue.h>
+#include <OneControl/Input/Input.h>
 
 namespace oc
 {
@@ -43,8 +45,7 @@ namespace oc
 		oc::KeyboardPair GetHookData();
 
 		// Static variables!
-
-		static bool SendToClient;
+		static inline bool SendToClient = true;
 		// This is what's called every time a raw input event happens.
 		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif OS_LINUX

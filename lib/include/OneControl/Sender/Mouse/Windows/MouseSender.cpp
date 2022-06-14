@@ -2,8 +2,6 @@
 
 #include <OneControl/Sender/Mouse/MouseSender.h>
 
-bool oc::MouseSender::SendToClient = true;
-
 oc::MouseSender::MouseSender()
 {
 	m_StartHook();

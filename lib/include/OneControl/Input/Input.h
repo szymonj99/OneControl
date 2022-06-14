@@ -1,32 +1,34 @@
 #pragma once
 
-#include <memory>
-#include <iostream>
-#include <utility>
-#include <cstdint>
-#include <thread>
-
-#include <fmt/core.h>
-#include <fmt/color.h>
+#include <SFML/Network/Packet.hpp>
 
 #include <OneControl/Constants.h>
-#include <OneControl/Enums.h>
 
 namespace oc
 {
-	// This class is what will be sent from the Server to the Client.
-	// I think for this, adding some tests would be easy.
-	class Input
+	struct MouseInput
 	{
-	private:
 		oc::MouseInt x = 0;
 		oc::MouseInt y = 0;
+		oc::MouseInt scroll = 0;
+	};
 
+	struct KeyboardInput
+	{
 		oc::KeyboardInt key = 0;
 		oc::KeyboardInt state = 0;
-
-	public:
-		Input();
-		~Input();
 	};
+
+	// This class is what will be sent from the Server to the Client.
+	// I think for this, adding some tests would be easy.
+	// In the future, this could be made ASN.1-compliant.
+	struct Input
+	{
+		oc::MouseInput mouse = oc::MouseInput();
+		oc::KeyboardInput keyboard = oc::KeyboardInput();
+	};
+
+	// Let's maybe serialize this in the future.
+	sf::Packet& operator<<(sf::Packet& packet, const oc::Input& input);
+	sf::Packet& operator>>(sf::Packet& packet, oc::Input& input);
 }

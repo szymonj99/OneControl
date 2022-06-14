@@ -2,8 +2,6 @@
 
 #include <OneControl/Sender/Keyboard/KeyboardSender.h>
 
-bool oc::KeyboardSender::SendToClient = true;
-
 oc::KeyboardSender::KeyboardSender()
 {
 	m_StartHook();
