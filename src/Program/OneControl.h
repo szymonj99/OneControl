@@ -9,9 +9,9 @@
 #include <OneControl/Constants.h>
 #include <OneControl/Enums.h>
 #include <OneControl/HelperMethods.h>
-#include <OneControl/Version/Version.h>
-#include <OneControl/Server/Server.h>
-#include <OneControl/Client/Client.h>
+#include <OneControl/Version.h>
+#include <OneControl/Server.h>
+#include <OneControl/Client.h>
 
 namespace oc
 {
