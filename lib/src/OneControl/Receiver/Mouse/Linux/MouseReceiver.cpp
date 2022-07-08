@@ -1,6 +1,6 @@
 #ifdef OS_LINUX
 
-#include <OneControl/Receiver/Mouse/MouseReceiver.h>
+#include <OneControl/MouseReceiver.h>
 
 oc::MouseReceiver::MouseReceiver(){}
 

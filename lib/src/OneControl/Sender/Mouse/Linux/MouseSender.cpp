@@ -1,6 +1,6 @@
 #ifdef OS_LINUX
 
-#include <OneControl/Sender/Mouse/MouseSender.h>
+#include <OneControl/MouseSender.h>
 
 oc::MouseSender::MouseSender() {}
 

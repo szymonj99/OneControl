@@ -1,6 +1,6 @@
 #ifdef OS_APPLE
 
-#include <OneControl/Receiver/Mouse/MouseReceiver.h>
+#include <OneControl/MouseReceiver.h>
 
 oc::MouseReceiver::MouseReceiver(){}
 

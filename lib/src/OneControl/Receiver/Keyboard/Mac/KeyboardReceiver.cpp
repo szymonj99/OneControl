@@ -1,6 +1,6 @@
 #ifdef OS_APPLE
 
-#include <OneControl/Receiver/Keyboard/KeyboardReceiver.h>
+#include <OneControl/KeyboardReceiver.h>
 
 oc::KeyboardReceiver::KeyboardReceiver() {}
 

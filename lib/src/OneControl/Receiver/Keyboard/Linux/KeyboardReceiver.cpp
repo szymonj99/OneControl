@@ -1,6 +1,6 @@
 #ifdef OS_LINUX
 
-#include <OneControl/Receiver/Keyboard/KeyboardReceiver.h>
+#include <OneControl/KeyboardReceiver.h>
 
 oc::KeyboardReceiver::KeyboardReceiver() {}
 

@@ -15,8 +15,8 @@ namespace oc
 		void m_emptyNonBlocking() const;
 
 	public:
-		oc::Queue<T>() = default;
-		oc::Queue<T>(const std::size_t maxSize);
+		Queue<T>() = default;
+		Queue<T>(const std::size_t maxSize);
 		bool empty() const; // Check if the queue is empty.
 		T pop(); // Get the first element from the queue AND remove it from the queue.
 		void push(const T& t); // Push an element onto the back queue.

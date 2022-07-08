@@ -1,6 +1,6 @@
 #ifdef OS_LINUX
 
-#include <OneControl/Server/Server.h>
+#include <OneControl/Server.h>
 
 void oc::Server::ServerLoop()
 {

@@ -1,6 +1,6 @@
 #ifdef OS_LINUX
 
-#include <OneControl/Sender/Keyboard/KeyboardSender.h>
+#include <OneControl/KeyboardSender.h>
 
 oc::KeyboardSender::KeyboardSender() {}
 
