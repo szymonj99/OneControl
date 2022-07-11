@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 project(${TESTS_NAME})
 
-CPMAddPackage("gh:google/googletest#0320f517fd920866d918e564105d68fd4362040a")
+CPMAddPackage("gh:google/googletest#4556086674e4dfae2aa5f042d9e7844fc5ef9b89")
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

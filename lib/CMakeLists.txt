@@ -5,7 +5,7 @@ project(${LIBRARY_NAME} LANGUAGES CXX VERSION 0.0.1)
 message(STATUS "OneControl Library version: ${PROJECT_VERSION}")
 
 CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
-CPMAddPackage("gh:fmtlib/fmt#48b7e3dafb27ece02cd6addc8bd1041c79d59c2c")
+CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
 CPMAddPackage("gh:adishavit/argh#39b9a00046143f6b300dcf98ea989486cf62097d")
 
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "*.h" "*.cpp")
