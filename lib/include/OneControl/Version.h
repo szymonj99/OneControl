@@ -12,7 +12,7 @@ namespace oc
 	private:
 		oc::VersionInt m_Major = 0;
 		oc::VersionInt m_Minor = 0;
-		oc::VersionInt m_Revision = 1;
+		oc::VersionInt m_Revision = 2;
 
 	public:
 		Version() {};
@@ -24,5 +24,5 @@ namespace oc
 	};
 
 	// The version of the application.
-	const static Version kVersion(0, 0, 1);
+	const static Version kVersion(0, 0, 2);
 }

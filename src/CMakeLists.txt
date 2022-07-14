@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
-project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.1)
+project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.2)
 
 message(STATUS "OneControl Version: ${PROJECT_VERSION}")
 

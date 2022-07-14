@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
-project(${LIBRARY_NAME} LANGUAGES CXX VERSION 0.0.1)
+project(${LIBRARY_NAME} LANGUAGES CXX VERSION 0.0.2)
 
 message(STATUS "OneControl Library version: ${PROJECT_VERSION}")
 

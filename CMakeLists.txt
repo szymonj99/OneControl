@@ -4,7 +4,7 @@ set(BINARY_NAME OneControl)
 set(LIBRARY_NAME OneLibrary)
 set(TESTS_NAME Tests)
 
-project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.1)
+project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.2)
 
 option(PACKAGE_TESTS "Build the tests" ON)
 
