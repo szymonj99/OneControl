@@ -17,8 +17,10 @@ endif()
 # I need to remember that we 'add_library' first, then set the target options afterwards.
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+# Keep in mind: Backward-CPP doesn't need to be included here, as we have already added it (in debug build) to the source files.
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/lib/include" SFML fmt argh)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+# Keep in mind: We don't link backward-CPP here, as we already add backward.cpp to the source files we compile.
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARY_NAME})
 
 include(CheckIPOSupported)

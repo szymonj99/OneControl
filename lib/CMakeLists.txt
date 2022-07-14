@@ -20,8 +20,10 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
+# Keep in mind: Backward-CPP doesn't need to be included here, as we have already added it (in debug build) to the source files.
 target_include_directories(${PROJECT_NAME} PUBLIC SFML fmt argh "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+# Keep in mind: We don't link backward-CPP here, as we already add backward.cpp to the source files we compile.
 target_link_libraries(${PROJECT_NAME} PUBLIC sfml-network fmt::fmt-header-only argh)
 
 include(CheckIPOSupported)
