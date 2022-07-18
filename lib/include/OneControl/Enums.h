@@ -11,9 +11,12 @@ namespace oc
 
 	enum class eInputType : uint32_t
 	{
-		KeepAlive = 1,
+		Uninitialised = 0,
+		KeepAlive,
 		Mouse,
-		Keyboard
+		Keyboard,
+		Failed,
+		HookStopped
 	};
 
 #ifdef OS_WINDOWS

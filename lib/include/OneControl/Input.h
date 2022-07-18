@@ -3,6 +3,8 @@
 #include <SFML/Network/Packet.hpp>
 
 #include <OneControl/Constants.h>
+#include <OneControl/Enums.h>
+#include <OneControl/Packet.h>
 
 namespace oc
 {
@@ -24,6 +26,7 @@ namespace oc
 	// In the future, this could be made ASN.1-compliant.
 	struct Input
 	{
+		oc::eInputType type = oc::eInputType::Uninitialised;
 		oc::MouseInput mouse = oc::MouseInput();
 		oc::KeyboardInput keyboard = oc::KeyboardInput();
 	};

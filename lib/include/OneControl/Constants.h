@@ -13,4 +13,8 @@ namespace oc
 	using VersionInt = uint32_t; // Versioning scheme type
 
 	const uint16_t kPort = 40480;
+
+#ifdef OS_WINDOWS
+	const uint32_t kTimerTimeout = 1000;
+#endif
 }

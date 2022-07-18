@@ -11,7 +11,7 @@ void oc::MouseSender::m_StartHook()
 {
 	MSG msg;
 	PeekMessage(&msg, 0, WM_USER, WM_USER, PM_NOREMOVE); // Force the system to create a message queue.
-	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, oc::MouseSender::HookProc, 0, 0);
+	m_pHook = SetWindowsHookEx(WH_MOUSE_LL, &oc::MouseSender::HookProc, 0, 0);
 }
 
 oc::MouseSender::~MouseSender()
@@ -27,6 +27,9 @@ void oc::MouseSender::m_EndHook()
 	}
 }
 
+// Note to self:
+// This can only be called by Windows when we are in a GetMessage loop.
+// Makes sense. Otherwise Windows doesn't have control of our program according to someone that can explain this better than I can, on StackOverflow.
 LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode < 0)
@@ -44,32 +47,20 @@ LRESULT CALLBACK oc::MouseSender::HookProc(int nCode, WPARAM wParam, LPARAM lPar
 		const auto hookStruct = *(MSLLHOOKSTRUCT*)lParam;
 
 		oc::Input input;
+		input.type = oc::eInputType::Mouse;
 		input.mouse.x = hookStruct.pt.x - point.x;
 		input.mouse.y = hookStruct.pt.y - point.y;
 
-		oc::MouseSender::MessageQueue.push(input);
-		fmt::print("Total Mouse Queue size: {}\n", oc::MouseSender::MessageQueue.size());
+		PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(&input));
 
-		// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
-		/*std::unique_ptr<MSLLHOOKSTRUCT> msPtr(new MSLLHOOKSTRUCT(*(MSLLHOOKSTRUCT*)lParam));
-		msPtr->pt.x -= point.x;
-		msPtr->pt.y -= point.y;*/
-
-		//if (PostThreadMessage(GetCurrentThreadId(), static_cast<UINT>(oc::eThreadMessages::Mouse), 0, reinterpret_cast<LPARAM>(msPtr.get())))
-		//{
-		//	// Release the ownership of this smart pointer.
-		//	// The pointer will be recreated in the GetHookData function, and will gain full ownership.
-		//	msPtr.release();
-		//}
 		return 1;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-oc::MousePair oc::MouseSender::GetHookData()
+oc::Input oc::MouseSender::GetHookData()
 {
 	MSG msg;
-
 	while (GetMessage(&msg, 0, static_cast<UINT>(oc::eThreadMessages::Mouse), static_cast<UINT>(oc::eThreadMessages::Mouse)) > 0)
 	{
 		switch (msg.message)
@@ -78,30 +69,38 @@ oc::MousePair oc::MouseSender::GetHookData()
 		{
 			if ((oc::eThreadMessages)msg.lParam == oc::eThreadMessages::KeepAlive)
 			{
-				return oc::MousePair(INT32_MAX, INT32_MAX);
+				auto input = oc::Input();
+				input.type = oc::eInputType::KeepAlive;
+				return input;
 			}
 
-			// https://stackoverflow.com/questions/25667226/how-can-i-use-shared-ptr-using-postthreadmessage
-			std::unique_ptr<MSLLHOOKSTRUCT> ms(reinterpret_cast<MSLLHOOKSTRUCT*>(msg.lParam));
+			const auto input = reinterpret_cast<oc::Input*>(msg.lParam);
 
-			if (ms == nullptr)
+			// Let's abort when something went wrong.
+			if (input == nullptr)
 			{
-				return oc::MousePair(INT32_MIN, INT32_MIN);
+				auto failed = oc::Input();
+				failed.type = oc::eInputType::Failed;
+				return failed;
 			}
 
-			return oc::MousePair(ms->pt.x, ms->pt.y);
+			return *input;
 		}
 
 		case WM_QUIT:
 		{
-			return oc::MousePair(INT32_MIN, INT32_MIN);
+			auto input = oc::Input();
+			input.type = oc::eInputType::HookStopped;
+			return input;
 		}
-
 		default:
-			return oc::MousePair(INT32_MIN, INT32_MIN);
+		{
+			break;
+		}
 		}
 	}
-	return oc::MousePair(INT32_MIN, INT32_MIN);
+
+	return oc::Input();
 }
 
 #endif

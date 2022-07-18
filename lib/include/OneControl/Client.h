@@ -13,6 +13,7 @@
 #include <OneControl/Version.h>
 #include <OneControl/MouseReceiver.h>
 #include <OneControl/KeyboardReceiver.h>
+#include <OneControl/Input.h>
 
 namespace oc
 {

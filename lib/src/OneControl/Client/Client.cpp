@@ -49,10 +49,8 @@ void oc::Client::StartReceivingPacketStream()
 	auto pkt = oc::Packet();
 
 	auto mouseInterface = std::make_unique<oc::MouseReceiver>();
-	oc::MousePair mouseToMove;
 
 	auto keyboardInterface = std::make_unique<oc::KeyboardReceiver>();
-	oc::KeyboardPair keyboardPair = { 0,0 };
 
 	while (true)
 	{
@@ -65,22 +63,23 @@ void oc::Client::StartReceivingPacketStream()
 			return;
 		}
 		
-		oc::InputInt packetType;
-		pkt >> packetType;
-		const auto type = static_cast<oc::eInputType>(packetType);
+		oc::Input input;
+		pkt >> input;
 
-		switch (type)
+		switch (input.type)
 		{
 		case oc::eInputType::Mouse:
-			pkt >> mouseToMove.first >> mouseToMove.second;
-			mouseInterface->MoveMouseRelative(mouseToMove.first, mouseToMove.second);
+			mouseInterface->MoveMouseRelative(input.mouse.x, input.mouse.y);
 			break;
 		case oc::eInputType::Keyboard:
-			pkt >> keyboardPair.first >> keyboardPair.second;
-			keyboardInterface->KeyPress(keyboardPair.first, keyboardPair.second);
+			keyboardInterface->KeyPress(input.keyboard.key, input.keyboard.state);
+			break;
+		case oc::eInputType::Failed:
+		case oc::eInputType::Uninitialised:
+		case oc::eInputType::HookStopped:
+			fmt::print(fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<oc::InputInt>(input.type));
 			break;
 		case oc::eInputType::KeepAlive:
-			break;
 		default:
 			break;
 		}

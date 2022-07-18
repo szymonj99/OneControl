@@ -42,11 +42,10 @@ namespace oc
 		~KeyboardSender();
 
 #ifdef OS_WINDOWS
-		oc::KeyboardPair GetHookData();
+		oc::Input GetHookData();
 
 		// Static variables!
 		static inline bool SendToClient = true;
-		static inline oc::Queue<oc::Input> MessageQueue = oc::Queue<oc::Input>();
 		// This is what's called every time a raw input event happens.
 		static LRESULT CALLBACK HookProc(int nCode, WPARAM wParam, LPARAM lParam);
 #elif OS_LINUX

@@ -8,26 +8,19 @@ void oc::Server::ServerLoop()
 	{
 		const auto mouseInterface = std::make_unique<oc::MouseSender>();
 		// This will also act as a keep alive "feature".
-		const auto timer = std::make_unique<oc::MessageTimer>(3000, oc::eThreadMessages::Mouse, GetCurrentThreadId());
+		const auto timer = std::make_unique<oc::MessageTimer>(kTimerTimeout, oc::eThreadMessages::Mouse, GetCurrentThreadId());
 		while (oc::MouseSender::SendToClient)
 		{
 			oc::Packet pkt;
-			const auto kMousePair = mouseInterface->GetHookData();
+			const auto kMouseInput = mouseInterface->GetHookData();
 
-			if (kMousePair == oc::MousePair(INT32_MIN, INT32_MIN))
+			if (kMouseInput.type == oc::eInputType::Failed || kMouseInput.type == oc::eInputType::HookStopped || kMouseInput.type == oc::eInputType::Uninitialised)
 			{
 				oc::MouseSender::SendToClient = false;
 				return;
 			}
 
-			if (kMousePair == oc::MousePair(INT32_MAX, INT32_MAX))
-			{
-				pkt << static_cast<oc::InputInt>(oc::eInputType::KeepAlive);
-			}
-			else
-			{
-				pkt << static_cast<oc::InputInt>(oc::eInputType::Mouse) << kMousePair.first << kMousePair.second;
-			}
+			pkt << kMouseInput;
 			
 			if (!SendPacketToClient(pkt))
 			{
@@ -41,26 +34,19 @@ void oc::Server::ServerLoop()
 	{
 		const auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
 		// This will also act as a keep alive "feature".
-		const auto timer = std::make_unique<oc::MessageTimer>(3000, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
+		const auto timer = std::make_unique<oc::MessageTimer>(kTimerTimeout, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
 		while (oc::KeyboardSender::SendToClient)
 		{
 			oc::Packet pkt;
-			const auto kKeyboardPair = keyboardInterface->GetHookData();
+			const auto kKeyboardInput = keyboardInterface->GetHookData();
 
-			if (kKeyboardPair == oc::KeyboardPair(INT32_MIN, INT32_MIN))
+			if (kKeyboardInput.type == oc::eInputType::Failed || kKeyboardInput.type == oc::eInputType::HookStopped || kKeyboardInput.type == oc::eInputType::Uninitialised)
 			{
 				oc::KeyboardSender::SendToClient = false;
 				return;
 			}
 
-			if (kKeyboardPair == oc::KeyboardPair(INT32_MAX, INT32_MAX))
-			{
-				pkt << static_cast<oc::InputInt>(oc::eInputType::KeepAlive);
-			}
-			else
-			{
-				pkt << static_cast<oc::InputInt>(oc::eInputType::Keyboard) << kKeyboardPair.first << kKeyboardPair.second;
-			}
+			pkt << kKeyboardInput;
 			
 			if (!SendPacketToClient(pkt))
 			{

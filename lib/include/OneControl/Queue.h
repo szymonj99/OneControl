@@ -12,7 +12,7 @@ namespace oc
 		std::queue<T> m_queue = std::queue<T>();
 		mutable std::mutex m_mutex = std::mutex();
 		std::size_t m_maxSize = SIZE_MAX; // Limit of how many elements can be stored in the queue. If this is reached, the next `push` will get rid of the first element.
-		void m_emptyNonBlocking() const;
+		bool m_emptyNonBlocking() const;
 
 	public:
 		Queue<T>() = default;
@@ -40,7 +40,7 @@ namespace oc
 	// Other functions
 
 	template<typename T>
-	inline void Queue<T>::m_emptyNonBlocking() const
+	inline bool Queue<T>::m_emptyNonBlocking() const
 	{
 		return this->m_queue.empty();
 	}
