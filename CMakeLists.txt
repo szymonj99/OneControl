@@ -12,6 +12,12 @@ if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 	set(CMAKE_HOST_LINUX TRUE)
 endif()
 
+# https://stackoverflow.com/questions/70462926/how-to-check-my-cmake-using-debug-or-release
+if (NOT CMAKE_BUILD_TYPE)
+    message("Build Type not set, defaulting to Debug...")
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 set(LINKER_LANGUAGE CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,7 +66,6 @@ if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
 endif()
 
 include(${CPM_DOWNLOAD_LOCATION})
-
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
