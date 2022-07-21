@@ -31,6 +31,7 @@ endif()
 
 if(CMAKE_HOST_WIN32)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00)
+	target_compile_options(${PROJECT_NAME} PUBLIC "/MP")
 elseif(CMAKE_HOST_APPLE)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC OS_APPLE=1)
 	target_compile_options(${PROJECT_NAME} PUBLIC "-Wfatal-errors")
