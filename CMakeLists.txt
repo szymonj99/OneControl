@@ -21,7 +21,6 @@ endif()
 set(LINKER_LANGUAGE CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # I want this to be a self-contained application at first, so all the dependencies are included in it.
