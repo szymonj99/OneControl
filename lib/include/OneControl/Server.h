@@ -22,6 +22,7 @@
 #include <OneControl/Version.h>
 #include <OneControl/MouseSender.h>
 #include <OneControl/KeyboardSender.h>
+#include <OneControl/RuntimeGlobals.h>
 
 namespace oc
 {

@@ -3,7 +3,7 @@
 void oc::Client::Start()
 {
 	std::thread clientThread([&] {
-		const auto kServerIP = GetUserIP("Insert server IP\n");
+		const auto kServerIP = oc::RuntimeGlobals::customServerIP ? oc::RuntimeGlobals::serverIP : GetUserIP("Insert server IP\n");
 		ConnectToServer(kServerIP);
 		StartReceivingPacketStream();
 		});
@@ -13,9 +13,10 @@ void oc::Client::Start()
 
 void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 {
+	const auto port = oc::RuntimeGlobals::customPort ? oc::RuntimeGlobals::port : oc::kPort;
 	// Enum class warning
 	#pragma warning(suppress: 26812)
-	if (connect(kIPAddress, oc::kPort) != sf::Socket::Status::Done)
+	if (connect(kIPAddress, port) != sf::Socket::Status::Done)
 	{
 		fmt::print(fmt::fg(fmt::color::red), "Client can't connect to server.\n");
 		std::cin.get();

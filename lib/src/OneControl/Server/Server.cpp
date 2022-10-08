@@ -20,18 +20,19 @@ void oc::Server::WaitForClient()
 		std::exit(-1);
 	}
 
+	const auto port = oc::RuntimeGlobals::customPort ? oc::RuntimeGlobals::port : oc::kPort;
 	// Enum class warning
-    #pragma warning(suppress: 26812)
-	if (m_pListener->listen(oc::kPort) != sf::Socket::Status::Done)
+	#pragma warning(suppress: 26812)
+	if (m_pListener->listen(port) != sf::Socket::Status::Done)
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Can't listen using TCP listener on port {}\n", oc::kPort);
+		fmt::print(fmt::fg(fmt::color::red), "Can't listen using TCP listener on port {}\n", port);
 		return;
 	}
 
 	fmt::print("Waiting for client.\n");
 	if (m_pListener->accept(*m_pClient) != sf::Socket::Status::Done)
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Can't accept client on port {}\n", oc::kPort);
+		fmt::print(fmt::fg(fmt::color::red), "Can't accept client on port {}\n", port);
 		return;
 	}
 

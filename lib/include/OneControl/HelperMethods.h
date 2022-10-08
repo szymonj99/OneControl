@@ -196,6 +196,7 @@ namespace oc
 				std::exit(1);
 			}
 
+			oc::RuntimeGlobals::customPort = true;
 			printOutput = true;
 			output.append("\tRunning on port: " + std::to_string(oc::RuntimeGlobals::port) + "\n");
 		}
@@ -219,6 +220,7 @@ namespace oc
 				std::exit(1);
 			}
 
+			oc::RuntimeGlobals::customServerIP = true;
 			printOutput = true;
 			output.append("\tConnecting to Server IP: " + oc::RuntimeGlobals::serverIP.toString() + "\n");
 		}
