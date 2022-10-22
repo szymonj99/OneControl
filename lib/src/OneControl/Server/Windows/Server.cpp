@@ -32,7 +32,7 @@ void oc::Server::ServerLoop()
 
 	const auto processKeyboard = [&]
 	{
-		const auto keyboardInterface = std::make_unique<oc::KeyboardSender>();
+		const auto keyboardInterface = std::make_unique<oc::KeyboardSender>(true);
 		// This will also act as a keep alive "feature".
 		const auto timer = std::make_unique<oc::MessageTimer>(kTimerTimeout, oc::eThreadMessages::Keyboard, GetCurrentThreadId());
 		while (oc::KeyboardSender::SendToClient)
