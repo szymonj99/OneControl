@@ -6,12 +6,12 @@
 #include <string>
 #include <string_view>
 
-#include "../Helpers/Constants.h"
-#include "../Helpers/Enums.h"
-#include "../Helpers/StaticHelpers.h"
-#include "../Version/Version.h"
-#include "../Server/Server.h"
-#include "../Client/Client.h"
+#include <OneControl/Constants.h>
+#include <OneControl/Enums.h>
+#include <OneControl/HelperMethods.h>
+#include <OneControl/Version.h>
+#include <OneControl/Server.h>
+#include <OneControl/Client.h>
 
 namespace oc
 {
