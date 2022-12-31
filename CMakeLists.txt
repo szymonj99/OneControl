@@ -1,12 +1,14 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 set(BINARY_NAME OneControl)
-set(LIBRARY_NAME OneLibrary)
+set(BINARY_VERSION 0.0.1)
 set(TESTS_NAME Tests)
 
-project(${BINARY_NAME} LANGUAGES CXX VERSION 0.0.2)
+project(${BINARY_NAME} LANGUAGES CXX VERSION ${BINARY_VERSION})
+message(STATUS "${PROJECT_NAME} Version: ${PROJECT_VERSION}")
 
-option(PACKAGE_TESTS "Build the tests" ON)
+# TODO: Enable this once it's implemented
+option(PACKAGE_TESTS "Build the tests" FALSE)
 
 if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 	set(CMAKE_HOST_LINUX TRUE)
@@ -18,62 +20,97 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+# Get CPM
+include(cmake/GetCPMConfig.cmake)
+include(GNUInstallDirs)
+
 set(LINKER_LANGUAGE CXX)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 # I want this to be a self-contained application at first, so all the dependencies are included in it.
-set(BUILD_SHARED_LIBS OFF)
-set(SFML_STATIC_LIBRARIES ON)
-set(SFML_USE_STATIC_STD_LIBS ON)
-set(SFML_GENERATE_PDB OFF)
+set(BUILD_SHARED_LIBS FALSE)
+# set(SFML_STATIC_LIBRARIES TRUE)
+if(CMAKE_HOST_WIN32)
+    set(SFML_USE_STATIC_STD_LIBS TRUE)
+endif()
+set(SFML_GENERATE_PDB FALSE)
 
-set(SFML_BUILD_AUDIO OFF)
-set(SFML_BUILD_GRAPHICS OFF)
-set(SFML_BUILD_WINDOW OFF)
-set(SFML_BUILD_NETWORK ON)
+set(SFML_BUILD_AUDIO FALSE)
+set(SFML_BUILD_GRAPHICS FALSE)
+set(SFML_BUILD_WINDOW FALSE)
+set(SFML_BUILD_NETWORK TRUE)
+set(SFML_OS_WINDOWS TRUE)
+set(SFML_OS_LINUX FALSE)
 
 # We use SPDLOG_FMT_EXTERNAL_HO as we use the header-only version of FMT.
-set(SPDLOG_FMT_EXTERNAL_HO ON)
-set(SPDLOG_FMT_EXTERNAL OFF)
+set(SPDLOG_FMT_EXTERNAL_HO TRUE)
+set(SPDLOG_FMT_EXTERNAL FALSE)
 
-set(UNICODE 1)
+set(UNICODE TRUE)
 
 set(CMAKE_BUILD_PARALLEL_LEVEL 8)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 
-# Incldue CPM
-set(CPM_DOWNLOAD_VERSION 0.36.0)
+# I use this to make development easier.
+# This lets a user create a new file and it will be automatically compiled.
+# Get all the files needed for the library
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "include/*.h" "src/*.cpp")
 
-if(CPM_SOURCE_CACHE)
-  set(CPM_DOWNLOAD_LOCATION "${CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-  message(STATUS "We have local CPM Source Cache: ${CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-elseif(DEFINED ENV{CPM_SOURCE_CACHE})
-  set(CPM_DOWNLOAD_LOCATION "$ENV{CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-  message(STATUS "We have Environment CPM Source Cache: ${CPM_SOURCE_CACHE}/cpm/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+# Adding in CPM dependencies
+CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
+CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
+CPMAddPackage(NAME OneLibrary
+        GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
+        GIT_TAG 9146def456381bcec8fcc65c49cca7301a864aeb
+        VERSION 0.0.1)
+
+# I need to remember that we 'add_library' first, then set the target options afterwards.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Adding in Backward-CPP to ${PROJECT_NAME}")
+    CPMAddPackage("gh:bombela/backward-cpp#90398eef20f4e7e0e939322d7e84f9c52078a325")
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${BACKWARD_ENABLE})
+    add_backward(${PROJECT_NAME})
 else()
-  set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-  message(STATUS "We don't have CPM cache locally. Defaulting to ${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 endif()
 
-if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-  message(STATUS "Downloading CPM.cmake to ${CPM_DOWNLOAD_LOCATION}")
-  file(DOWNLOAD
-       https://github.com/TheLartians/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake
-       ${CPM_DOWNLOAD_LOCATION}
-  )
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+# Keep in mind: Backward-CPP doesn't need to be included here, as we have already added it (in debug build) to the source files.
+target_include_directories(${PROJECT_NAME} PUBLIC SFML fmt OneLibrary PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# Keep in mind: We don't link backward-CPP here, as we already add backward.cpp to the source files we compile.
+target_link_libraries(${PROJECT_NAME} PUBLIC sfml-network fmt::fmt-header-only OneLibrary)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
+
+# Set Inter-Procedural Optimisation
+include(CheckIPOSupported)
+check_ipo_supported(RESULT result)
+if(result)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-include(${CPM_DOWNLOAD_LOCATION})
+if(CMAKE_HOST_WIN32)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00)
+    target_compile_options(${PROJECT_NAME} PUBLIC "/MP")
+elseif(CMAKE_HOST_APPLE)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_APPLE=1)
+    target_compile_options(${PROJECT_NAME} PUBLIC "-Wfatal-errors")
+elseif(CMAKE_HOST_LINUX)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_LINUX=1)
+    target_compile_options(${PROJECT_NAME} PUBLIC "-pthread" "-Wfatal-errors")
+else()
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_ERROR=1)
+endif()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+# TODO: Add `install` here.
+#install(TARGETS ${PROJECT_NAME})
 
 if(PACKAGE_TESTS)
     # enable_testing() needs to be here.
     # Reasoning: https://stackoverflow.com/questions/64099136/visual-studio-2019-test-explorer-did-not-find-c-google-tests
-    enable_testing()
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    #enable_testing()
+    #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
