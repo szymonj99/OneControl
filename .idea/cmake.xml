@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Windows-Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MSVC - x64" />
+      <configuration PROFILE_NAME="Windows-Release" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="MSVC - x64" />
+    </configurations>
+  </component>
+</project>

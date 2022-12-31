@@ -362,7 +362,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 out
-CMakeSettings.json
 [Bb]uild
 cmake-build*
 cpm
+.idea/workspace.xml
