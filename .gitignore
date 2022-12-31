@@ -366,3 +366,4 @@ CMakeSettings.json
 [Bb]uild
 cmake-build*
 cpm
+.idea/workspace.xml
