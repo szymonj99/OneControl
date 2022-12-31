@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="OneControl" targetName="backward" />
+      <config projectName="OneControl" targetName="gmock_main" />
+      <config projectName="OneControl" targetName="backward_object" />
+      <config projectName="OneControl" targetName="fmt" />
+      <config projectName="OneControl" targetName="OneControl" />
+      <config projectName="OneControl" targetName="Tests" />
+      <config projectName="OneControl" targetName="gtest_main" />
+      <config projectName="OneControl" targetName="sfml-network" />
+      <config projectName="OneControl" targetName="gtest" />
+      <config projectName="OneControl" targetName="sfml-system" />
+      <config projectName="OneControl" targetName="gmock" />
+      <config projectName="OneControl" targetName="sfml-main" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MSVC - x64" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="MSVC - x64" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d18cac42-d2dd-4551-abe4-4232d59daaed" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Client.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Constants.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Enums.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/HelperMethods.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Input.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/KeyboardReceiver.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/KeyboardSender.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/MessageTimer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/MouseReceiver.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/MouseSender.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Packet.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/RuntimeGlobals.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Server.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/include/OneControl/Version.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Client/Client.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Input/Input.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Packet/Packet.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Keyboard/Linux/KeyboardReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Keyboard/Mac/KeyboardReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Keyboard/Windows/KeyboardReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Mouse/Linux/MouseReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Mouse/Mac/MouseReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Receiver/Mouse/Windows/MouseReceiver.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Keyboard/Linux/KeyboardSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Keyboard/Mac/KeyboardSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Keyboard/Windows/KeyboardSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Mouse/Linux/MouseSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Mouse/Mac/MouseSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Sender/Mouse/Windows/MouseSender.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Server/Linux/Server.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Server/Mac/Server.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Server/Server.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Server/Windows/Server.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Utils/Windows/MessageTimer/MessageTimer.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/OneControl/Version/Version.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="3.1" />
+  </component>
+  <component name="ProjectId" id="2JYWfpQfER4KHlZR9Q7XAMU1P3b" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "E:/Programming/OneControl/cmake",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Programming\OneControl\cmake" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Programming\OneControl\src" />
+      <recent name="E:\Programming\OneControl" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.OneControl">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="Tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="OneControl" RUN_TARGET_NAME="Tests" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OneControl" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="OneControl" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="OneControl" RUN_TARGET_NAME="OneControl">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="backward" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="backward" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="backward_object" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="backward_object" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fmt" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="fmt" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="gmock" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="gmock_main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="gtest" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="gtest_main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sfml-main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="sfml-main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sfml-network" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="sfml-network" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sfml-system" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OneControl" TARGET_NAME="sfml-system" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.OneControl" />
+      <item itemvalue="CMake Application.backward" />
+      <item itemvalue="CMake Application.backward_object" />
+      <item itemvalue="CMake Application.fmt" />
+      <item itemvalue="CMake Application.gmock" />
+      <item itemvalue="CMake Application.gmock_main" />
+      <item itemvalue="CMake Application.gtest" />
+      <item itemvalue="CMake Application.gtest_main" />
+      <item itemvalue="CMake Application.sfml-main" />
+      <item itemvalue="CMake Application.sfml-network" />
+      <item itemvalue="CMake Application.sfml-system" />
+      <item itemvalue="Google Test.Tests" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d18cac42-d2dd-4551-abe4-4232d59daaed" name="Changes" comment="" />
+      <created>1672255604813</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1672255604813</updated>
+      <workItem from="1672255606941" duration="1731000" />
+      <workItem from="1672354878469" duration="9628000" />
+      <workItem from="1672372380030" duration="2696000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

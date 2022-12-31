@@ -364,3 +364,5 @@ _deps
 out
 CMakeSettings.json
 [Bb]uild
+cmake-build*
+cpm
