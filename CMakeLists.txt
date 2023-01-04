@@ -8,7 +8,14 @@ project(${BINARY_NAME} LANGUAGES CXX VERSION ${BINARY_VERSION})
 message(STATUS "${PROJECT_NAME} Version: ${PROJECT_VERSION}")
 
 # TODO: Enable this once it's implemented
-option(PACKAGE_TESTS "Build the tests" FALSE)
+option(ONECONTROL_BUILD_TESTS "Build the tests" FALSE)
+option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" FALSE)
+option(ONECONTROL_USE_BACKWARDCPP "Compile OneControl including Backward-CPP (only active in `Debug` mode)" TRUE)
+
+if(NOT DEFINED ${ONECONTROL_LOCAL_ONELIBRARY_PATH})
+    # For local development, change this to your own path.
+    set(ONECONTROL_LOCAL_ONELIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../OneLibrary)
+endif()
 
 if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 	set(CMAKE_HOST_LINUX TRUE)
@@ -41,12 +48,12 @@ set(SFML_BUILD_AUDIO FALSE)
 set(SFML_BUILD_GRAPHICS FALSE)
 set(SFML_BUILD_WINDOW FALSE)
 set(SFML_BUILD_NETWORK TRUE)
-set(SFML_OS_WINDOWS TRUE)
-set(SFML_OS_LINUX FALSE)
 
 # We use SPDLOG_FMT_EXTERNAL_HO as we use the header-only version of FMT.
 set(SPDLOG_FMT_EXTERNAL_HO TRUE)
 set(SPDLOG_FMT_EXTERNAL FALSE)
+
+set(ONELIBRARY_USE_BACKWARDCPP TRUE)
 
 set(UNICODE TRUE)
 
@@ -56,20 +63,25 @@ set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 
 # I use this to make development easier.
 # This lets a user create a new file and it will be automatically compiled.
-# Get all the files needed for the library
+# Get all the files needed for the program
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "include/*.h" "src/*.cpp")
 
 # Adding in CPM dependencies
 CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
 CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
-CPMAddPackage(NAME OneLibrary
-        GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-        GIT_TAG 9146def456381bcec8fcc65c49cca7301a864aeb
-        VERSION 0.0.1)
+if(ONECONTROL_USE_LOCAL_ONELIBRARY)
+    message(STATUS "Using local OneLibrary")
+    CPMFindPackage(NAME OneLibrary SOURCE_DIR ${ONECONTROL_LOCAL_ONELIBRARY_PATH})
+else()
+    CPMAddPackage(NAME OneLibrary
+            GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
+            GIT_TAG 0aa3fba95301765926975f32e7f8d7017c105652
+            VERSION 0.0.1)
+endif()
 
 # I need to remember that we 'add_library' first, then set the target options afterwards.
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "Adding in Backward-CPP to ${PROJECT_NAME}")
+if(ONECONTROL_USE_BACKWARDCPP AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Adding Backward-CPP to ${PROJECT_NAME}")
     CPMAddPackage("gh:bombela/backward-cpp#90398eef20f4e7e0e939322d7e84f9c52078a325")
     add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${BACKWARD_ENABLE})
     add_backward(${PROJECT_NAME})
