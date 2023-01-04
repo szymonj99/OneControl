@@ -20,7 +20,7 @@ void oc::Server::ServerLoop()
 				return;
 			}
 
-			pkt << &kMouseInput;
+			pkt << kMouseInput;
 			
 			if (!SendPacketToClient(pkt))
 			{
@@ -46,7 +46,7 @@ void oc::Server::ServerLoop()
 				return;
 			}
 
-			pkt << &kKeyboardInput;
+			pkt << kKeyboardInput;
 			
 			if (!SendPacketToClient(pkt))
 			{
