@@ -7,14 +7,13 @@
 
 #include <SFML/Network/TcpSocket.hpp>
 
+#include <OneLibrary/MouseReceiver.h>
+#include <OneLibrary/KeyboardReceiver.h>
 #include <OneControl/Packet.h>
 #include <OneControl/HelperMethods.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
-#include <OneLibrary/MouseReceiver.h>
-#include <OneLibrary/KeyboardReceiver.h>
 #include <OneControl/Input.h>
-
 
 namespace oc
 {

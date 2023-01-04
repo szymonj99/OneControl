@@ -17,12 +17,13 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
 
+#include <OneLibrary/MouseSender.h>
+#include <OneLibrary/KeyboardSender.h>
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
-#include <OneLibrary/MouseSender.h>
-#include <OneLibrary/KeyboardSender.h>
 #include <OneControl/RuntimeGlobals.h>
+#include <OneControl/Input.h>
 
 namespace oc
 {
