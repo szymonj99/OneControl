@@ -6,9 +6,9 @@ set(TESTS_NAME Tests)
 
 # TODO: Enable this once it's implemented
 option(ONECONTROL_BUILD_TESTS "Build the tests" FALSE)
-option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" TRUE)
+option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" FALSE)
 option(ONECONTROL_USE_BACKWARDCPP "Compile OneControl including Backward-CPP (only active in `Debug` mode)" TRUE)
-option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM" TRUE)
+option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM" FALSE)
 
 if (ONECONTROL_USE_VCPKG)
     # This needs to be done before calling project()
@@ -93,7 +93,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG 0aa3fba95301765926975f32e7f8d7017c105652
+            GIT_TAG fe9fa078215fea44fa5a4d4f09ccc4ab8647f77f
             VERSION 0.0.1)
 endif()
 
@@ -108,7 +108,7 @@ else()
     add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 endif()
 
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args OneLibrary)
 
@@ -122,16 +122,16 @@ if(result)
 endif()
 
 if(CMAKE_HOST_WIN32)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00)
-    target_compile_options(${PROJECT_NAME} PUBLIC "/MP")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00)
+    target_compile_options(${PROJECT_NAME} PRIVATE "/MP")
 elseif(CMAKE_HOST_APPLE)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_APPLE=1)
-    target_compile_options(${PROJECT_NAME} PUBLIC "-Wfatal-errors")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_APPLE=1)
+    target_compile_options(${PROJECT_NAME} PRIVATE "-Wfatal-errors")
 elseif(CMAKE_HOST_LINUX)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_LINUX=1)
-    target_compile_options(${PROJECT_NAME} PUBLIC "-pthread" "-Wfatal-errors")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_LINUX=1)
+    target_compile_options(${PROJECT_NAME} PRIVATE "-pthread" "-Wfatal-errors")
 else()
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OS_ERROR=1)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_ERROR=1)
 endif()
 
 # TODO: Add `install` here.
