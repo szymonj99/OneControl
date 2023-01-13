@@ -4,13 +4,19 @@ set(BINARY_NAME OneControl)
 set(BINARY_VERSION 0.0.1)
 set(TESTS_NAME Tests)
 
-project(${BINARY_NAME} LANGUAGES CXX VERSION ${BINARY_VERSION})
-message(STATUS "${PROJECT_NAME} Version: ${PROJECT_VERSION}")
-
 # TODO: Enable this once it's implemented
 option(ONECONTROL_BUILD_TESTS "Build the tests" FALSE)
-option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" FALSE)
+option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" TRUE)
 option(ONECONTROL_USE_BACKWARDCPP "Compile OneControl including Backward-CPP (only active in `Debug` mode)" TRUE)
+option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM" TRUE)
+
+if (ONECONTROL_USE_VCPKG)
+    # This needs to be done before calling project()
+    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE FILEPATH "VCPKG toolchain file")
+    message(STATUS "Using VCPKG Toolchain from: ${CMAKE_TOOLCHAIN_FILE}")
+endif()
+project(${BINARY_NAME} LANGUAGES CXX VERSION ${BINARY_VERSION})
+message(STATUS "${PROJECT_NAME} Version: ${PROJECT_VERSION}")
 
 if(NOT DEFINED ${ONECONTROL_LOCAL_ONELIBRARY_PATH})
     # For local development, change this to your own path.
@@ -34,15 +40,15 @@ include(GNUInstallDirs)
 set(LINKER_LANGUAGE CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+#set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 # I want this to be a self-contained application at first, so all the dependencies are included in it.
-set(BUILD_SHARED_LIBS FALSE)
 # set(SFML_STATIC_LIBRARIES TRUE)
 if(CMAKE_HOST_WIN32)
-    set(SFML_USE_STATIC_STD_LIBS TRUE)
+    set(SFML_USE_STATIC_STD_LIBS FALSE)
 endif()
 set(SFML_GENERATE_PDB FALSE)
+set(SFML_BUILD_EXAMPLES FALSE)
 
 set(SFML_BUILD_AUDIO FALSE)
 set(SFML_BUILD_GRAPHICS FALSE)
@@ -69,14 +75,22 @@ set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 # Get all the files needed for the program
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "include/*.h" "src/*.cpp")
 
-# Adding in CPM dependencies
-CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
-CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
-CPMAddPackage("gh:Taywee/args#3e70c396bcdf2216846810988f967d88eb165782")
+if(ONECONTROL_USE_VCPKG)
+    find_package(SFML COMPONENTS system network CONFIG REQUIRED)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(args CONFIG REQUIRED)
+else()
+    # Adding in CPM dependencies
+    CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
+    CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
+    CPMAddPackage("gh:Taywee/args#3e70c396bcdf2216846810988f967d88eb165782")
+endif()
+
 if(ONECONTROL_USE_LOCAL_ONELIBRARY)
     message(STATUS "Using local OneLibrary")
     CPMFindPackage(NAME OneLibrary SOURCE_DIR ${ONECONTROL_LOCAL_ONELIBRARY_PATH})
 else()
+    # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
             GIT_TAG 0aa3fba95301765926975f32e7f8d7017c105652
@@ -86,6 +100,7 @@ endif()
 # I need to remember that we 'add_library' first, then set the target options afterwards.
 if(ONECONTROL_USE_BACKWARDCPP AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Adding Backward-CPP to ${PROJECT_NAME}")
+    # Backward-cpp is not available through vcpkg
     CPMAddPackage("gh:bombela/backward-cpp#90398eef20f4e7e0e939322d7e84f9c52078a325")
     add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${BACKWARD_ENABLE})
     add_backward(${PROJECT_NAME})
@@ -94,10 +109,8 @@ else()
 endif()
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-# Keep in mind: Backward-CPP doesn't need to be included here, as we have already added it (in debug build) to the source files.
-target_include_directories(${PROJECT_NAME} PUBLIC SFML fmt OneLibrary PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-# Keep in mind: We don't link backward-CPP here, as we already add backward.cpp to the source files we compile.
-target_link_libraries(${PROJECT_NAME} PUBLIC sfml-network fmt::fmt-header-only OneLibrary)
+target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args OneLibrary)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
 
