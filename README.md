@@ -1,40 +1,34 @@
-<h1 align="center">
-<img src="./images/Logo.png">
-<br/>
+<img src="./images/Logo.png" alt="OneControl Logo">
 
 # OneControl
 Easily control all your additional devices seamlessly with one keyboard and mouse.
 
 # How-To
-
+_To use `vcpkg`, you need an environment variable `VCPKG_ROOT` set to the root directory of `vcpkg`._
 ```zsh
 git clone https://github.com/szymonj99/OneControl
 cd OneControl
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
+The executable should be output to `build/Release/OneControl.exe`.
 
-To change the build type, replace `Release` with one of the available CMake options available [here](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html).
+## Additional build options
+OneControl provides multiple CMake `option`s. These are prefixed with `ONECONTROL_` and can be changed in `CMakeLists.txt`.
 
-Then run `./src/OneControl` as an administrator.
+For example, wanting to use `CPM` instead of `vcpkg`, change or set `ONECONTROL_USE_VCPKG` to `FALSE`.
 
-# Linux Permissions
-On Linux, the user has the choice to either:
-- Run the program as root,
-- Add the current user to the group which owns `/dev/input/mice` and `/dev/input/eventX` files.
-
-This is needed as the files by default, prevent the user accounts from sniffing and simulating inputs, which is what this program does.
+For local development, you can also set `ONECONTROL_USE_LOCAL_ONELIBRARY` to `TRUE`. This can speed up rebuilding of the project and allows for local changes to OneLibrary to be implemented.
 
 # License
 [GPL-3.0 License](https://github.com/szymonj99/OneControl/blob/main/LICENSE)
+Commercial licenses are also available.
 
 # Project Structure
 Currently, the project has the following structure:
 
 ```
-./src	- The source files for the OneControl binary
-./lib	- The source files for the OneControl library
-./tests - The test files
+./include   - The header files
+./src	    - The source files
+./tests     - The test files
 ```
-
-- The files generated from the `./lib` directory are tested with the Google Tests framework. This library is then included in the binary. This allows us to test some of the functionality of the program.
