@@ -7,8 +7,6 @@ void oc::Server::ServerLoop()
 	const auto processMouse = [&]
 	{
 		const auto mouseInterface = std::make_unique<ol::MouseSender>();
-		// This will also act as a keep alive "feature".
-		const auto timer = std::make_unique<ol::MessageTimer>(ol::kTimerTimeout, ol::eThreadMessages::Mouse, GetCurrentThreadId());
 		while (ol::MouseSender::SendToClient)
 		{
 			oc::Packet pkt;
@@ -33,8 +31,6 @@ void oc::Server::ServerLoop()
 	const auto processKeyboard = [&]
 	{
 		const auto keyboardInterface = std::make_unique<ol::KeyboardSender>(true);
-		// This will also act as a keep alive "feature".
-		const auto timer = std::make_unique<ol::MessageTimer>(ol::kTimerTimeout, ol::eThreadMessages::Keyboard, GetCurrentThreadId());
 		while (ol::KeyboardSender::SendToClient)
 		{
 			oc::Packet pkt;
