@@ -18,7 +18,7 @@ void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 	#pragma warning(suppress: 26812)
 	if (connect(kIPAddress, port) != sf::Socket::Status::Done)
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Client can't connect to server.\n");
+		fmt::print(stderr, fmt::fg(fmt::color::red), "Client can't connect to server.\n");
 		std::cin.get();
 		return;
 	}
@@ -38,7 +38,7 @@ bool oc::Client::m_SendAuthenticationPacket()
 	authenticationPkt << oc::kVersion.GetMajor() << oc::kVersion.GetMinor() << oc::kVersion.GetRevision();
 	if (send(authenticationPkt) != sf::Socket::Status::Done)
 	{
-		fmt::print(fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
+		fmt::print(stderr, fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
 		return false;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
@@ -48,42 +48,39 @@ bool oc::Client::m_SendAuthenticationPacket()
 void oc::Client::StartReceivingPacketStream()
 {
 	auto pkt = oc::Packet();
-
-	auto mouseInterface = std::make_unique<ol::MouseReceiver>();
-
-	auto keyboardInterface = std::make_unique<ol::KeyboardReceiver>();
+    // TODO: When adding in parameter parsing or compile options, add in an option/toggle to allow only mouse or keyboard
+    // That will potentially allow some users to compile with potentially less dependencies if they would like to.
+    auto mouseSimulator = std::make_unique<ol::InputSimulatorMouse>();
+    auto keyboardSimulator = std::make_unique<ol::InputSimulatorKeyboard>();
 
 	while (true)
 	{
 		if (receive(pkt) != sf::Socket::Status::Done)
 		{
 			disconnect();
-			fmt::print(fmt::fg(fmt::color::red), "Client lost connection with server.\n");
-			fmt::print("Quitting.\n");
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Client lost connection with server.\n");
+			fmt::print(stderr, "Quitting.\n");
 			std::cin.get();
 			return;
 		}
 		
-		ol::Input input;
+		ol::Input input{};
 		pkt >> input;
 
-		switch (input.type)
-		{
-		case ol::eInputType::Mouse:
-			mouseInterface->MoveMouseRelative(input.mouse.x, input.mouse.y);
-			break;
-		case ol::eInputType::Keyboard:
-			keyboardInterface->KeyPress(input.keyboard.key, input.keyboard.state);
-			break;
-		case ol::eInputType::Failed:
-		case ol::eInputType::Uninitialised:
-		case ol::eInputType::HookStopped:
-			fmt::print(fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<ol::InputInt>(input.type));
-			break;
-		case ol::eInputType::KeepAlive:
-		default:
-			break;
-		}
+        switch (input.inputType)
+        {
+            case ol::eInputType::Mouse:
+                mouseSimulator->PerformInput(input);
+                break;
+            case ol::eInputType::Keyboard:
+                keyboardSimulator->PerformInput(input);
+                break;
+            default:
+                // TODO: Make the static_cast a bit nicer.
+                fmt::print(stderr, fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<uint8_t>(input.inputType));
+                break;
+        }
+
 		pkt.clear();
 	}
 }

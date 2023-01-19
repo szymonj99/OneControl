@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cstdint>
+
 #include <SFML/Network/Packet.hpp>
 
 #include <OneLibrary/Input.h>
-#include <OneControl/Packet.h>
 
 namespace oc
 {
