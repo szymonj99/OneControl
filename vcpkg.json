@@ -17,6 +17,7 @@
     },
     "sfml",
     "fmt",
-    "args"
+    "args",
+    "spdlog"
   ]
 }

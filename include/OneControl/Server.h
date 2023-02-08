@@ -1,8 +1,7 @@
 #pragma once
 
 #ifdef OS_WINDOWS
-#include <Windows.h>
-#include <OneLibrary/MessageTimer.h>
+    #include <Windows.h>
 #endif
 
 #include <memory>
@@ -17,13 +16,13 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
 
-#include <OneLibrary/MouseSender.h>
-#include <OneLibrary/KeyboardSender.h>
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/RuntimeGlobals.h>
 #include <OneControl/Input.h>
+#include <OneLibrary/InputGathererMouse.h>
+#include <OneLibrary/InputGathererKeyboard.h>
 
 namespace oc
 {

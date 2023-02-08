@@ -7,8 +7,8 @@
 
 #include <SFML/Network/TcpSocket.hpp>
 
-#include <OneLibrary/MouseReceiver.h>
-#include <OneLibrary/KeyboardReceiver.h>
+#include <OneLibrary/InputSimulatorMouse.h>
+#include <OneLibrary/InputSimulatorKeyboard.h>
 #include <OneControl/Packet.h>
 #include <OneControl/HelperMethods.h>
 #include <OneControl/Constants.h>

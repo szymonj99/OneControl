@@ -17,4 +17,6 @@ namespace oc::RuntimeGlobals
 
 	inline bool customServerIP = false;
 	inline sf::IpAddress serverIP = sf::IpAddress::None;
+
+    inline bool sendToClient = true;
 }

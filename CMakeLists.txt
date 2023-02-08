@@ -8,11 +8,17 @@ set(TESTS_NAME Tests)
 option(ONECONTROL_BUILD_TESTS "Build the tests" FALSE)
 option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" FALSE)
 option(ONECONTROL_USE_BACKWARDCPP "Compile OneControl including Backward-CPP (only active in `Debug` mode)" TRUE)
-option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM" FALSE)
+option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM if they are not available through VCPKG" TRUE)
 
-if (ONECONTROL_USE_VCPKG)
+if(ONECONTROL_USE_VCPKG)
+    if(NOT DEFINED ENV{VCPKG_ROOT})
+        message(FATAL_ERROR "VCPKG_ROOT is not set!")
+    else()
+        file(REAL_PATH $ENV{VCPKG_ROOT} VCPKG_ROOT)
+        message(STATUS "VCPKG_ROOT is defined as: $ENV{VCPKG_ROOT} (Real Path: ${VCPKG_ROOT})")
+    endif()
     # This needs to be done before calling project()
-    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE FILEPATH "VCPKG toolchain file")
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
     message(STATUS "Using VCPKG Toolchain from: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 project(${BINARY_NAME} LANGUAGES CXX VERSION ${BINARY_VERSION})
@@ -28,7 +34,7 @@ if(CMAKE_HOST_UNIX AND NOT CMAKE_HOST_APPLE)
 endif()
 
 # https://stackoverflow.com/questions/70462926/how-to-check-my-cmake-using-debug-or-release
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     message("Build Type not set, defaulting to Debug...")
     set(CMAKE_BUILD_TYPE Debug)
 endif()
@@ -73,17 +79,19 @@ set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 # I use this to make development easier.
 # This lets a user create a new file and it will be automatically compiled.
 # Get all the files needed for the program
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "include/*.h" "src/*.cpp")
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/*.h" "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
 if(ONECONTROL_USE_VCPKG)
-    find_package(SFML COMPONENTS system network CONFIG REQUIRED)
+    find_package(SFML COMPONENTS network CONFIG REQUIRED)
     find_package(fmt CONFIG REQUIRED)
     find_package(args CONFIG REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
 else()
     # Adding in CPM dependencies
     CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
     CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
     CPMAddPackage("gh:Taywee/args#3e70c396bcdf2216846810988f967d88eb165782")
+    CPMAddPackage("gh:gabime/spdlog#05e3a73b162705b37ed464ceb4644addfb03f25b")
 endif()
 
 if(ONECONTROL_USE_LOCAL_ONELIBRARY)
@@ -93,7 +101,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG fe9fa078215fea44fa5a4d4f09ccc4ab8647f77f
+            GIT_TAG 8da3ab814f41a0d9588be0f315c8bb9ba447e860
             VERSION 0.0.1)
 endif()
 
@@ -109,8 +117,10 @@ else()
 endif()
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
-target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args OneLibrary)
+# I'm not sure if this is necessary when we use `find_package` :thinking:
+#target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args spdlog ${DBG_MACRO_INCLUDE_DIRS} OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only OneLibrary)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
 
