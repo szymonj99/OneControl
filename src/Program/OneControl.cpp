@@ -2,8 +2,9 @@
 
 void oc::OneControl::Start()
 {
+    std::cout << "You can also run OneControl with arguments. Run 'OneControl -h' to see the possible options.\n";
 	m_eState = GetMachineState();
-	ClearConsole();
+	//ClearConsole();
 	m_StartService();
 }
 
