@@ -7,5 +7,5 @@ namespace oc
 {
 	using VersionInt = uint32_t; // Versioning scheme type
 
-	const uint16_t kDefaultPort = 40480;
+	constexpr uint16_t kDefaultPort = 40480;
 }
