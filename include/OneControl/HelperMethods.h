@@ -3,10 +3,12 @@
 #include <iostream>
 #include <cstdint>
 #include <string>
+#include <algorithm>
 
 #include <SFML/Network/IpAddress.hpp>
 #include <fmt/core.h>
 #include <fmt/color.h>
+#include <args.hxx>
 
 #include <OneControl/Constants.h>
 #include <OneControl/Enums.h>
@@ -80,7 +82,7 @@ namespace oc
 			}			
 			std::cin.clear();
 		}
-		while (input == input.None);
+		while (input == sf::IpAddress::None);
 		ClearConsole();
 		fmt::print("Connecting to server IP: {}\n", input.toString());
 		return input;
@@ -88,145 +90,118 @@ namespace oc
 
 	static oc::eMachineState GetMachineState()
 	{
+        if (oc::RuntimeGlobals::isClient) { return oc::eMachineState::Client; }
+        if (oc::RuntimeGlobals::isServer) { return oc::eMachineState::Server; }
 		const auto userValue = GetUserValue("Is this machine a Server or a Client?\n1. Server\n2. Client\n", (int32_t)1, (int32_t)2);
 		return static_cast<oc::eMachineState>(userValue);
 	}
 
-	static void PrintHelp()
-	{
-		fmt::print("Welcome to OneControl.\n");
-		fmt::print("\n");
-		fmt::print("OPTIONS:\n");
-		fmt::print("\n");
-		fmt::print("\t-h, --help                   : Show the help banner.\n");
-		fmt::print("\t-p, --port <port>            : The port on which to connect to/listen on. If no port is set, it will use the default port of {}\n", oc::kDefaultPort);
-		fmt::print("\t-t, --type <client/server>   : Set this machine to act as either the server or the client.\n");
-		fmt::print("\t-s, --server <ip>            : The server address to which to connect to. Only applicable if this machine will act as a client.\n");
-		fmt::print("\n");
-		fmt::print("Example usage:\n");
-		fmt::print("\n");
-		fmt::print("\tOneControl -p 12345                            : Change the port number to 12345\n");
-		fmt::print("\tOneControl -t server                           : This machine will act as the server\n");
-		fmt::print("\tOneControl -p 12345 -t server                  : This machine will act as the server on port 12345\n");
-		fmt::print("\tOneControl -p 12345 -t client -s 192.168.1.111 : This machine will act as the client and will try to connect to the server with an IP of 192.168.1.111 on port 12345\n");
-		fmt::print("\tOneControl --no-mouse						     : This machine will not send mouse events to the client, or receive mouse events from the server\n");
-		fmt::print("\tOneControl --no-keyboard					     : This machine will not send keyboard events to the client, or receive keyboard events from the server\n");
-	}
+    // TODO: Make this return an error code that we have specified
+    // true: Arguments parsed correctly
+    // false: Failure to parse arguments
+    static bool ParseArguments(int argc, char* argv[])
+    {
+        if (argc < 2) { return true; }
 
-	// Let's refactor this to make the code a bit nicer; it works but it ain't as pretty as it could be.
-	//static void ParseArgs(const int argc, char* argv[])
-	//{
-	//	if (argc == 1)
-	//	{
-	//		return;
-	//	}
-//
-	//	argh::parser cmdl;
-	//	// 'Registering' options by calling `add_params` means that the param will have a value that is not a boolean.
-	//	// Not registering a param will default to a bool.
-	//	cmdl.add_params({ "-p", "--port", "--s", "--server", "-t", "--type" });
-	//	cmdl.parse(argv);
-//
-	//	if (cmdl[{"-h", "--help"}])
-	//	{
-	//		oc::PrintHelp();
-	//		std::exit(0);
-//
-	//	}
-//
-	//	std::string output = "Running OneControl with the following options:\n";
-	//	auto printOutput = false;
-//
-	//	if (cmdl[{"--no-mouse"}])
-	//	{
-	//		printOutput = true;
-	//		output.append("\tMouse disabled.\n");
-	//		oc::RuntimeGlobals::mouseEnabled = false;
-	//	}
-//
-	//	if (cmdl[{"--no-keyboard"}])
-	//	{
-	//		printOutput = true;
-	//		output.append("\tKeyboard disabled.\n");
-	//		oc::RuntimeGlobals::keyboardEnabled = false;
-	//	}
-//
-	//	// Let's check if the user isn't doing something silly.
-	//	if (!oc::RuntimeGlobals::mouseEnabled && !oc::RuntimeGlobals::keyboardEnabled)
-	//	{
-	//		fmt::print(stderr, "Can't run OneControl with mouse AND keyboard disabled. Remove either the `--no-keyboard` or `--no-mouse` parameter and launch the application again.");
-	//		// Let's make oc::ReturnCodes::Failure or something here.
-	//		std::exit(1);
-	//	}
-//
-	//	if (!cmdl({ "-t", "--type" }).str().empty())
-	//	{
-	//		printOutput = true;
-	//		std::string type;
-	//		cmdl({ "-t", "--type" }) >> type;
-//
-	//		if (type == "client" || type == "c")
-	//		{
-	//			oc::RuntimeGlobals::isClient = true;
-	//			oc::RuntimeGlobals::isServer = !oc::RuntimeGlobals::isClient;
-	//			output.append("\tThis will be the client.\n");
-	//		}
-//
-	//		if (type == "server" || type == "s")
-	//		{
-	//			oc::RuntimeGlobals::isClient = false;
-	//			oc::RuntimeGlobals::isServer = !oc::RuntimeGlobals::isClient;
-	//			output.append("\tThis will be the server.\n");
-	//		}
-//
-	//		if (!oc::RuntimeGlobals::isServer && !oc::RuntimeGlobals::isClient)
-	//		{
-	//			fmt::print(stderr, "Invalid type provided: {}\n", type);
-	//			std::exit(1);
-	//		}
-	//	}
-//
-	//	if (!cmdl({ "-p", "--port" }).str().empty())
-	//	{
-	//		if (!(cmdl({ "-p", "--port" }) >> oc::RuntimeGlobals::port) || oc::RuntimeGlobals::port == 0)
-	//		{
-	//			fmt::print(stderr, "Invalid port provided: {}\n", cmdl({"-p", "--port"}).str());
-	//			// Let's make oc::ReturnCodes::Failure or something here.
-	//			std::exit(1);
-	//		}
-//
-	//		oc::RuntimeGlobals::customPort = true;
-	//		printOutput = true;
-	//		output.append("\tRunning on port: " + std::to_string(oc::RuntimeGlobals::port) + "\n");
-	//	}
-//
-	//	if (!cmdl({ "-s", "--server" }).str().empty())
-	//	{
-	//		if (oc::RuntimeGlobals::isServer)
-	//		{
-	//			fmt::print(stderr, "Can't connect to a server when this machine will act as the server.\n");
-	//			std::exit(1);
-	//		}
-//
-	//		std::string serverStr;
-	//		cmdl({ "-s", "--server" }) >> serverStr;
-	//
-	//		oc::RuntimeGlobals::serverIP = sf::IpAddress(serverStr);
-//
-	//		if (oc::RuntimeGlobals::serverIP == sf::IpAddress::None)
-	//		{
-	//			fmt::print(stderr, "Invalid server IP address provided: {}\n", serverStr);
-	//			std::exit(1);
-	//		}
-//
-	//		oc::RuntimeGlobals::customServerIP = true;
-	//		printOutput = true;
-	//		output.append("\tConnecting to Server IP: " + oc::RuntimeGlobals::serverIP.toString() + "\n");
-	//	}
-//
-	//	if (printOutput)
-	//	{
-	//		fmt::print(fmt::runtime(output));
-	//	}
-	//}
+        // Design:
+        // Would we prefer having to call:
+        //  OneControl --server
+        // or
+        //  OneControl --type server
+        // to specify that this machine will act as the server? I think the latter is more verbose and therefore would confuse users less.
+
+        // Register arguments
+        args::ArgumentParser parser("OneControl - Software KVM Switch", "The project source code is available at: https://github.com/szymonj99/OneControl");
+        args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+        args::Group group(parser, "This group can have any number of options selected:", args::Group::Validators::DontCare);
+        args::Group exclusive(parser, "This group is exclusive: (at most one option)", args::Group::Validators::AtMostOne);
+
+        //TODO: Add args::CompletionFlag to allow for auto-completion when running under Bash.
+        // https://github.com/Taywee/args/blob/master/examples/bash_completion.sh
+
+        args::Flag noKeyboard(exclusive, "no-keyboard", "Run OneControl without capturing the keyboard input", {"no-keyboard"});
+        args::Flag noMouse(exclusive, "no-mouse", "Run OneControl without capturing the mouse input", {"no-mouse"});
+
+        args::ValueFlag<std::uint16_t> port(group, "port", "The port on which to connect to/listen on. If no port is set, it will use the default port of " + std::to_string(oc::kDefaultPort), {'p', "port"}, 40480);
+        args::ValueFlag<std::string> type(group, "type", "Set this machine to act as either the server or the client. Use values [s, server] or [c, client].", {'t', "type"}, "server");
+        args::ValueFlag<std::string> serverIP(group, "serverIP", "The IP to connect to when running OneControl as a Client. This option does nothing when OneControl is run as the server", {'s', "server", "server-ip"}, "127.0.0.1");
+
+        // Parse and handle errors
+        try
+        {
+            parser.ParseCLI(argc, argv);
+        }
+        catch (const args::Help&)
+        {
+            std::cout << parser;
+            return false; //true
+        }
+        catch (const args::ParseError& e)
+        {
+            std::cerr << e.what() << std::endl;
+            std::cerr << parser;
+            return false;
+        }
+        catch (args::ValidationError& e)
+        {
+            std::cerr << e.what() << std::endl;
+            std::cerr << parser;
+            return false;
+        }
+        // Set runtime values
+        if (noMouse) { std::cout << "OneControl will not share the mouse input.\n"; oc::RuntimeGlobals::mouseEnabled = false; }
+        if (noKeyboard) { std::cout << "OneControl will not share the keyboard input.\n"; oc::RuntimeGlobals::keyboardEnabled = false; }
+        if (type)
+        {
+            // TODO: Figure out a way to convert the string to lowercase
+            // We want to compare 'c', "client", 's', and "server".
+            // Anything else would be considered a typo.
+            // However the issue arises when we use unicode.
+            // Let's follow the practices defined by https://utf8everywhere.org/
+            // We treat std::string as being unicode UTF-8
+            // TODO: Future work here might involve the UTF8-CPP library.
+            std::string lowerType = std::string("", args::get(type).length());
+            std::transform(args::get(type).begin(), args::get(type).end(), lowerType.begin(), ::tolower);
+            if (lowerType == "c" || lowerType == "client")
+            {
+                oc::RuntimeGlobals::isClient = true;
+                oc::RuntimeGlobals::isServer = !oc::RuntimeGlobals::isClient;
+                std::cout << "This machine will be the client\n";
+            }
+            // Could use <locale> here
+            else if (lowerType == "s" || lowerType == "server")
+            {
+                oc::RuntimeGlobals::isClient = false;
+                oc::RuntimeGlobals::isServer = !oc::RuntimeGlobals::isClient;
+                std::cout << "This machine will be the server\n";
+            }
+            else
+            {
+                std::cout << "Unknown type: " << args::get(type) << "\n";
+                std::cout << "Use either s or server, or c or client.\n";
+                return false;
+            }
+        }
+        if (oc::RuntimeGlobals::isClient && serverIP)
+        {
+            if (sf::IpAddress(args::get(serverIP)) == sf::IpAddress::None)
+            {
+                std::cout << "Incorrect IP address format: " << args::get(serverIP) << "\n";
+                return false;
+            }
+            else
+            {
+                oc::RuntimeGlobals::customServerIP = true;
+                oc::RuntimeGlobals::serverIP = sf::IpAddress(args::get(serverIP));
+                std::cout << "Connecting to server IP: " << oc::RuntimeGlobals::serverIP.toString() << "\n";
+            }
+        }
+        if (port)
+        {
+            oc::RuntimeGlobals::customPort = true;
+            oc::RuntimeGlobals::port = args::get(port);
+            std::cout << "Running on port: " << oc::RuntimeGlobals::port << "\n";
+        }
+        return true;
+    }
 }
