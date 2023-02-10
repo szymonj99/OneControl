@@ -1,0 +1,36 @@
+\hypertarget{_client_8h_source}{}\doxysection{Client.\+h}
+\label{_client_8h_source}\index{include/OneControl/Client.h@{include/OneControl/Client.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <SFML/Network/TcpSocket.hpp>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <OneLibrary/InputSimulatorMouse.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <OneLibrary/InputSimulatorKeyboard.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <OneControl/Packet.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <OneControl/HelperMethods.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <OneControl/Constants.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <OneControl/Version.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <OneControl/Input.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classoc_1_1_client}{Client}}\ :\ sf::TcpSocket}
+\DoxyCodeLine{00024\ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_SendAuthenticationPacket();}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_client_aa3ac2867db5f756d4c75b1ff88956ea9}{Start}}();}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_client_abb6cc2bb6d054aafd41af4e0b7dbe19c}{ConnectToServer}}(\textcolor{keyword}{const}\ sf::IpAddress\&\ kIPAddress);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_client_a4d4483f2467e5095556356f048d9e25b}{StartReceivingPacketStream}}();}
+\DoxyCodeLine{00041\ \ \ \ \ \};}
+\DoxyCodeLine{00042\ \}}
+
+\end{DoxyCode}

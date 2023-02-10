@@ -1,0 +1,49 @@
+\hypertarget{_server_8h_source}{}\doxysection{Server.\+h}
+\label{_server_8h_source}\index{include/OneControl/Server.h@{include/OneControl/Server.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#ifdef\ OS\_WINDOWS}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\ \ \ \ \#include\ <Windows.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <fmt/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <fmt/color.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <SFML/Network/TcpSocket.hpp>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <SFML/Network/TcpListener.hpp>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <OneControl/Packet.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <OneControl/Constants.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <OneControl/Version.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <OneControl/RuntimeGlobals.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <OneControl/Input.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <OneLibrary/InputGathererMouse.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <OneLibrary/InputGathererKeyboard.h>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classoc_1_1_server}{Server}}\ :\ sf::TcpSocket}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::unique\_ptr<sf::TcpListener>\ m\_pListener\{\};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ Check\ if\ the\ client\ can\ be\ of\ type\ oc::Client,\ rather\ than\ a\ raw\ SFML\ TCP\ socket.}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ std::unique\_ptr<sf::TcpSocket>\ m\_pClient\{\};}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_ReceiveAuthenticationPacket();}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_server_a5e8955e7038ef04148e0f1004f2b82a9}{Start}}();}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_server_aaaa8c1f4bbb77c6b2b1a7d61f0f10a57}{WaitForClient}}();}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_server_ad80592e42638c0e54cc111e4e4b88d70}{ServerLoop}}();}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classoc_1_1_server_a129edabb904b0ae1d1d47f18fa2844ea}{SendPacketToClient}}(\mbox{\hyperlink{classoc_1_1_packet}{oc::Packet}}\&\ kPacket);}
+\DoxyCodeLine{00058\ \ \ \ \ \};}
+\DoxyCodeLine{00059\ \}}
+
+\end{DoxyCode}

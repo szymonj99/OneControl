@@ -1,0 +1,19 @@
+\hypertarget{_input_8h_source}{}\doxysection{Input.\+h}
+\label{_input_8h_source}\index{include/OneControl/Input.h@{include/OneControl/Input.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SFML/Network/Packet.hpp>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <OneLibrary/Input.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ sf::Packet\&\ operator<<(sf::Packet\&\ packet,\ \textcolor{keyword}{const}\ ol::Input\&\ input);}
+\DoxyCodeLine{00026\ \ \ \ \ sf::Packet\&\ operator>>(sf::Packet\&\ packet,\ ol::Input\&\ input);}
+\DoxyCodeLine{00027\ \}}
+
+\end{DoxyCode}

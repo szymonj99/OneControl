@@ -1,0 +1,51 @@
+\hypertarget{classoc_1_1_client}{}\doxysection{oc\+::Client Class Reference}
+\label{classoc_1_1_client}\index{oc::Client@{oc::Client}}
+
+
+{\ttfamily \#include $<$Client.\+h$>$}
+
+Inheritance diagram for oc\+::Client\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classoc_1_1_client}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classoc_1_1_client_aa3ac2867db5f756d4c75b1ff88956ea9}{Start}} ()
+\item 
+void \mbox{\hyperlink{classoc_1_1_client_abb6cc2bb6d054aafd41af4e0b7dbe19c}{Connect\+To\+Server}} (const sf\+::\+Ip\+Address \&k\+IPAddress)
+\item 
+void \mbox{\hyperlink{classoc_1_1_client_a4d4483f2467e5095556356f048d9e25b}{Start\+Receiving\+Packet\+Stream}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used when the current machine acts as the client. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classoc_1_1_client_abb6cc2bb6d054aafd41af4e0b7dbe19c}\label{classoc_1_1_client_abb6cc2bb6d054aafd41af4e0b7dbe19c}} 
+\index{oc::Client@{oc::Client}!ConnectToServer@{ConnectToServer}}
+\index{ConnectToServer@{ConnectToServer}!oc::Client@{oc::Client}}
+\doxysubsubsection{\texorpdfstring{ConnectToServer()}{ConnectToServer()}}
+{\footnotesize\ttfamily void oc\+::\+Client\+::\+Connect\+To\+Server (\begin{DoxyParamCaption}\item[{const sf\+::\+Ip\+Address \&}]{k\+IPAddress }\end{DoxyParamCaption})}
+
+Reaches out to the server and tries to connect. \mbox{\Hypertarget{classoc_1_1_client_aa3ac2867db5f756d4c75b1ff88956ea9}\label{classoc_1_1_client_aa3ac2867db5f756d4c75b1ff88956ea9}} 
+\index{oc::Client@{oc::Client}!Start@{Start}}
+\index{Start@{Start}!oc::Client@{oc::Client}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily void oc\+::\+Client\+::\+Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Starts the client. If an IP has been specified as a command-\/line argument, it is used. Otherwise prompts the user for input. \mbox{\Hypertarget{classoc_1_1_client_a4d4483f2467e5095556356f048d9e25b}\label{classoc_1_1_client_a4d4483f2467e5095556356f048d9e25b}} 
+\index{oc::Client@{oc::Client}!StartReceivingPacketStream@{StartReceivingPacketStream}}
+\index{StartReceivingPacketStream@{StartReceivingPacketStream}!oc::Client@{oc::Client}}
+\doxysubsubsection{\texorpdfstring{StartReceivingPacketStream()}{StartReceivingPacketStream()}}
+{\footnotesize\ttfamily void oc\+::\+Client\+::\+Start\+Receiving\+Packet\+Stream (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Start the message loop. Messages will be sent by the server and input will be performed. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\+One\+Control/Client.\+h\item 
+src/\+Client/Client.\+cpp\end{DoxyCompactItemize}

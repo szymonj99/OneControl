@@ -1,0 +1,58 @@
+\hypertarget{classoc_1_1_packet}{}\doxysection{oc\+::Packet Class Reference}
+\label{classoc_1_1_packet}\index{oc::Packet@{oc::Packet}}
+
+
+{\ttfamily \#include $<$Packet.\+h$>$}
+
+Inheritance diagram for oc\+::Packet\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classoc_1_1_packet}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classoc_1_1_packet_a3e2c94e3904e3465a7d62ff7b8de30f3}{on\+Receive}} (const void $\ast$data, std\+::size\+\_\+t size) override
+\item 
+const void $\ast$ \mbox{\hyperlink{classoc_1_1_packet_a89c9d35b637d730ae51608caf0833357}{on\+Send}} (std\+::size\+\_\+t \&size) override
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The packet used to send the input data to a client. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classoc_1_1_packet_a3e2c94e3904e3465a7d62ff7b8de30f3}\label{classoc_1_1_packet_a3e2c94e3904e3465a7d62ff7b8de30f3}} 
+\index{oc::Packet@{oc::Packet}!onReceive@{onReceive}}
+\index{onReceive@{onReceive}!oc::Packet@{oc::Packet}}
+\doxysubsubsection{\texorpdfstring{onReceive()}{onReceive()}}
+{\footnotesize\ttfamily void oc\+::\+Packet\+::on\+Receive (\begin{DoxyParamCaption}\item[{const void $\ast$}]{data,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+This function is called very time a packet is received. 
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the packet contents \\
+\hline
+{\em size} & The size of the data in the packet \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classoc_1_1_packet_a89c9d35b637d730ae51608caf0833357}\label{classoc_1_1_packet_a89c9d35b637d730ae51608caf0833357}} 
+\index{oc::Packet@{oc::Packet}!onSend@{onSend}}
+\index{onSend@{onSend}!oc::Packet@{oc::Packet}}
+\doxysubsubsection{\texorpdfstring{onSend()}{onSend()}}
+{\footnotesize\ttfamily const void $\ast$ oc\+::\+Packet\+::on\+Send (\begin{DoxyParamCaption}\item[{std\+::size\+\_\+t \&}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+Called just before the packet is sent, meaning the data can be changed here. 
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the data in the packet \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the packet contents 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\+One\+Control/Packet.\+h\item 
+src/\+Packet/Packet.\+cpp\end{DoxyCompactItemize}

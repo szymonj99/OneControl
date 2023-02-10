@@ -7,6 +7,9 @@
 
 namespace oc
 {
+	/**
+	 * This class is used for authentication purposes. It's a quick check to see if the client and server are compatible.
+	 */
 	class Version
 	{
 	private:
@@ -15,12 +18,12 @@ namespace oc
 		oc::VersionInt m_Revision = 2;
 
 	public:
-		Version() {};
+		Version() = default;
 		Version(const oc::VersionInt major, const oc::VersionInt minor, const oc::VersionInt revision);
-		std::string GetVersionString() const;
-		oc::VersionInt GetMajor() const;
-		oc::VersionInt GetMinor() const;
-		oc::VersionInt GetRevision() const;
+		[[nodiscard]] std::string GetVersionString() const;
+		[[nodiscard]] oc::VersionInt GetMajor() const;
+		[[nodiscard]] oc::VersionInt GetMinor() const;
+		[[nodiscard]] oc::VersionInt GetRevision() const;
 	};
 
 	// The version of the application.

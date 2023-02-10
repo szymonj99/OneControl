@@ -1,0 +1,214 @@
+\hypertarget{_helper_methods_8h_source}{}\doxysection{Helper\+Methods.\+h}
+\label{_helper_methods_8h_source}\index{include/OneControl/HelperMethods.h@{include/OneControl/HelperMethods.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <SFML/Network/IpAddress.hpp>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <fmt/core.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <fmt/color.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <args.hxx>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <OneControl/Constants.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <OneControl/Enums.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <OneControl/RuntimeGlobals.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ClearConsole()}
+\DoxyCodeLine{00024\ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{comment}{//std::cout\ <<\ "{}\(\backslash\)033c"{}\ <<\ std::endl;}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ fmt::print(\textcolor{stringliteral}{"{}\(\backslash\)033c"{}});\ \textcolor{comment}{//\ Alternative:\ "{}\(\backslash\)033[2J"{}}}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ TODO:\ Improve\ this.}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{static}\ T\ GetUserValue(\textcolor{keyword}{const}\ std::string\&\ msg,\ \textcolor{keyword}{const}\ T\ min,\ \textcolor{keyword}{const}\ T\ max)}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (max\ <\ min)}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ fmt::print(fmt::fg(fmt::color::red),\ \textcolor{stringliteral}{"{}Incorrect\ min\ and\ max\ values\ received.\(\backslash\)n"{}});}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ std::cin.get();}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ exit(-\/1);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ fmt::print(fmt::runtime(msg));}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ T\ input\ =\ 0;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*\ end\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ failedToParse\ =\ \textcolor{keyword}{true};\ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ inputString;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ std::getline(std::cin,\ inputString);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ errno\ =\ 0;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ input\ =\ \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}(strtol(inputString.c\_str(),\ \&end,\ 0));}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ *end\ ==\ 0\ if\ we\ correctly\ parsed\ the\ whole\ input.}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ *end\ is\ not\ null,\ there\ were\ characters\ that\ were\ not\ parsed.}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ failedToParse\ =\ (*end\ !=\ \textcolor{charliteral}{'\(\backslash\)0'});}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (failedToParse)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::print(fmt::fg(fmt::color::red),\ \textcolor{stringliteral}{"{}The\ provided\ input\ is\ not\ a\ number.\(\backslash\)n"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (input\ >\ max)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::print(fmt::fg(fmt::color::red),\ \textcolor{stringliteral}{"{}The\ provided\ number\ is\ too\ big.\(\backslash\)n"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (input\ <\ min)}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fmt::print(fmt::fg(fmt::color::red),\ \textcolor{stringliteral}{"{}The\ provided\ number\ is\ too\ small.\(\backslash\)n"{}});}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ std::cin.clear();}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ ((input\ <\ min\ ||\ input\ >\ max)\ ||\ failedToParse);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ input;}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{static}\ sf::IpAddress\ GetUserIP(\textcolor{keyword}{const}\ std::string\&\ msg)}
+\DoxyCodeLine{00090\ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ input\ =\ sf::IpAddress();}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ fmt::print(fmt::runtime(msg));}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ inputString\ =\ std::string();}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ std::getline(std::cin,\ inputString);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!inputString.empty())}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ input\ =\ sf::IpAddress(inputString);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ std::cin.clear();}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (input\ ==\ sf::IpAddress::None);}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ ClearConsole();}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ fmt::print(\textcolor{stringliteral}{"{}Connecting\ to\ server\ IP:\ \{\}\(\backslash\)n"{}},\ input.toString());}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ input;}
+\DoxyCodeLine{00107\ \ \ \ \ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{static}\ oc::eMachineState\ GetMachineState()}
+\DoxyCodeLine{00114\ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (oc::RuntimeGlobals::isClient)\ \{\ \textcolor{keywordflow}{return}\ oc::eMachineState::Client;\ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (oc::RuntimeGlobals::isServer)\ \{\ \textcolor{keywordflow}{return}\ oc::eMachineState::Server;\ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ userValue\ =\ GetUserValue(\textcolor{stringliteral}{"{}Is\ this\ machine\ a\ Server\ or\ a\ Client?\(\backslash\)n1.\ Server\(\backslash\)n2.\ Client\(\backslash\)n"{}},\ (int32\_t)1,\ (int32\_t)2);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}oc::eMachineState\textcolor{keyword}{>}(userValue);}
+\DoxyCodeLine{00119\ \ \ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{//\ TODO:\ Make\ this\ return\ an\ error\ code\ that\ we\ have\ specified}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{//\ true:\ Arguments\ parsed\ correctly}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ false:\ Failure\ to\ parse\ arguments}}
+\DoxyCodeLine{00130\ \textcolor{comment}{}\ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ ParseArguments(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ argc,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ argv[])}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 2)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Design:}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Would\ we\ prefer\ having\ to\ call:}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ OneControl\ -\/-\/server}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ or}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ OneControl\ -\/-\/type\ server}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ specify\ that\ this\ machine\ will\ act\ as\ the\ server?\ I\ think\ the\ latter\ is\ more\ verbose\ and\ therefore\ would\ confuse\ users\ less.}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Register\ arguments}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ args::ArgumentParser\ parser(\textcolor{stringliteral}{"{}OneControl\ -\/\ Software\ KVM\ Switch"{}},\ \textcolor{stringliteral}{"{}The\ project\ source\ code\ is\ available\ at:\ https://github.com/szymonj99/OneControl"{}});}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ args::HelpFlag\ help(parser,\ \textcolor{stringliteral}{"{}help"{}},\ \textcolor{stringliteral}{"{}Display\ this\ help\ menu"{}},\ \{\textcolor{charliteral}{'h'},\ \textcolor{stringliteral}{"{}help"{}}\});}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ args::Group\ group(parser,\ \textcolor{stringliteral}{"{}This\ group\ can\ have\ any\ number\ of\ options\ selected:"{}},\ args::Group::Validators::DontCare);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ args::Group\ exclusive(parser,\ \textcolor{stringliteral}{"{}This\ group\ is\ exclusive:\ (at\ most\ one\ option)"{}},\ args::Group::Validators::AtMostOne);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{comment}{//TODO:\ Add\ args::CompletionFlag\ to\ allow\ for\ auto-\/completion\ when\ running\ under\ Bash.}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ https://github.com/Taywee/args/blob/master/examples/bash\_completion.sh}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ args::Flag\ noKeyboard(exclusive,\ \textcolor{stringliteral}{"{}no-\/keyboard"{}},\ \textcolor{stringliteral}{"{}Run\ OneControl\ without\ capturing\ the\ keyboard\ input"{}},\ \{\textcolor{stringliteral}{"{}no-\/keyboard"{}}\});}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ args::Flag\ noMouse(exclusive,\ \textcolor{stringliteral}{"{}no-\/mouse"{}},\ \textcolor{stringliteral}{"{}Run\ OneControl\ without\ capturing\ the\ mouse\ input"{}},\ \{\textcolor{stringliteral}{"{}no-\/mouse"{}}\});}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ args::ValueFlag<std::uint16\_t>\ port(group,\ \textcolor{stringliteral}{"{}port"{}},\ \textcolor{stringliteral}{"{}The\ port\ on\ which\ to\ connect\ to/listen\ on.\ If\ no\ port\ is\ set,\ it\ will\ use\ the\ default\ port\ of\ "{}}\ +\ std::to\_string(oc::kDefaultPort),\ \{\textcolor{charliteral}{'p'},\ \textcolor{stringliteral}{"{}port"{}}\},\ 40480);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ args::ValueFlag<std::string>\ type(group,\ \textcolor{stringliteral}{"{}type"{}},\ \textcolor{stringliteral}{"{}Set\ this\ machine\ to\ act\ as\ either\ the\ server\ or\ the\ client.\ Use\ values\ [s,\ server]\ or\ [c,\ client]."{}},\ \{\textcolor{charliteral}{'t'},\ \textcolor{stringliteral}{"{}type"{}}\},\ \textcolor{stringliteral}{"{}server"{}});}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ args::ValueFlag<std::string>\ serverIP(group,\ \textcolor{stringliteral}{"{}serverIP"{}},\ \textcolor{stringliteral}{"{}The\ IP\ to\ connect\ to\ when\ running\ OneControl\ as\ a\ Client.\ This\ option\ does\ nothing\ when\ OneControl\ is\ run\ as\ the\ server"{}},\ \{\textcolor{charliteral}{'s'},\ \textcolor{stringliteral}{"{}server"{}},\ \textcolor{stringliteral}{"{}server-\/ip"{}}\},\ \textcolor{stringliteral}{"{}127.0.0.1"{}});}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Parse\ and\ handle\ errors}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ parser.ParseCLI(argc,\ argv);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ args::Help\&)}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ parser;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \textcolor{comment}{//true}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ args::ParseError\&\ e)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ e.what()\ <<\ std::endl;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ parser;}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (args::ValidationError\&\ e)}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ e.what()\ <<\ std::endl;}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ parser;}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ runtime\ values}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (noMouse)\ \{\ std::cout\ <<\ \textcolor{stringliteral}{"{}OneControl\ will\ not\ share\ the\ mouse\ input.\(\backslash\)n"{}};\ oc::RuntimeGlobals::mouseEnabled\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (noKeyboard)\ \{\ std::cout\ <<\ \textcolor{stringliteral}{"{}OneControl\ will\ not\ share\ the\ keyboard\ input.\(\backslash\)n"{}};\ oc::RuntimeGlobals::keyboardEnabled\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type)}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ Figure\ out\ a\ way\ to\ convert\ the\ string\ to\ lowercase}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ want\ to\ compare\ 'c',\ "{}client"{},\ 's',\ and\ "{}server"{}.}}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Anything\ else\ would\ be\ considered\ a\ typo.}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ However\ the\ issue\ arises\ when\ we\ use\ unicode.}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Let's\ follow\ the\ practices\ defined\ by\ https://utf8everywhere.org/}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ treat\ std::string\ as\ being\ unicode\ UTF-\/8}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ Future\ work\ here\ might\ involve\ the\ UTF8-\/CPP\ library.}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ lowerType\ =\ std::string(\textcolor{stringliteral}{"{}"{}},\ args::get(type).length());}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ std::transform(args::get(type).begin(),\ args::get(type).end(),\ lowerType.begin(),\ ::tolower);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lowerType\ ==\ \textcolor{stringliteral}{"{}c"{}}\ ||\ lowerType\ ==\ \textcolor{stringliteral}{"{}client"{}})}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::isClient\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::isServer\ =\ !oc::RuntimeGlobals::isClient;}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}This\ machine\ will\ be\ the\ client\(\backslash\)n"{}};}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Could\ use\ <locale>\ here}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (lowerType\ ==\ \textcolor{stringliteral}{"{}s"{}}\ ||\ lowerType\ ==\ \textcolor{stringliteral}{"{}server"{}})}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::isClient\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::isServer\ =\ !oc::RuntimeGlobals::isClient;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}This\ machine\ will\ be\ the\ server\(\backslash\)n"{}};}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Unknown\ type:\ "{}}\ <<\ args::get(type)\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Use\ either\ s\ or\ server,\ or\ c\ or\ client.\(\backslash\)n"{}};}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (oc::RuntimeGlobals::isClient\ \&\&\ serverIP)}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sf::IpAddress(args::get(serverIP))\ ==\ sf::IpAddress::None)}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Incorrect\ IP\ address\ format:\ "{}}\ <<\ args::get(serverIP)\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::customServerIP\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::serverIP\ =\ sf::IpAddress(args::get(serverIP));}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Connecting\ to\ server\ IP:\ "{}}\ <<\ oc::RuntimeGlobals::serverIP.toString()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (port)}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::customPort\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ oc::RuntimeGlobals::port\ =\ args::get(port);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Running\ on\ port:\ "{}}\ <<\ oc::RuntimeGlobals::port\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00234\ \ \ \ \ \}}
+\DoxyCodeLine{00235\ \}}
+
+\end{DoxyCode}

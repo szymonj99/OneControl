@@ -1,0 +1,62 @@
+\hypertarget{classoc_1_1_server}{}\doxysection{oc\+::Server Class Reference}
+\label{classoc_1_1_server}\index{oc::Server@{oc::Server}}
+
+
+{\ttfamily \#include $<$Server.\+h$>$}
+
+Inheritance diagram for oc\+::Server\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classoc_1_1_server}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classoc_1_1_server_a5e8955e7038ef04148e0f1004f2b82a9}{Start}} ()
+\item 
+void \mbox{\hyperlink{classoc_1_1_server_aaaa8c1f4bbb77c6b2b1a7d61f0f10a57}{Wait\+For\+Client}} ()
+\item 
+void \mbox{\hyperlink{classoc_1_1_server_ad80592e42638c0e54cc111e4e4b88d70}{Server\+Loop}} ()
+\item 
+bool \mbox{\hyperlink{classoc_1_1_server_a129edabb904b0ae1d1d47f18fa2844ea}{Send\+Packet\+To\+Client}} (\mbox{\hyperlink{classoc_1_1_packet}{oc\+::\+Packet}} \&k\+Packet)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used when the current selected machine acts as the server, and shares its inputs to the client. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classoc_1_1_server_a129edabb904b0ae1d1d47f18fa2844ea}\label{classoc_1_1_server_a129edabb904b0ae1d1d47f18fa2844ea}} 
+\index{oc::Server@{oc::Server}!SendPacketToClient@{SendPacketToClient}}
+\index{SendPacketToClient@{SendPacketToClient}!oc::Server@{oc::Server}}
+\doxysubsubsection{\texorpdfstring{SendPacketToClient()}{SendPacketToClient()}}
+{\footnotesize\ttfamily bool oc\+::\+Server\+::\+Send\+Packet\+To\+Client (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classoc_1_1_packet}{oc\+::\+Packet}} \&}]{k\+Packet }\end{DoxyParamCaption})}
+
+Send a packet to the currently connected client. \begin{DoxyReturn}{Returns}
+True if the packet was sent. False otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classoc_1_1_server_ad80592e42638c0e54cc111e4e4b88d70}\label{classoc_1_1_server_ad80592e42638c0e54cc111e4e4b88d70}} 
+\index{oc::Server@{oc::Server}!ServerLoop@{ServerLoop}}
+\index{ServerLoop@{ServerLoop}!oc::Server@{oc::Server}}
+\doxysubsubsection{\texorpdfstring{ServerLoop()}{ServerLoop()}}
+{\footnotesize\ttfamily void oc\+::\+Server\+::\+Server\+Loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Start the server loop where the mouse and/or keyboard input will be shared with the client. \mbox{\Hypertarget{classoc_1_1_server_a5e8955e7038ef04148e0f1004f2b82a9}\label{classoc_1_1_server_a5e8955e7038ef04148e0f1004f2b82a9}} 
+\index{oc::Server@{oc::Server}!Start@{Start}}
+\index{Start@{Start}!oc::Server@{oc::Server}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily void oc\+::\+Server\+::\+Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Start the server. \mbox{\Hypertarget{classoc_1_1_server_aaaa8c1f4bbb77c6b2b1a7d61f0f10a57}\label{classoc_1_1_server_aaaa8c1f4bbb77c6b2b1a7d61f0f10a57}} 
+\index{oc::Server@{oc::Server}!WaitForClient@{WaitForClient}}
+\index{WaitForClient@{WaitForClient}!oc::Server@{oc::Server}}
+\doxysubsubsection{\texorpdfstring{WaitForClient()}{WaitForClient()}}
+{\footnotesize\ttfamily void oc\+::\+Server\+::\+Wait\+For\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Wait until a client has attempted a connection to this server. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\+One\+Control/Server.\+h\item 
+src/\+Server/Server.\+cpp\end{DoxyCompactItemize}
