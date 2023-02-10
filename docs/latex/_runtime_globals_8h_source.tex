@@ -1,0 +1,28 @@
+\hypertarget{_runtime_globals_8h_source}{}\doxysection{Runtime\+Globals.\+h}
+\label{_runtime_globals_8h_source}\index{include/OneControl/RuntimeGlobals.h@{include/OneControl/RuntimeGlobals.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SFML/Network/IpAddress.hpp>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }oc::RuntimeGlobals}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ isServer\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ isClient\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ customPort\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{inline}\ uint16\_t\ port\ =\ 0;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ Let's\ create\ both\ mouse\ and\ keyboard\ interfaces,\ and\ allow\ the\ user\ to\ opt-\/out\ using\ a\ flag\ such\ as\ -\/-\/no-\/keyboard\ or\ -\/-\/no-\/mouse.\ :thumbs\_up:}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ mouseEnabled\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ keyboardEnabled\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ customServerIP\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{inline}\ sf::IpAddress\ serverIP\ =\ sf::IpAddress::None;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ sendToClient\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00022\ \}}
+
+\end{DoxyCode}

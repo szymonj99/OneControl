@@ -1,0 +1,85 @@
+\hypertarget{classoc_1_1_version}{}\doxysection{oc\+::Version Class Reference}
+\label{classoc_1_1_version}\index{oc::Version@{oc::Version}}
+
+
+{\ttfamily \#include $<$Version.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classoc_1_1_version_ac97636f2cb3363c5b1fec780fc752516}{Version}} (const oc\+::\+Version\+Int major, const oc\+::\+Version\+Int minor, const oc\+::\+Version\+Int revision)
+\item 
+std\+::string \mbox{\hyperlink{classoc_1_1_version_a67af3b82e747d004ea4495545254731b}{Get\+Version\+String}} () const
+\item 
+oc\+::\+Version\+Int \mbox{\hyperlink{classoc_1_1_version_a7f75105629c54fc8e54573216d32f9ce}{Get\+Major}} () const
+\item 
+oc\+::\+Version\+Int \mbox{\hyperlink{classoc_1_1_version_a81ab741d160c58c8ae3c501a75bf68f0}{Get\+Minor}} () const
+\item 
+oc\+::\+Version\+Int \mbox{\hyperlink{classoc_1_1_version_a1b5102eb12b53f5a2e384d8888d2805d}{Get\+Revision}} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used for authentication purposes. It\textquotesingle{}s a quick check to see if the client and server are compatible. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classoc_1_1_version_ac97636f2cb3363c5b1fec780fc752516}\label{classoc_1_1_version_ac97636f2cb3363c5b1fec780fc752516}} 
+\index{oc::Version@{oc::Version}!Version@{Version}}
+\index{Version@{Version}!oc::Version@{oc::Version}}
+\doxysubsubsection{\texorpdfstring{Version()}{Version()}}
+{\footnotesize\ttfamily oc\+::\+Version\+::\+Version (\begin{DoxyParamCaption}\item[{const oc\+::\+Version\+Int}]{major,  }\item[{const oc\+::\+Version\+Int}]{minor,  }\item[{const oc\+::\+Version\+Int}]{revision }\end{DoxyParamCaption})}
+
+Create a new \mbox{\hyperlink{classoc_1_1_version}{Version}}. 
+\begin{DoxyParams}{Parameters}
+{\em major} & Major version \\
+\hline
+{\em minor} & Minor version \\
+\hline
+{\em revision} & Revision \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classoc_1_1_version_a7f75105629c54fc8e54573216d32f9ce}\label{classoc_1_1_version_a7f75105629c54fc8e54573216d32f9ce}} 
+\index{oc::Version@{oc::Version}!GetMajor@{GetMajor}}
+\index{GetMajor@{GetMajor}!oc::Version@{oc::Version}}
+\doxysubsubsection{\texorpdfstring{GetMajor()}{GetMajor()}}
+{\footnotesize\ttfamily oc\+::\+Version\+Int oc\+::\+Version\+::\+Get\+Major (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Get the major version \begin{DoxyReturn}{Returns}
+Value for the major version 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classoc_1_1_version_a81ab741d160c58c8ae3c501a75bf68f0}\label{classoc_1_1_version_a81ab741d160c58c8ae3c501a75bf68f0}} 
+\index{oc::Version@{oc::Version}!GetMinor@{GetMinor}}
+\index{GetMinor@{GetMinor}!oc::Version@{oc::Version}}
+\doxysubsubsection{\texorpdfstring{GetMinor()}{GetMinor()}}
+{\footnotesize\ttfamily oc\+::\+Version\+Int oc\+::\+Version\+::\+Get\+Minor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Get the minor version \begin{DoxyReturn}{Returns}
+Value for the minor version 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classoc_1_1_version_a1b5102eb12b53f5a2e384d8888d2805d}\label{classoc_1_1_version_a1b5102eb12b53f5a2e384d8888d2805d}} 
+\index{oc::Version@{oc::Version}!GetRevision@{GetRevision}}
+\index{GetRevision@{GetRevision}!oc::Version@{oc::Version}}
+\doxysubsubsection{\texorpdfstring{GetRevision()}{GetRevision()}}
+{\footnotesize\ttfamily oc\+::\+Version\+Int oc\+::\+Version\+::\+Get\+Revision (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Get the revision \begin{DoxyReturn}{Returns}
+Value for the revision 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classoc_1_1_version_a67af3b82e747d004ea4495545254731b}\label{classoc_1_1_version_a67af3b82e747d004ea4495545254731b}} 
+\index{oc::Version@{oc::Version}!GetVersionString@{GetVersionString}}
+\index{GetVersionString@{GetVersionString}!oc::Version@{oc::Version}}
+\doxysubsubsection{\texorpdfstring{GetVersionString()}{GetVersionString()}}
+{\footnotesize\ttfamily std\+::string oc\+::\+Version\+::\+Get\+Version\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Convert the version to a string \begin{DoxyReturn}{Returns}
+A period-\/separeted string of the version 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\+One\+Control/Version.\+h\item 
+src/\+Version/Version.\+cpp\end{DoxyCompactItemize}

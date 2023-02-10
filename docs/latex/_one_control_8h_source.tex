@@ -1,0 +1,35 @@
+\hypertarget{_one_control_8h_source}{}\doxysection{One\+Control.\+h}
+\label{_one_control_8h_source}\index{include/OneControl/OneControl.h@{include/OneControl/OneControl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <OneControl/Constants.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <OneControl/Enums.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <OneControl/HelperMethods.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <OneControl/Version.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <OneControl/Server.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <OneControl/Client.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classoc_1_1_one_control}{OneControl}}}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ eMachineState\ m\_eState\ =\ eMachineState::Uninitialised;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ m\_StartService();}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_one_control_a9674dd6da862c3cc879dedf5266e5ac6}{Start}}();}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ std::unique\_ptr<oc::Client>\ pClient\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ std::unique\_ptr<oc::Server>\ pServer\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00034\ \ \ \ \ \};}
+\DoxyCodeLine{00035\ \}}
+
+\end{DoxyCode}

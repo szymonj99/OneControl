@@ -1,0 +1,21 @@
+\hypertarget{_packet_8h_source}{}\doxysection{Packet.\+h}
+\label{_packet_8h_source}\index{include/OneControl/Packet.h@{include/OneControl/Packet.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SFML/Network/Packet.hpp>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }oc}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classoc_1_1_packet}{Packet}}\ :\ \textcolor{keyword}{public}\ sf::Packet}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classoc_1_1_packet_a3e2c94e3904e3465a7d62ff7b8de30f3}{onReceive}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ data,\ std::size\_t\ size)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classoc_1_1_packet_a89c9d35b637d730ae51608caf0833357}{onSend}}(std::size\_t\&\ size)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00027\ \ \ \ \ \};}
+\DoxyCodeLine{00028\ \}}
+
+\end{DoxyCode}
