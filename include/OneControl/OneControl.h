@@ -15,6 +15,9 @@
 
 namespace oc
 {
+    /**
+     * This class is used when running the program.
+     */
 	class OneControl
 	{
 	private:
@@ -22,6 +25,9 @@ namespace oc
 		void m_StartService();
 
 	public:
+		/**
+		 * Start the program. If the state/type of the current machine was passed in as a command-line argument, it will be used here. Otherwise, prompt the user.
+		 */
 		void Start();
 		std::unique_ptr<oc::Client> pClient = nullptr;
 		std::unique_ptr<oc::Server> pServer = nullptr;

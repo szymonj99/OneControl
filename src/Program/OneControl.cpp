@@ -10,6 +10,7 @@ void oc::OneControl::Start()
 
 void oc::OneControl::m_StartService()
 {
+    // TODO: Potentially move these into m_StartServer and m_StartClient.
 	if (m_eState == eMachineState::Server)
 	{
 		pServer = std::move(std::make_unique<oc::Server>());

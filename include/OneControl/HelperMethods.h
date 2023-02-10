@@ -16,13 +16,26 @@
 
 namespace oc
 {
+    /**
+     * Clears the console using a special character code.
+     * May not be supported in all terminals, such as Windows CMD.
+     */
 	static void ClearConsole()
 	{
 		//std::cout << "\033c" << std::endl;
 		fmt::print("\033c"); // Alternative: "\033[2J"
 	}
 
+    // TODO: Improve this.
 	template<class T>
+	/**
+	 * Prompt the user to input a value into the console. The min and max values are inclusive.
+	 * @tparam T A value of type T
+	 * @param msg What message to prompt the user with
+	 * @param min Minimum accepted value
+	 * @param max Maximum accepted value
+	 * @return A value that the user has input
+	 */
 	static T GetUserValue(const std::string& msg, const T min, const T max)
 	{
 		if (max < min)
@@ -68,6 +81,11 @@ namespace oc
 		return input;
 	}
 
+    /**
+     * Get an IP address from the user. It will prompt the user to keep inputting an IP address until a valid IP address is input.
+     * @param msg The message that will be displayed before asking the user for input
+     * @return An IP address
+     */
 	static sf::IpAddress GetUserIP(const std::string& msg)
 	{
 		auto input = sf::IpAddress();
@@ -88,6 +106,10 @@ namespace oc
 		return input;
 	}
 
+    /**
+     * Get the current machine state, stating if it's a server or a client.
+     * @return The machine state
+     */
 	static oc::eMachineState GetMachineState()
 	{
         if (oc::RuntimeGlobals::isClient) { return oc::eMachineState::Client; }
@@ -99,7 +121,13 @@ namespace oc
     // TODO: Make this return an error code that we have specified
     // true: Arguments parsed correctly
     // false: Failure to parse arguments
-    static bool ParseArguments(int argc, char* argv[])
+    /**
+     * Parse command line arguments/flags, and change runtime options.
+     * @param argc The number of parameters passed in
+     * @param argv An array of parameters/flags passed in
+     * @return
+     */
+    static bool ParseArguments(const int argc, const char* argv[])
     {
         if (argc < 2) { return true; }
 

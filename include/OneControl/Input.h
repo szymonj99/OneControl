@@ -8,7 +8,20 @@
 
 namespace oc
 {
-	// Let's maybe serialize this in the future.
+    /**
+     * Append the input data to the packet.
+     * TODO: Serialize this in the future, potentially using Google's `protobuf`
+     * @param packet
+     * @param input
+     * @return The packet
+     */
 	sf::Packet& operator<<(sf::Packet& packet, const ol::Input& input);
+    /**
+     * Retrieve the input data from the packet.
+     * TODO: Serialize this in the future, potentially using Google's `protobuf`
+     * @param packet
+     * @param input
+     * @return The packet
+     */
 	sf::Packet& operator>>(sf::Packet& packet, ol::Input& input);
 }

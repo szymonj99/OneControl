@@ -30,6 +30,7 @@ void oc::Server::WaitForClient()
 	}
 
 	fmt::print("Waiting for client.\n");
+    // TODO: Add in an assert for m_pClient not being nullptr.
 	if (m_pListener->accept(*m_pClient) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Can't accept client on port {}\n", port);
@@ -78,6 +79,7 @@ bool oc::Server::SendPacketToClient(oc::Packet& kPacket)
 void oc::Server::ServerLoop()
 {
     // TODO: Make this nicer.
+	std::thread mouseThread;
     const auto processMouse = [&]
     {
         const auto mouseInterface = std::make_unique<ol::InputGathererMouse>(true);
@@ -96,8 +98,9 @@ void oc::Server::ServerLoop()
             }
         }
     };
-    std::thread mouseThread(processMouse);
+    if (oc::RuntimeGlobals::mouseEnabled) { std::thread mouseThread(processMouse); }
 
+	std::thread keyboardThread;
     const auto processKeyboard = [&]
     {
         const auto keyboardInterface = std::make_unique<ol::InputGathererKeyboard>(true);
@@ -114,8 +117,8 @@ void oc::Server::ServerLoop()
             }
         }
     };
-    std::thread keyboardThread(processKeyboard);
+	if (oc::RuntimeGlobals::keyboardEnabled) { std::thread keyboardThread(processKeyboard); }
 
-    mouseThread.join();
-    keyboardThread.join();
+    if (oc::RuntimeGlobals::mouseEnabled) { mouseThread.join(); }
+    if (oc::RuntimeGlobals::keyboardEnabled) { keyboardThread.join(); }
 }
