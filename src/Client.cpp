@@ -32,8 +32,8 @@ void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 
 oc::ReturnCode oc::Client::m_SendAuthenticationPacket()
 {
-	auto authenticationPkt = oc::Packet();
-	authenticationPkt << oc::kVersion.GetMajor() << oc::kVersion.GetMinor() << oc::kVersion.GetRevision();
+	oc::Packet authenticationPkt{};
+	authenticationPkt << oc::kVersion;
 	if (this->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
