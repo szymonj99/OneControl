@@ -16,13 +16,15 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
 
+#include <OneLibrary/InputGathererMouse.h>
+#include <OneLibrary/InputGathererKeyboard.h>
+
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/RuntimeGlobals.h>
 #include <OneControl/Input.h>
-#include <OneLibrary/InputGathererMouse.h>
-#include <OneLibrary/InputGathererKeyboard.h>
+#include <OneControl/ReturnCode.h>
 
 namespace oc
 {
@@ -32,10 +34,10 @@ namespace oc
 	class Server : sf::TcpSocket
 	{
 	private:
-		std::unique_ptr<sf::TcpListener> m_pListener{};
+        std::unique_ptr<sf::TcpListener> m_pListener = std::make_unique<sf::TcpListener>();
         // TODO: Check if the client can be of type oc::Client, rather than a raw SFML TCP socket.
-		std::unique_ptr<sf::TcpSocket> m_pClient{};
-		bool m_ReceiveAuthenticationPacket();
+        std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
+		oc::ReturnCode m_ReceiveAuthenticationPacket();
 
 	public:
         /**
@@ -50,10 +52,5 @@ namespace oc
          * Start the server loop where the mouse and/or keyboard input will be shared with the client.
          */
 		void ServerLoop();
-        /**
-         * Send a packet to the currently connected client.
-         * @return True if the packet was sent. False otherwise.
-         */
-		bool SendPacketToClient(oc::Packet& kPacket);
 	};
 }

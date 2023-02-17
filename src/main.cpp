@@ -1,14 +1,12 @@
 #ifdef OS_ERROR
-#error Platform is not known/supported.
+    #error Platform is not known/supported.
 #endif
 
 #include <OneControl/OneControl.h>
 
-int main(int argc, char* argv[])
+int main(const int argc, const char* argv[])
 {
-    if (!oc::ParseArguments(argc, argv)) { return 1; }
+    if (oc::ParseArguments(argc, argv) != oc::ReturnCode::Success) { return static_cast<uint32_t>(oc::ReturnCode::CheckParserOutput); }
     std::make_unique<oc::OneControl>()->Start();
-	fmt::print("Program finished. Press enter to exit.");
-	std::cin.get();
-	return 0;
+	return static_cast<uint32_t>(oc::ReturnCode::Success);
 }
