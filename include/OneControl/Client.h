@@ -14,6 +14,7 @@
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/Input.h>
+#include <OneControl/ReturnCode.h>
 
 namespace oc
 {
@@ -23,7 +24,7 @@ namespace oc
 	class Client : sf::TcpSocket
 	{
 	private:
-		bool m_SendAuthenticationPacket();
+		oc::ReturnCode m_SendAuthenticationPacket();
 
 	public:
 		/**

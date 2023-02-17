@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <algorithm>
+#include <cassert>
 
 #include <SFML/Network/IpAddress.hpp>
 #include <fmt/core.h>
@@ -13,6 +14,7 @@
 #include <OneControl/Constants.h>
 #include <OneControl/Enums.h>
 #include <OneControl/RuntimeGlobals.h>
+#include <OneControl/ReturnCode.h>
 
 namespace oc
 {
@@ -26,36 +28,19 @@ namespace oc
 		fmt::print("\033c"); // Alternative: "\033[2J"
 	}
 
-    // TODO: Improve this.
-	template<class T>
-	/**
-	 * Prompt the user to input a value into the console. The min and max values are inclusive.
-	 * @tparam T A value of type T
-	 * @param msg What message to prompt the user with
-	 * @param min Minimum accepted value
-	 * @param max Maximum accepted value
-	 * @return A value that the user has input
-	 */
-	static T GetUserValue(const std::string& msg, const T min, const T max)
+	static uint64_t GetUserValue(const std::string& msg, const uint64_t min, const uint64_t max)
 	{
-		if (max < min)
-		{
-			fmt::print(fmt::fg(fmt::color::red), "Incorrect min and max values received.\n");
-			std::cin.get();
-			exit(-1);
-		}
-
-		fmt::print(fmt::runtime(msg));
-		T input = 0;
+        assert(max > min);
+        fmt::print(fmt::runtime(msg));
+        uint64_t input = 0;
 		char* end = nullptr;
 		bool failedToParse = true;		
 		do
 		{
 			std::string inputString;
 			std::getline(std::cin, inputString);
-
 			errno = 0;
-            input = static_cast<T>(strtol(inputString.c_str(), &end, 0));
+            input = _strtoui64(inputString.c_str(), &end, 0);
 			// *end == 0 if we correctly parsed the whole input.
 			// if *end is not null, there were characters that were not parsed.
 			failedToParse = (*end != '\0');
@@ -127,9 +112,9 @@ namespace oc
      * @param argv An array of parameters/flags passed in
      * @return
      */
-    static bool ParseArguments(const int argc, const char* argv[])
+    static oc::ReturnCode ParseArguments(const int argc, const char* argv[])
     {
-        if (argc < 2) { return true; }
+        if (argc < 2) { return oc::ReturnCode::Success; }
 
         // Design:
         // Would we prefer having to call:
@@ -162,19 +147,19 @@ namespace oc
         catch (const args::Help&)
         {
             std::cout << parser;
-            return false; //true
+            return oc::ReturnCode::ShowHelpMenu;
         }
         catch (const args::ParseError& e)
         {
             std::cerr << e.what() << std::endl;
             std::cerr << parser;
-            return false;
+            return oc::ReturnCode::ParserError;
         }
         catch (args::ValidationError& e)
         {
             std::cerr << e.what() << std::endl;
             std::cerr << parser;
-            return false;
+            return oc::ReturnCode::ValidationError;
         }
         // Set runtime values
         if (noMouse) { std::cout << "OneControl will not share the mouse input.\n"; oc::RuntimeGlobals::mouseEnabled = false; }
@@ -207,7 +192,7 @@ namespace oc
             {
                 std::cout << "Unknown type: " << args::get(type) << "\n";
                 std::cout << "Use either s or server, or c or client.\n";
-                return false;
+                return oc::ReturnCode::InvalidTypeString;
             }
         }
         if (oc::RuntimeGlobals::isClient && serverIP)
@@ -215,7 +200,7 @@ namespace oc
             if (sf::IpAddress(args::get(serverIP)) == sf::IpAddress::None)
             {
                 std::cout << "Incorrect IP address format: " << args::get(serverIP) << "\n";
-                return false;
+                return oc::ReturnCode::InvalidIPAddress;
             }
             else
             {
@@ -230,6 +215,6 @@ namespace oc
             oc::RuntimeGlobals::port = args::get(port);
             std::cout << "Running on port: " << oc::RuntimeGlobals::port << "\n";
         }
-        return true;
+        return oc::ReturnCode::Success;
     }
 }

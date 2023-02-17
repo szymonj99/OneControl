@@ -6,6 +6,7 @@
 
 namespace oc::RuntimeGlobals
 {
+	// TODO: As these can be accessed by multiple threads, wrap these in a mutex. Also add get and set functions for ease of use.
 	inline bool isServer = false;
 	inline bool isClient = false;
 	inline bool customPort = false;
