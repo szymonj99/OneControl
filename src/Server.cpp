@@ -39,21 +39,19 @@ void oc::Server::WaitForClient()
 
 oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
 {
-	auto authenticationPkt = oc::Packet();
+	oc::Packet authenticationPkt{};
 	if (m_pClient->receive(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Failed at getting authentication packet.\nQuitting.\n");
 		return oc::ReturnCode::FailedSendingPacket;
 	}
-	oc::VersionInt major, minor, revision;
-	authenticationPkt >> major >> minor >> revision;
-
-	oc::Version version(major, minor, revision);
-	if (version.GetVersionString() != oc::kVersion.GetVersionString())
+	oc::Version clientVersion;
+	authenticationPkt >> clientVersion;
+	if (oc::kVersion != clientVersion)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "!!!Version mismatch!!!\n");
-		fmt::print(stderr, "Client version : {}\n", version.GetVersionString());
-		fmt::print(stderr, "Server version : {}\nKicking client.\n", oc::kVersion.GetVersionString());
+		fmt::print(stderr, "Client version : {}\n", oc::VersionToString(clientVersion));
+		fmt::print(stderr, "Server version : {}\nKicking client.\n", oc::VersionToString(oc::kVersion));
 		this->m_pClient->disconnect();
 		return oc::ReturnCode::VersionMismatch;
 	}

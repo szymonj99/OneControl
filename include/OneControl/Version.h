@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 
+#include <SFML/Network/Packet.hpp>
+
 #include <OneControl/Constants.h>
 
 namespace oc
@@ -10,22 +12,25 @@ namespace oc
 	/**
 	 * This class is used for authentication purposes. It's a quick check to see if the client and server are compatible.
 	 */
-	class Version
+	struct Version
 	{
-	private:
-		oc::VersionInt m_Major = 0;
-		oc::VersionInt m_Minor = 0;
-		oc::VersionInt m_Revision = 2;
+		oc::VersionInt Major = 0;
+		oc::VersionInt Minor = 0;
+		oc::VersionInt Revision = 0;
 
-	public:
 		Version() = default;
-		Version(const oc::VersionInt major, const oc::VersionInt minor, const oc::VersionInt revision);
-		[[nodiscard]] std::string GetVersionString() const;
-		[[nodiscard]] oc::VersionInt GetMajor() const;
-		[[nodiscard]] oc::VersionInt GetMinor() const;
-		[[nodiscard]] oc::VersionInt GetRevision() const;
+		Version(const oc::VersionInt& kMajor, const oc::VersionInt& kMinor, const oc::VersionInt& kRevision) { this->Major = kMajor; this->Minor = kMinor; this->Revision = kRevision; }
+
+		bool operator==(const oc::Version& kVersion);
 	};
 
-	// The version of the application.
-	const static Version kVersion(0, 0, 2);
+	static std::string VersionToString(const oc::Version& kVersion)
+	{
+		return std::to_string(kVersion.Major) + "." + std::to_string(kVersion.Minor) + "." + std::to_string(kVersion.Revision);
+	}
+
+	const static oc::Version kVersion(0, 0, 3);
+
+	sf::Packet& operator<<(sf::Packet& packet, const oc::Version& kVersion);
+	sf::Packet& operator>>(sf::Packet& packet, oc::Version& version);
 }
