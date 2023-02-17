@@ -4,6 +4,14 @@ void oc::Server::Start()
 {
 	std::thread listenerThread([&] {
 		WaitForClient();
+
+		if (this->m_Handshake() != oc::ReturnCode::Success)
+		{
+			std::cerr << "Failed to perform handshake with the client." << std::endl;
+			this->m_pClient->disconnect();
+			return;
+		}
+
 		ServerLoop();
 		});
 	listenerThread.join();
@@ -29,12 +37,6 @@ void oc::Server::WaitForClient()
 	}
 
 	fmt::print(fmt::fg(fmt::color::green), "We have a client! {}:{}\n", this->m_pClient->getRemoteAddress().toString(), std::to_string(this->m_pClient->getRemotePort()));
-
-	if (this->m_ReceiveAuthenticationPacket() != oc::ReturnCode::Success)
-	{
-		this->m_pClient->disconnect();
-		return;
-	}
 }
 
 oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
@@ -57,6 +59,12 @@ oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
 	return oc::ReturnCode::Success;
+}
+
+oc::ReturnCode oc::Server::m_Handshake()
+{
+	std::cout << "Performing OneControl-specific Handshake with Client." << std::endl;
+	return this->m_ReceiveAuthenticationPacket();
 }
 
 void oc::Server::ServerLoop()

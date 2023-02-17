@@ -38,6 +38,7 @@ namespace oc
         // TODO: Check if the client can be of type oc::Client, rather than a raw SFML TCP socket.
         std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		oc::ReturnCode m_ReceiveAuthenticationPacket();
+        oc::ReturnCode m_Handshake();
 
 	public:
         /**
