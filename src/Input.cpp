@@ -3,6 +3,78 @@
 // We need to add more options to this in the future.
 namespace oc
 {
+    // TODO: Move these stream operators to OneLibrary
+
+    std::istream& operator>>(std::istream& stream, ol::eInputType& inputType)
+    {
+        uint8_t t;
+        stream >> t;
+        inputType = static_cast<ol::eInputType>(t);
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const ol::eInputType& kInputType)
+    {
+        stream << static_cast<uint8_t>(kInputType);
+        return stream;
+    }
+
+    std::istream& operator>>(std::istream& stream, ol::eEventType& eventType)
+    {
+        uint8_t e;
+        stream >> e;
+        eventType = static_cast<ol::eEventType>(e);
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const ol::eEventType& kEventType)
+    {
+        stream << static_cast<uint8_t>(kEventType);
+        return stream;
+    }
+
+    std::istream& operator>>(std::istream& stream, ol::MouseInput& mouseInput)
+    {
+        stream >> mouseInput.x >> mouseInput.y >> mouseInput.scroll;
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const ol::MouseInput& kMouseInput)
+    {
+        stream << kMouseInput.x << kMouseInput.y << kMouseInput.scroll;
+        return stream;
+    }
+
+    std::istream& operator>>(std::istream& stream, ol::KeyboardInput& keyboardInput)
+    {
+        stream >> keyboardInput.key;
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const ol::KeyboardInput& kKeyboardInput)
+    {
+        stream << kKeyboardInput.key;
+        return stream;
+    }
+
+    std::istream& operator>>(std::istream& stream, ol::Input& input)
+    {
+        stream >> input.inputType;
+        stream >> input.eventType;
+        stream >> input.mouse;
+        stream >> input.keyboard;
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const ol::Input& kInput)
+    {
+        stream << kInput.inputType;
+        stream << kInput.eventType;
+        stream << kInput.mouse;
+        stream << kInput.keyboard;
+        return stream;
+    }
+
     sf::Packet& operator<<(sf::Packet& packet, const ol::eInputType& kInputType)
     {
         packet << static_cast<uint8_t>(kInputType);
