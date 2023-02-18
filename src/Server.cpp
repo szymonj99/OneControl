@@ -84,19 +84,22 @@ oc::ReturnCode oc::Server::m_Handshake()
 	CryptoPP::RSA::PublicKey clientPubK;
 	clientPubK.Load(clientPubKSource);
 
-	// Here we have a packet with some info inside.
-	// What do we want this info to be actually?
 	// AES Key
-	CryptoPP::SecByteBlock aesK[CryptoPP::AES::DEFAULT_KEYLENGTH];
-	rng.GenerateBlock(aesK->BytePtr(), sizeof(aesK));
+	CryptoPP::SecByteBlock aesK(CryptoPP::AES::DEFAULT_KEYLENGTH);
+	CryptoPP::SecByteBlock iv(CryptoPP::AES::BLOCKSIZE);
+	rng.GenerateBlock(aesK, aesK.size());
+	rng.GenerateBlock(iv, iv.size());
 
 	// Now that this server has the client's public key, we can encrypt the AES key using the Client RSA Public Key.
 	CryptoPP::RSAES_OAEP_SHA_Encryptor encryptor(clientPubK);
 	std::string encryptedAESK;
-	CryptoPP::StringSource encryptedAESKSource(aesK->BytePtr(), sizeof(aesK), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedAESK)));
+	CryptoPP::StringSource encryptedAESKSource(aesK, aesK.size(), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedAESK)));
+
+	std::string encryptedIV;
+	CryptoPP::StringSource encryptedIVSource(iv, iv.size(), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedIV)));
 
 	oc::Packet encryptedAESPkt{};
-	encryptedAESPkt << encryptedAESK;
+	encryptedAESPkt << encryptedAESK << encryptedIV;
 
 	if (this->m_pClient->send(encryptedAESPkt) != sf::Socket::Status::Done)
 	{
@@ -105,6 +108,16 @@ oc::ReturnCode oc::Server::m_Handshake()
 	}
 
 	// Here we have an agreed-upon AES key that was sent securely.
+	// CryptoPP::CBC_Mode_ExternalCipher::Encryption does _NOT_ take in an IV.
+	// CryptoPP::CBC_ModeBase::Encryption does take in an IV.
+	// For now, let's use the former.
+	CryptoPP::AES::Encryption aesEncryption(aesK, aesK.size());
+	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
+
+	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
+	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
+
+	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
 	return this->m_ReceiveAuthenticationPacket();
 }

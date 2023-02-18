@@ -19,6 +19,7 @@
 #include <cryptopp/rsa.h>
 #include <cryptopp/base64.h>
 #include <cryptopp/aes.h>
+#include <cryptopp/modes.h>
 
 #include <OneLibrary/InputGathererMouse.h>
 #include <OneLibrary/InputGathererKeyboard.h>

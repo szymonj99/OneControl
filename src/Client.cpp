@@ -57,8 +57,6 @@ oc::ReturnCode oc::Client::m_Handshake()
 		return oc::ReturnCode::FailedSendingPacket;
 	}
 
-	// Here we have a packet with some info inside.
-	// What do we want this info to be actually?
 	// The encrypted AES key will be sent from the server to this, the client.
 
 	// Here, we now will get the encrypted AES key from the server.
@@ -71,15 +69,26 @@ oc::ReturnCode oc::Client::m_Handshake()
 	}
 
 	std::string encryptedAESK;
-	encryptedAESKPkt >> encryptedAESK;
+	std::string encryptedIV;
+	encryptedAESKPkt >> encryptedAESK >> encryptedIV;
 
 	// Decrypt the AES key.
 
 	CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(privK);
-	CryptoPP::SecByteBlock aesK[CryptoPP::AES::DEFAULT_KEYLENGTH];
-	CryptoPP::StringSource decryptedAESKSource(encryptedAESK, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(aesK->BytePtr(), aesK->SizeInBytes())));
+	CryptoPP::SecByteBlock aesK(CryptoPP::AES::DEFAULT_KEYLENGTH);
+	CryptoPP::StringSource decryptedAESKSource(encryptedAESK, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(aesK, aesK.size())));
+	CryptoPP::SecByteBlock iv(CryptoPP::AES::BLOCKSIZE);
+	CryptoPP::StringSource decryptedIVSource(encryptedIV, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(iv, iv.size())));
 
-	// Here we have an agreed-upon AES key that was sent securely.
+	// Here we have an agreed-upon AES key that was sent securely as well as the initialisation vector.
+
+	CryptoPP::AES::Encryption aesEncryption(aesK, aesK.size());
+	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
+
+	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
+	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
+
+	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
 	return m_SendAuthenticationPacket();
 }
