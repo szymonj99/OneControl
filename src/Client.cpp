@@ -88,6 +88,13 @@ oc::ReturnCode oc::Client::m_Handshake()
 	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
 	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
 
+	oc::Crypto::aesEncryption = aesEncryption;
+	oc::Crypto::aesDecryption = aesDecryption;
+	oc::Crypto::cbcEncryption = cbcEncryption;
+	oc::Crypto::cbcDecryption = cbcDecryption;
+
+	// TODO: Figure out a way to send a new IV between the server and the client.
+
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
 	return m_SendAuthenticationPacket();

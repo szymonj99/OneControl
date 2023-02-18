@@ -108,14 +108,18 @@ oc::ReturnCode oc::Server::m_Handshake()
 	}
 
 	// Here we have an agreed-upon AES key that was sent securely.
-	// CryptoPP::CBC_Mode_ExternalCipher::Encryption does _NOT_ take in an IV.
-	// CryptoPP::CBC_ModeBase::Encryption does take in an IV.
-	// For now, let's use the former.
 	CryptoPP::AES::Encryption aesEncryption(aesK, aesK.size());
 	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
 
 	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
 	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
+
+	oc::Crypto::aesEncryption = aesEncryption;
+	oc::Crypto::aesDecryption = aesDecryption;
+	oc::Crypto::cbcEncryption = cbcEncryption;
+	oc::Crypto::cbcDecryption = cbcDecryption;
+
+	// TODO: Figure out a way to send a new IV between the server and the client.
 
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 

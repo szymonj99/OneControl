@@ -29,6 +29,7 @@
 #include <OneControl/RuntimeGlobals.h>
 #include <OneControl/Input.h>
 #include <OneControl/ReturnCode.h>
+#include <OneControl/Crypto.h>
 
 namespace oc
 {
