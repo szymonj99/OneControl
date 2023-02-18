@@ -74,18 +74,14 @@ oc::ReturnCode oc::Server::m_Handshake()
 		return oc::ReturnCode::NoPacketReceived;
 	}
 
-	CryptoPP::RSA::PublicKey clientPubK;
-
+	// This server doesn't actually need to create it's own RSA keys, as we get it from the client, and encrypt our AES key with it.
 	CryptoPP::AutoSeededRandomPool rng;
-	CryptoPP::RSA::PrivateKey privK;
-	constexpr uint32_t kAESKeySize = 2048;
-	privK.GenerateRandomWithKeySize(rng, kAESKeySize);
-	CryptoPP::RSA::PublicKey pubK(privK);
 
 	std::string clientPubKStr;
 	clientPublicKeyPkt >> clientPubKStr;
 
 	CryptoPP::StringSource clientPubKSource(clientPubKStr, true);
+	CryptoPP::RSA::PublicKey clientPubK;
 	clientPubK.Load(clientPubKSource);
 
 	// Here we have a packet with some info inside.
@@ -93,6 +89,22 @@ oc::ReturnCode oc::Server::m_Handshake()
 	// AES Key
 	CryptoPP::SecByteBlock aesK[CryptoPP::AES::DEFAULT_KEYLENGTH];
 	rng.GenerateBlock(aesK->BytePtr(), sizeof(aesK));
+
+	// Now that this server has the client's public key, we can encrypt the AES key using the Client RSA Public Key.
+	CryptoPP::RSAES_OAEP_SHA_Encryptor encryptor(clientPubK);
+	std::string encryptedAESK;
+	CryptoPP::StringSource encryptedAESKSource(aesK->BytePtr(), sizeof(aesK), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedAESK)));
+
+	oc::Packet encryptedAESPkt{};
+	encryptedAESPkt << encryptedAESK;
+
+	if (this->m_pClient->send(encryptedAESPkt) != sf::Socket::Status::Done)
+	{
+		std::cerr << "Failed to send encrypted AES key to client." << std::endl;
+		return oc::ReturnCode::FailedSendingPacket;
+	}
+
+	// Here we have an agreed-upon AES key that was sent securely.
 
 	return this->m_ReceiveAuthenticationPacket();
 }

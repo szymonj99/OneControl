@@ -54,12 +54,32 @@ oc::ReturnCode oc::Client::m_Handshake()
 	if (this->send(clientPublicKeyPkt) != sf::Socket::Status::Done)
 	{
 		std::cerr << "Failed to send public key packet to server." << std::endl;
-		return oc::ReturnCode::NoPacketReceived;
+		return oc::ReturnCode::FailedSendingPacket;
 	}
 
 	// Here we have a packet with some info inside.
 	// What do we want this info to be actually?
 	// The encrypted AES key will be sent from the server to this, the client.
+
+	// Here, we now will get the encrypted AES key from the server.
+
+	oc::Packet encryptedAESKPkt{};
+	if (this->receive(encryptedAESKPkt) != sf::Socket::Status::Done)
+	{
+		std::cerr << "Failed to receive encrypted AES key from the server." << std::endl;
+		return oc::ReturnCode::NoPacketReceived;
+	}
+
+	std::string encryptedAESK;
+	encryptedAESKPkt >> encryptedAESK;
+
+	// Decrypt the AES key.
+
+	CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(privK);
+	CryptoPP::SecByteBlock aesK[CryptoPP::AES::DEFAULT_KEYLENGTH];
+	CryptoPP::StringSource decryptedAESKSource(encryptedAESK, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(aesK->BytePtr(), aesK->SizeInBytes())));
+
+	// Here we have an agreed-upon AES key that was sent securely.
 
 	return m_SendAuthenticationPacket();
 }
