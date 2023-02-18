@@ -15,10 +15,13 @@
 #include <fmt/color.h>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
+#include <cryptopp/osrng.h>
+#include <cryptopp/rsa.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/aes.h>
 
 #include <OneLibrary/InputGathererMouse.h>
 #include <OneLibrary/InputGathererKeyboard.h>
-
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>

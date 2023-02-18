@@ -5,6 +5,14 @@ void oc::Client::Start()
 	std::thread clientThread([&] {
 		const auto kServerIP = oc::RuntimeGlobals::customServerIP ? oc::RuntimeGlobals::serverIP : GetUserIP("Insert server IP\n");
 		ConnectToServer(kServerIP);
+
+		if (this->m_Handshake() != oc::ReturnCode::Success)
+		{
+			std::cerr << "Failed to perform handshake with the server." << std::endl;
+			this->disconnect();
+			return;
+		}
+
 		StartReceivingPacketStream();
 		});
 	clientThread.join();
@@ -22,12 +30,38 @@ void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 		return;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Connected to server successfully.\n");
+}
 
-	if (m_SendAuthenticationPacket() != oc::ReturnCode::Success)
+oc::ReturnCode oc::Client::m_Handshake()
+{
+	std::cout << "Performing OneControl-specific Handshake with Server." << std::endl;
+
+	CryptoPP::AutoSeededRandomPool rng;
+	CryptoPP::RSA::PrivateKey privK;
+	constexpr uint32_t kAESKeySize = 2048;
+	privK.GenerateRandomWithKeySize(rng, kAESKeySize);
+	CryptoPP::RSA::PublicKey pubK(privK);
+
+	// Let's not add an option to disable encryption for now. That may be potentially done in the future.
+	oc::Packet clientPublicKeyPkt{};
+	std::string pubKStr;
+	CryptoPP::StringSink pubKSink(pubKStr);
+	pubK.Save(pubKSink);
+	clientPublicKeyPkt << pubKStr;
+
+	// TODO: If we want to output more debug info, we can print out some of the parameters of the keys used, or base64 them.
+
+	if (this->send(clientPublicKeyPkt) != sf::Socket::Status::Done)
 	{
-		this->disconnect();
-		return;
+		std::cerr << "Failed to send public key packet to server." << std::endl;
+		return oc::ReturnCode::NoPacketReceived;
 	}
+
+	// Here we have a packet with some info inside.
+	// What do we want this info to be actually?
+	// The encrypted AES key will be sent from the server to this, the client.
+
+	return m_SendAuthenticationPacket();
 }
 
 oc::ReturnCode oc::Client::m_SendAuthenticationPacket()

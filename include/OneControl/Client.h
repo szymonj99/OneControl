@@ -6,6 +6,10 @@
 #include <iostream>
 
 #include <SFML/Network/TcpSocket.hpp>
+#include <cryptopp/osrng.h>
+#include <cryptopp/rsa.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/aes.h>
 
 #include <OneLibrary/InputSimulatorMouse.h>
 #include <OneLibrary/InputSimulatorKeyboard.h>
@@ -25,6 +29,7 @@ namespace oc
 	{
 	private:
 		oc::ReturnCode m_SendAuthenticationPacket();
+		oc::ReturnCode m_Handshake();
 
 	public:
 		/**

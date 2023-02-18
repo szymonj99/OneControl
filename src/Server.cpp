@@ -64,6 +64,36 @@ oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
 oc::ReturnCode oc::Server::m_Handshake()
 {
 	std::cout << "Performing OneControl-specific Handshake with Client." << std::endl;
+
+	// The client will reach out to us, the server, with it's RSA public key.
+	// Let's not add an option to disable encryption for now. That may be potentially done in the future.
+	oc::Packet clientPublicKeyPkt{};
+	if (this->m_pClient->receive(clientPublicKeyPkt) != sf::Socket::Status::Done)
+	{
+		std::cerr << "Failed to receive public key packet from client." << std::endl;
+		return oc::ReturnCode::NoPacketReceived;
+	}
+
+	CryptoPP::RSA::PublicKey clientPubK;
+
+	CryptoPP::AutoSeededRandomPool rng;
+	CryptoPP::RSA::PrivateKey privK;
+	constexpr uint32_t kAESKeySize = 2048;
+	privK.GenerateRandomWithKeySize(rng, kAESKeySize);
+	CryptoPP::RSA::PublicKey pubK(privK);
+
+	std::string clientPubKStr;
+	clientPublicKeyPkt >> clientPubKStr;
+
+	CryptoPP::StringSource clientPubKSource(clientPubKStr, true);
+	clientPubK.Load(clientPubKSource);
+
+	// Here we have a packet with some info inside.
+	// What do we want this info to be actually?
+	// AES Key
+	CryptoPP::SecByteBlock aesK[CryptoPP::AES::DEFAULT_KEYLENGTH];
+	rng.GenerateBlock(aesK->BytePtr(), sizeof(aesK));
+
 	return this->m_ReceiveAuthenticationPacket();
 }
 
