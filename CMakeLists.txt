@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 set(BINARY_NAME OneControl)
-set(BINARY_VERSION 0.0.1)
+set(BINARY_VERSION 0.0.3)
 set(TESTS_NAME Tests)
 
 # TODO: Enable this once it's implemented
@@ -103,7 +103,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG 93a10098a3f1b9c992038b0ce49ba5695b5142f7
+            GIT_TAG f28b674214b1b9f54dccf97fc14f1fe545846ffa
             VERSION 0.0.1)
 endif()
 
