@@ -81,18 +81,10 @@ oc::ReturnCode oc::Client::m_Handshake()
 
 	// Here we have an agreed-upon AES key that was sent securely as well as the initialisation vector.
 
-	CryptoPP::AES::Encryption aesEncryption(aesK, aesK.size());
-	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
-
-	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
-	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
-
-	oc::Crypto::aesEncryption = aesEncryption;
-	oc::Crypto::aesDecryption = aesDecryption;
-	oc::Crypto::cbcEncryption = cbcEncryption;
-	oc::Crypto::cbcDecryption = cbcDecryption;
-
-	// TODO: Figure out a way to send a new IV between the server and the client.
+	oc::Crypto::aesEncryption = { aesK, aesK.size() };
+	oc::Crypto::aesDecryption = { aesK, aesK.size() };
+	oc::Crypto::cbcEncryption = { oc::Crypto::aesEncryption, iv };
+	oc::Crypto::cbcDecryption = { oc::Crypto::aesDecryption, iv };
 
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
@@ -116,6 +108,7 @@ void oc::Client::ClientLoop()
 {
 	std::thread receiver([&]
 	{
+		oc::Crypto::EncryptorDecryptor<ol::Input> decryptor{};
 		while (oc::RuntimeGlobals::receiveFromServer)
 		{
 			oc::Packet pkt{};
@@ -126,10 +119,10 @@ void oc::Client::ClientLoop()
 				fmt::print(stderr, "Quitting.\n");
 				return;
 			}
-			ol::Input input{};
-			pkt >> input;
-
-			this->m_bufInputs.Add(input);
+			std::string encryptedInput;
+			pkt >> encryptedInput;
+			const ol::Input kInput = decryptor.Decrypt(encryptedInput);
+			this->m_bufInputs.Add(kInput);
 		}
 	});
 

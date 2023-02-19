@@ -106,18 +106,10 @@ oc::ReturnCode oc::Server::m_Handshake()
 	}
 
 	// Here we have an agreed-upon AES key that was sent securely.
-	CryptoPP::AES::Encryption aesEncryption(aesK, aesK.size());
-	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
-
-	CryptoPP::AES::Decryption aesDecryption(aesK, aesK.size());
-	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
-
-	oc::Crypto::aesEncryption = aesEncryption;
-	oc::Crypto::aesDecryption = aesDecryption;
-	oc::Crypto::cbcEncryption = cbcEncryption;
-	oc::Crypto::cbcDecryption = cbcDecryption;
-
-	// TODO: Figure out a way to send a new IV between the server and the client.
+	oc::Crypto::aesEncryption = { aesK, aesK.size() };
+	oc::Crypto::cbcEncryption = { oc::Crypto::aesEncryption, iv };
+	oc::Crypto::aesDecryption = { aesK, aesK.size() };
+	oc::Crypto::cbcDecryption = { oc::Crypto::aesDecryption, iv };
 
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
@@ -128,30 +120,33 @@ void oc::Server::ServerLoop()
 {
 	const auto mouseInterface = std::make_unique<ol::InputGathererMouse>(true);
 	const auto keyboardInterface = std::make_unique<ol::InputGathererKeyboard>(true);
-	// Buffer the inputs iin a single buffer.
+	oc::Crypto::EncryptorDecryptor<ol::Input> inputEncryptor{};
+	// Buffer the inputs in a single buffer.
 	// The reasoning for this is that the mouse and keyboard inputs are stored in separate buffers in OneLibrary
 	// Adding them to one buffer makes things more concise but is not necessary.
 	// Is this syntax better/worse than having it on multiple lines?
 	// TODO: Potentially rename the variable to addToBuffer?
+
 	std::thread mouseThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(mouseInterface->GatherInput()); }});
-	std::thread KeyboardThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(keyboardInterface->GatherInput()); }});
+	std::thread keyboardThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(keyboardInterface->GatherInput()); }});
 
 	// Send out the buffered inputs here
 	while (oc::RuntimeGlobals::sendToClient)
 	{
 		oc::Packet pkt{};
 		const auto kInput = this->m_bufInputs.Get();
-		pkt << kInput;
+		pkt << inputEncryptor.Encrypt(kInput);
 
 		if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
 		{
-			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client");
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client\n");
 			// TODO: Investigate if this needs to be wrapped in a mutex as it can be accessed by more than one thread at a time.
 			// Or change it to atomic.
 			oc::RuntimeGlobals::sendToClient = false;
+			break;
 		}
 	}
 
     mouseThread.join();
-	KeyboardThread.join();
+	keyboardThread.join();
 }
