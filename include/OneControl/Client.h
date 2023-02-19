@@ -14,6 +14,7 @@
 
 #include <OneLibrary/InputSimulatorMouse.h>
 #include <OneLibrary/InputSimulatorKeyboard.h>
+#include <OneLibrary/ThreadsafeQueue.h>
 #include <OneControl/Packet.h>
 #include <OneControl/HelperMethods.h>
 #include <OneControl/Constants.h>
@@ -30,6 +31,7 @@ namespace oc
 	class Client : sf::TcpSocket
 	{
 	private:
+		ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
 		oc::ReturnCode m_SendAuthenticationPacket();
 		oc::ReturnCode m_Handshake();
 
@@ -45,6 +47,6 @@ namespace oc
 		/**
 		 * Start the message loop. Messages will be sent by the server and input will be performed.
 		 */
-		void StartReceivingPacketStream();
+		void ClientLoop();
 	};
 }

@@ -75,8 +75,6 @@ oc::ReturnCode oc::Server::m_Handshake()
 	}
 
 	// This server doesn't actually need to create it's own RSA keys, as we get it from the client, and encrypt our AES key with it.
-	CryptoPP::AutoSeededRandomPool rng;
-
 	std::string clientPubKStr;
 	clientPublicKeyPkt >> clientPubKStr;
 
@@ -87,16 +85,16 @@ oc::ReturnCode oc::Server::m_Handshake()
 	// AES Key
 	CryptoPP::SecByteBlock aesK(CryptoPP::AES::DEFAULT_KEYLENGTH);
 	CryptoPP::SecByteBlock iv(CryptoPP::AES::BLOCKSIZE);
-	rng.GenerateBlock(aesK, aesK.size());
-	rng.GenerateBlock(iv, iv.size());
+	oc::Crypto::rng.GenerateBlock(aesK, aesK.size());
+	oc::Crypto::rng.GenerateBlock(iv, iv.size());
 
 	// Now that this server has the client's public key, we can encrypt the AES key using the Client RSA Public Key.
 	CryptoPP::RSAES_OAEP_SHA_Encryptor encryptor(clientPubK);
 	std::string encryptedAESK;
-	CryptoPP::StringSource encryptedAESKSource(aesK, aesK.size(), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedAESK)));
+	CryptoPP::StringSource encryptedAESKSource(aesK, aesK.size(), true, new CryptoPP::PK_EncryptorFilter(oc::Crypto::rng, encryptor, new CryptoPP::StringSink(encryptedAESK)));
 
 	std::string encryptedIV;
-	CryptoPP::StringSource encryptedIVSource(iv, iv.size(), true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::StringSink(encryptedIV)));
+	CryptoPP::StringSource encryptedIVSource(iv, iv.size(), true, new CryptoPP::PK_EncryptorFilter(oc::Crypto::rng, encryptor, new CryptoPP::StringSink(encryptedIV)));
 
 	oc::Packet encryptedAESPkt{};
 	encryptedAESPkt << encryptedAESK << encryptedIV;
@@ -128,45 +126,32 @@ oc::ReturnCode oc::Server::m_Handshake()
 
 void oc::Server::ServerLoop()
 {
-    // TODO: Make this nicer.
-    const auto processMouse = [&]
-    {
-        const auto mouseInterface = std::make_unique<ol::InputGathererMouse>(true);
-        while (oc::RuntimeGlobals::sendToClient)
-        {
-            oc::Packet pkt {};
-            const auto kInput = mouseInterface->GatherInput();
-            pkt << kInput;
+	const auto mouseInterface = std::make_unique<ol::InputGathererMouse>(true);
+	const auto keyboardInterface = std::make_unique<ol::InputGathererKeyboard>(true);
+	// Buffer the inputs iin a single buffer.
+	// The reasoning for this is that the mouse and keyboard inputs are stored in separate buffers in OneLibrary
+	// Adding them to one buffer makes things more concise but is not necessary.
+	// Is this syntax better/worse than having it on multiple lines?
+	// TODO: Potentially rename the variable to addToBuffer?
+	std::thread mouseThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(mouseInterface->GatherInput()); }});
+	std::thread KeyboardThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(keyboardInterface->GatherInput()); }});
 
-            if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
-            {
-                fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client");
-                // TODO: Investigate if this needs to be wrapped in a mutex as it can be accessed by more than one thread at a time.
-                // Or change it to atomic.
-                oc::RuntimeGlobals::sendToClient = false;
-            }
-        }
-    };
-    std::thread mouseThread(processMouse);
+	// Send out the buffered inputs here
+	while (oc::RuntimeGlobals::sendToClient)
+	{
+		oc::Packet pkt{};
+		const auto kInput = this->m_bufInputs.Get();
+		pkt << kInput;
 
-    const auto processKeyboard = [&]
-    {
-        const auto keyboardInterface = std::make_unique<ol::InputGathererKeyboard>(true);
-        while (oc::RuntimeGlobals::sendToClient)
-        {
-            oc::Packet pkt {};
-            const auto kInput = keyboardInterface->GatherInput();
-            pkt << kInput;
-
-            if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
-            {
-                fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client");
-                oc::RuntimeGlobals::sendToClient = false;
-            }
-        }
-    };
-	std::thread keyboardThread(processKeyboard);
+		if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
+		{
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client");
+			// TODO: Investigate if this needs to be wrapped in a mutex as it can be accessed by more than one thread at a time.
+			// Or change it to atomic.
+			oc::RuntimeGlobals::sendToClient = false;
+		}
+	}
 
     mouseThread.join();
-    keyboardThread.join();
+	KeyboardThread.join();
 }

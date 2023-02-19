@@ -23,6 +23,7 @@
 
 #include <OneLibrary/InputGathererMouse.h>
 #include <OneLibrary/InputGathererKeyboard.h>
+#include <OneLibrary/ThreadsafeQueue.h>
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
@@ -44,6 +45,7 @@ namespace oc
         std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		oc::ReturnCode m_ReceiveAuthenticationPacket();
         oc::ReturnCode m_Handshake();
+        ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
 
 	public:
         /**

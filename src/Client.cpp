@@ -13,7 +13,7 @@ void oc::Client::Start()
 			return;
 		}
 
-		StartReceivingPacketStream();
+		ClientLoop();
 		});
 	clientThread.join();
 	fmt::print("Client thread finished.\n");
@@ -36,10 +36,9 @@ oc::ReturnCode oc::Client::m_Handshake()
 {
 	std::cout << "Performing OneControl-specific Handshake with Server." << std::endl;
 
-	CryptoPP::AutoSeededRandomPool rng;
 	CryptoPP::RSA::PrivateKey privK;
 	constexpr uint32_t kAESKeySize = 2048;
-	privK.GenerateRandomWithKeySize(rng, kAESKeySize);
+	privK.GenerateRandomWithKeySize(oc::Crypto::rng, kAESKeySize);
 	CryptoPP::RSA::PublicKey pubK(privK);
 
 	// Let's not add an option to disable encryption for now. That may be potentially done in the future.
@@ -76,9 +75,9 @@ oc::ReturnCode oc::Client::m_Handshake()
 
 	CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(privK);
 	CryptoPP::SecByteBlock aesK(CryptoPP::AES::DEFAULT_KEYLENGTH);
-	CryptoPP::StringSource decryptedAESKSource(encryptedAESK, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(aesK, aesK.size())));
+	CryptoPP::StringSource decryptedAESKSource(encryptedAESK, true, new CryptoPP::PK_DecryptorFilter(oc::Crypto::rng, decryptor, new CryptoPP::ArraySink(aesK, aesK.size())));
 	CryptoPP::SecByteBlock iv(CryptoPP::AES::BLOCKSIZE);
-	CryptoPP::StringSource decryptedIVSource(encryptedIV, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::ArraySink(iv, iv.size())));
+	CryptoPP::StringSource decryptedIVSource(encryptedIV, true, new CryptoPP::PK_DecryptorFilter(oc::Crypto::rng, decryptor, new CryptoPP::ArraySink(iv, iv.size())));
 
 	// Here we have an agreed-upon AES key that was sent securely as well as the initialisation vector.
 
@@ -113,41 +112,49 @@ oc::ReturnCode oc::Client::m_SendAuthenticationPacket()
 	return oc::ReturnCode::Success;
 }
 
-void oc::Client::StartReceivingPacketStream()
+void oc::Client::ClientLoop()
 {
-	oc::Packet pkt{};
+	std::thread receiver([&]
+	{
+		while (oc::RuntimeGlobals::receiveFromServer)
+		{
+			oc::Packet pkt{};
+			if (this->receive(pkt) != sf::Socket::Status::Done)
+			{
+				this->disconnect();
+				fmt::print(stderr, fmt::fg(fmt::color::red), "Client lost connection with server.\n");
+				fmt::print(stderr, "Quitting.\n");
+				return;
+			}
+			ol::Input input{};
+			pkt >> input;
+
+			this->m_bufInputs.Add(input);
+		}
+	});
+
     // TODO: When adding in parameter parsing or compile options, add in an option/toggle to allow only mouse or keyboard
     // That will potentially allow some users to compile with potentially less dependencies if they would like to.
     auto mouseSimulator = std::make_unique<ol::InputSimulatorMouse>();
     auto keyboardSimulator = std::make_unique<ol::InputSimulatorKeyboard>();
 
-	while (true)
+	while (oc::RuntimeGlobals::receiveFromServer)
 	{
-		if (this->receive(pkt) != sf::Socket::Status::Done)
+		const auto kInput = this->m_bufInputs.Get();
+		switch (kInput.inputType)
 		{
-			this->disconnect();
-			fmt::print(stderr, fmt::fg(fmt::color::red), "Client lost connection with server.\n");
-			fmt::print(stderr, "Quitting.\n");
-			return;
+		case ol::eInputType::Mouse:
+			mouseSimulator->PerformInput(kInput);
+			break;
+		case ol::eInputType::Keyboard:
+			keyboardSimulator->PerformInput(kInput);
+			break;
+		default:
+			// TODO: Make the static_cast a bit nicer.
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<uint32_t>(kInput.inputType));
+			break;
 		}
-		
-		ol::Input input{};
-		pkt >> input;
-
-        switch (input.inputType)
-        {
-            case ol::eInputType::Mouse:
-                mouseSimulator->PerformInput(input);
-                break;
-            case ol::eInputType::Keyboard:
-                keyboardSimulator->PerformInput(input);
-                break;
-            default:
-                // TODO: Make the static_cast a bit nicer.
-                fmt::print(stderr, fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<uint32_t>(input.inputType));
-                break;
-        }
-
-		pkt.clear();
 	}
+
+	receiver.join();
 }

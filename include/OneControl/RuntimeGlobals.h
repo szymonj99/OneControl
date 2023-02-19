@@ -20,4 +20,5 @@ namespace oc::RuntimeGlobals
 	inline sf::IpAddress serverIP = sf::IpAddress::None;
 
     inline bool sendToClient = true;
+	inline bool receiveFromServer = true;
 }
