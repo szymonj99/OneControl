@@ -8,7 +8,7 @@ namespace oc
 
     std::istream& operator>>(std::istream& stream, ol::eInputType& inputType)
     {
-        uint8_t t;
+        uint16_t t;
         stream >> t;
         inputType = static_cast<ol::eInputType>(t);
         return stream;
@@ -16,13 +16,13 @@ namespace oc
 
     std::ostream& operator<<(std::ostream& stream, const ol::eInputType& kInputType)
     {
-        stream << static_cast<uint8_t>(kInputType);
+        stream << static_cast<uint16_t>(kInputType);
         return stream;
     }
 
     std::istream& operator>>(std::istream& stream, ol::eEventType& eventType)
     {
-        uint8_t e;
+        uint16_t e;
         stream >> e;
         eventType = static_cast<ol::eEventType>(e);
         return stream;
@@ -30,7 +30,7 @@ namespace oc
 
     std::ostream& operator<<(std::ostream& stream, const ol::eEventType& kEventType)
     {
-        stream << static_cast<uint8_t>(kEventType);
+        stream << static_cast<uint16_t>(kEventType);
         return stream;
     }
 
@@ -75,7 +75,7 @@ namespace oc
 
     std::stringstream& operator>>(std::stringstream& stream, ol::eInputType& inputType)
     {
-        uint8_t t;
+        uint16_t t;
         stream >> t;
         inputType = static_cast<ol::eInputType>(t);
         return stream;
@@ -83,7 +83,7 @@ namespace oc
 
     std::istringstream& operator>>(std::istringstream& stream, ol::eInputType& inputType)
     {
-        uint8_t t;
+        uint16_t t;
         stream >> t;
         inputType = static_cast<ol::eInputType>(t);
         return stream;
@@ -91,19 +91,19 @@ namespace oc
 
     std::stringstream& operator<<(std::stringstream& stream, const ol::eInputType& kInputType)
     {
-        stream << static_cast<uint8_t>(kInputType);
+        stream << static_cast<uint16_t>(kInputType);
         return stream;
     }
 
     std::ostringstream& operator<<(std::ostringstream& stream, const ol::eInputType& kInputType)
     {
-        stream << static_cast<uint8_t>(kInputType);
+        stream << static_cast<uint16_t>(kInputType);
         return stream;
     }
 
     std::stringstream& operator>>(std::stringstream& stream, ol::eEventType& eventType)
     {
-        uint8_t e;
+        uint16_t e;
         stream >> e;
         eventType = static_cast<ol::eEventType>(e);
         return stream;
@@ -111,7 +111,7 @@ namespace oc
 
     std::istringstream& operator>>(std::istringstream& stream, ol::eEventType& eventType)
     {
-        uint8_t e;
+        uint16_t e;
         stream >> e;
         eventType = static_cast<ol::eEventType>(e);
         return stream;
@@ -119,13 +119,13 @@ namespace oc
 
     std::stringstream& operator<<(std::stringstream& stream, const ol::eEventType& kEventType)
     {
-        stream << static_cast<uint8_t>(kEventType);
+        stream << static_cast<uint16_t>(kEventType);
         return stream;
     }
 
     std::ostringstream& operator<<(std::ostringstream& stream, const ol::eEventType& kEventType)
     {
-        stream << static_cast<uint8_t>(kEventType);
+        stream << static_cast<uint16_t>(kEventType);
         return stream;
     }
 
@@ -206,69 +206,4 @@ namespace oc
         stream << kInput.inputType << " " << kInput.eventType << " " << kInput.mouse << " " << kInput.keyboard;
         return stream;
     }
-
-    sf::Packet& operator<<(sf::Packet& packet, const ol::eInputType& kInputType)
-    {
-        packet << static_cast<uint8_t>(kInputType);
-        return packet;
-    }
-
-    sf::Packet& operator>>(sf::Packet& packet, ol::eInputType& inputType)
-    {
-        uint8_t i;
-        packet >> i;
-        inputType = static_cast<ol::eInputType>(i);
-        return packet;
-    }
-
-    sf::Packet& operator<<(sf::Packet& packet, const ol::eEventType& kEventType)
-    {
-        packet << static_cast<uint8_t>(kEventType);
-        return packet;
-    }
-
-    sf::Packet& operator>>(sf::Packet& packet, ol::eEventType& eventType)
-    {
-        uint8_t i;
-        packet >> i;
-        eventType = static_cast<ol::eEventType>(i);
-        return packet;
-    }
-
-    sf::Packet& operator<<(sf::Packet& packet, const ol::MouseInput& kMouseInput)
-    {
-        packet << kMouseInput.x << kMouseInput.y << kMouseInput.scroll;
-        return packet;
-    }
-
-    sf::Packet& operator>>(sf::Packet& packet, ol::MouseInput& mouseInput)
-    {
-        packet >> mouseInput.x >> mouseInput.y >> mouseInput.scroll;
-        return packet;
-    }
-
-    sf::Packet& operator<<(sf::Packet& packet, const ol::KeyboardInput& kKeyboardInput)
-    {
-        packet << kKeyboardInput.key;
-        return packet;
-    }
-
-    sf::Packet& operator>>(sf::Packet& packet, ol::KeyboardInput& keyboardInput)
-    {
-        packet >> keyboardInput.key;
-        return packet;
-    }
-
-	// Let's maybe serialize this in the future.
-	sf::Packet& operator<<(sf::Packet& packet, const ol::Input& kInput)
-	{
-        packet << kInput.inputType << kInput.eventType << kInput.mouse << kInput.keyboard;
-        return packet;
-	}
-
-	sf::Packet& operator>>(sf::Packet& packet, ol::Input& input)
-    {
-        packet >> input.inputType >> input.eventType >> input.mouse >> input.keyboard;
-        return packet;
-	}
 }
