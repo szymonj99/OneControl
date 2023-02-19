@@ -4,6 +4,7 @@
 namespace oc
 {
     // TODO: Move these stream operators to OneLibrary
+    // Note: StringStreams use the " " space as a delimiter.
 
     std::istream& operator>>(std::istream& stream, ol::eInputType& inputType)
     {
@@ -41,7 +42,7 @@ namespace oc
 
     std::ostream& operator<<(std::ostream& stream, const ol::MouseInput& kMouseInput)
     {
-        stream << kMouseInput.x << kMouseInput.y << kMouseInput.scroll;
+        stream << kMouseInput.x << " " << kMouseInput.y << " " << kMouseInput.scroll;
         return stream;
     }
 
@@ -68,10 +69,7 @@ namespace oc
 
     std::ostream& operator<<(std::ostream& stream, const ol::Input& kInput)
     {
-        stream << kInput.inputType;
-        stream << kInput.eventType;
-        stream << kInput.mouse;
-        stream << kInput.keyboard;
+        stream << kInput.inputType << " " << kInput.eventType << " " << kInput.mouse << " " << kInput.keyboard;
         return stream;
     }
 
@@ -145,13 +143,13 @@ namespace oc
 
     std::stringstream& operator<<(std::stringstream& stream, const ol::MouseInput& kMouseInput)
     {
-        stream << kMouseInput.x << kMouseInput.y << kMouseInput.scroll;
+        stream << kMouseInput.x << " " << kMouseInput.y << " " << kMouseInput.scroll;
         return stream;
     }
 
     std::ostringstream& operator<<(std::ostringstream& stream, const ol::MouseInput& kMouseInput)
     {
-        stream << kMouseInput.x << kMouseInput.y << kMouseInput.scroll;
+        stream << kMouseInput.x << " " << kMouseInput.y << " " << kMouseInput.scroll;
         return stream;
     }
 
@@ -199,19 +197,13 @@ namespace oc
 
     std::stringstream& operator<<(std::stringstream& stream, const ol::Input& kInput)
     {
-        stream << kInput.inputType;
-        stream << kInput.eventType;
-        stream << kInput.mouse;
-        stream << kInput.keyboard;
+        stream << kInput.inputType << " " << kInput.eventType << " " << kInput.mouse << " " << kInput.keyboard;
         return stream;
     }
 
     std::ostringstream& operator<<(std::ostringstream& stream, const ol::Input& kInput)
     {
-        stream << kInput.inputType;
-        stream << kInput.eventType;
-        stream << kInput.mouse;
-        stream << kInput.keyboard;
+        stream << kInput.inputType << " " << kInput.eventType << " " << kInput.mouse << " " << kInput.keyboard;
         return stream;
     }
 
