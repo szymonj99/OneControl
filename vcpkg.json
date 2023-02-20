@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
   "name": "onecontrol",
-  "version-string": "0.0.1",
+  "version-string": "0.0.3",
   "description": "Control multiple devices with one mouse and keyboard.",
   "homepage": "https://github.com/szymonj99/OneControl",
   "license": "GPL-3.0",
-  "supports": "windows & x64",
+  "supports": "(windows | osx | linux) & x64",
   "dependencies": [
     {
       "name": "vcpkg-cmake",
