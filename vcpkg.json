@@ -18,6 +18,7 @@
     "sfml",
     "fmt",
     "args",
-    "spdlog"
+    "spdlog",
+    "cryptopp"
   ]
 }

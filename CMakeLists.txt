@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 set(BINARY_NAME OneControl)
-set(BINARY_VERSION 0.0.1)
+set(BINARY_VERSION 0.0.3)
 set(TESTS_NAME Tests)
 
 # TODO: Enable this once it's implemented
@@ -86,12 +86,14 @@ if(ONECONTROL_USE_VCPKG)
     find_package(fmt CONFIG REQUIRED)
     find_package(args CONFIG REQUIRED)
     find_package(spdlog CONFIG REQUIRED)
+    find_package(cryptopp CONFIG REQUIRED)
 else()
     # Adding in CPM dependencies
     CPMAddPackage("gh:SFML/sfml#fd1435d1c04750893369067d75e0f667a88e0f6c")
     CPMAddPackage("gh:fmtlib/fmt#05be7a0764f8fbfbdf9c9750ec54d49fe3d2419f")
     CPMAddPackage("gh:Taywee/args#3e70c396bcdf2216846810988f967d88eb165782")
     CPMAddPackage("gh:gabime/spdlog#05e3a73b162705b37ed464ceb4644addfb03f25b")
+    CPMAddPackage("gh:weidai11/cryptopp#c364032d4c9e025704cf7caf379e8880ad87a59a")
 endif()
 
 if(ONECONTROL_USE_LOCAL_ONELIBRARY)
@@ -101,7 +103,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG 93a10098a3f1b9c992038b0ce49ba5695b5142f7
+            GIT_TAG f28b674214b1b9f54dccf97fc14f1fe545846ffa
             VERSION 0.0.1)
 endif()
 
@@ -120,7 +122,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 # I'm not sure if this is necessary when we use `find_package` :thinking:
 #target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args spdlog ${DBG_MACRO_INCLUDE_DIRS} OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only OneLibrary)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only cryptopp::cryptopp OneLibrary)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
 

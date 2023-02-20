@@ -15,16 +15,22 @@
 #include <fmt/color.h>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
+#include <cryptopp/osrng.h>
+#include <cryptopp/rsa.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/aes.h>
+#include <cryptopp/modes.h>
 
 #include <OneLibrary/InputGathererMouse.h>
 #include <OneLibrary/InputGathererKeyboard.h>
-
+#include <OneLibrary/ThreadsafeQueue.h>
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/RuntimeGlobals.h>
 #include <OneControl/Input.h>
 #include <OneControl/ReturnCode.h>
+#include <OneControl/Crypto.h>
 
 namespace oc
 {
@@ -38,6 +44,8 @@ namespace oc
         // TODO: Check if the client can be of type oc::Client, rather than a raw SFML TCP socket.
         std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
 		oc::ReturnCode m_ReceiveAuthenticationPacket();
+        oc::ReturnCode m_Handshake();
+        ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
 
 	public:
         /**

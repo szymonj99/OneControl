@@ -6,15 +6,22 @@
 #include <iostream>
 
 #include <SFML/Network/TcpSocket.hpp>
+#include <cryptopp/osrng.h>
+#include <cryptopp/rsa.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/aes.h>
+#include <cryptopp/modes.h>
 
 #include <OneLibrary/InputSimulatorMouse.h>
 #include <OneLibrary/InputSimulatorKeyboard.h>
+#include <OneLibrary/ThreadsafeQueue.h>
 #include <OneControl/Packet.h>
 #include <OneControl/HelperMethods.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/Input.h>
 #include <OneControl/ReturnCode.h>
+#include <OneControl/Crypto.h>
 
 namespace oc
 {
@@ -24,7 +31,9 @@ namespace oc
 	class Client : sf::TcpSocket
 	{
 	private:
+		ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
 		oc::ReturnCode m_SendAuthenticationPacket();
+		oc::ReturnCode m_Handshake();
 
 	public:
 		/**
@@ -38,6 +47,6 @@ namespace oc
 		/**
 		 * Start the message loop. Messages will be sent by the server and input will be performed.
 		 */
-		void StartReceivingPacketStream();
+		void ClientLoop();
 	};
 }
