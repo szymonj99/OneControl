@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <iostream>
+#include <sstream>
 
 #include <cryptopp/base64.h>
 #include <cryptopp/modes.h>
@@ -8,7 +10,7 @@
 #include <cryptopp/rsa.h>
 #include <cryptopp/osrng.h>
 
-#include <OneControl/Input.h>
+#include <OneLibrary/Input.h>
 
 // This is used by both the client and the server to encrypt and decrypt data after the OneControl encryption handshake was successful.
 namespace oc::Crypto
@@ -27,7 +29,7 @@ namespace oc::Crypto
 	// TODO: Figure out if there is a better way of doing this.
 	// Should this be split into Encryptor and Decryptor?
 	// TODO: Don't forget to make this use a new IV every encryption cycle.
-	// TODO: This can potentially do wit ha mutex.
+	// TODO: This can potentially do with a mutex.
 	template <typename T>
 	class EncryptorDecryptor
 	{

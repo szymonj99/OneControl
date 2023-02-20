@@ -24,11 +24,11 @@
 #include <OneLibrary/InputGathererMouse.h>
 #include <OneLibrary/InputGathererKeyboard.h>
 #include <OneLibrary/ThreadsafeQueue.h>
+#include <OneLibrary/Input.h>
 #include <OneControl/Packet.h>
 #include <OneControl/Constants.h>
 #include <OneControl/Version.h>
 #include <OneControl/RuntimeGlobals.h>
-#include <OneControl/Input.h>
 #include <OneControl/ReturnCode.h>
 #include <OneControl/Crypto.h>
 
