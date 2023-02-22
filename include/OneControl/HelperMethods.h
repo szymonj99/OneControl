@@ -40,7 +40,7 @@ namespace oc
 			std::string inputString;
 			std::getline(std::cin, inputString);
 			errno = 0;
-            input = _strtoui64(inputString.c_str(), &end, 0);
+            input = strtoull(inputString.c_str(), &end, 0);
 			// *end == 0 if we correctly parsed the whole input.
 			// if *end is not null, there were characters that were not parsed.
 			failedToParse = (*end != '\0');

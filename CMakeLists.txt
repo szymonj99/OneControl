@@ -103,7 +103,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG 4f35b4b5a64ee98fee2971c8cb38fc79913683e1
+            GIT_TAG d71c4efe1cb087535100f633f47aaa1d07d3c355
             VERSION 0.0.1)
 endif()
 
