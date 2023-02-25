@@ -43,13 +43,6 @@ endif()
 include(cmake/GetCPMConfig.cmake)
 include(GNUInstallDirs)
 
-set(LINKER_LANGUAGE CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-#set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-# I want this to be a self-contained application at first, so all the dependencies are included in it.
-# set(SFML_STATIC_LIBRARIES TRUE)
 if(CMAKE_HOST_WIN32)
     set(SFML_USE_STATIC_STD_LIBS FALSE)
 endif()
@@ -68,13 +61,7 @@ set(SPDLOG_FMT_EXTERNAL FALSE)
 set(ARGS_BUILD_EXAMPLE FALSE)
 set(ARGS_BUILD_UNITTESTS FALSE)
 
-set(ONELIBRARY_USE_BACKWARDCPP TRUE)
-
-set(UNICODE TRUE)
-
-set(CMAKE_BUILD_PARALLEL_LEVEL 8)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
+set(ONELIBRARY_USE_BACKWARDCPP ${ONECONTROL_USE_BACKWARDCPP})
 
 # I use this to make development easier.
 # This lets a user create a new file and it will be automatically compiled.
@@ -103,8 +90,8 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG d71c4efe1cb087535100f633f47aaa1d07d3c355
-            VERSION 0.0.1)
+            GIT_TAG a76b9273f03e161685c877815a59cc3c524e2692
+            VERSION 0.0.2)
 endif()
 
 # I need to remember that we 'add_library' first, then set the target options afterwards.
@@ -125,6 +112,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only cryptopp::cryptopp OneLibrary)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${PROJECT_NAME} PROPERTIES CMAKE_CXX_STANDARD 20)
+set_target_properties(${PROJECT_NAME} PROPERTIES CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set_target_properties(${PROJECT_NAME} PROPERTIES UNICODE TRUE)
+set_target_properties(${PROJECT_NAME} PROPERTIES CMAKE_BUILD_PARALLEL_LEVEL 8)
+set_target_properties(${PROJECT_NAME} PROPERTIES USE_FOLDERS TRUE)
 
 # Set Inter-Procedural Optimisation
 include(CheckIPOSupported)
@@ -149,7 +143,7 @@ endif()
 # TODO: Add `install` here.
 #install(TARGETS ${PROJECT_NAME})
 
-if(PACKAGE_TESTS)
+if(ONECONTROL_BUILD_TESTS)
     # enable_testing() needs to be here.
     # Reasoning: https://stackoverflow.com/questions/64099136/visual-studio-2019-test-explorer-did-not-find-c-google-tests
     #enable_testing()
