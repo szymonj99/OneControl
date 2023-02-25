@@ -20,8 +20,13 @@ jobs:
     
     # I will change this to use matrix.os with an if statement in the future. //shrug
     - name: Download Packages
-      run: sudo apt update && sudo apt install autoconf libtool libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev libxrandr-dev libxi-dev libgl1-mesa-dev
+      run: sudo apt update && sudo apt install autoconf libtool libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev libxrandr-dev libxi-dev libgl1-mesa-dev libevdev-dev
       shell: bash
+
+    - name: Copy libevdev to Directory
+      run: |
+        cd /usr/include/libevdev-1.0
+        sudo mv libevdev ../
 
     - name: Set up VCPKG
       run: git clone https://github.com/microsoft/vcpkg && cd ./vcpkg && chmod u+x ./bootstrap-vcpkg.sh && ./bootstrap-vcpkg.sh
