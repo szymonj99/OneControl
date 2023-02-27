@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <string>
+#include <iostream>
+#include <sstream>
 
 #include <SFML/Network/Packet.hpp>
 
@@ -29,8 +31,14 @@ namespace oc
 		return std::to_string(kVersion.Major) + "." + std::to_string(kVersion.Minor) + "." + std::to_string(kVersion.Revision);
 	}
 
-	const static oc::Version kVersion(0, 0, 3);
+	const static oc::Version kVersion(0, 0, 4);
 
-	sf::Packet& operator<<(sf::Packet& packet, const oc::Version& kVersion);
-	sf::Packet& operator>>(sf::Packet& packet, oc::Version& version);
+	std::istream& operator>>(std::istream& stream, oc::Version& version);
+	std::ostream& operator<<(std::ostream& stream, const oc::Version& kVersion);
+
+	std::stringstream& operator>>(std::stringstream& stream, oc::Version& version);
+	std::istringstream& operator>>(std::istringstream& stream, oc::Version& version);
+
+	std::stringstream& operator<<(std::stringstream& stream, const oc::Version& kVersion);
+	std::ostringstream& operator<<(std::ostringstream& stream, const oc::Version& kVersion);
 }
