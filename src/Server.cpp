@@ -47,8 +47,12 @@ oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Failed at getting authentication packet.\nQuitting.\n");
 		return oc::ReturnCode::FailedSendingPacket;
 	}
-	oc::Version clientVersion;
-	authenticationPkt >> clientVersion;
+
+	oc::Crypto::EncryptorDecryptor<oc::Version> versionDecryptor{};
+
+	std::string clientVersionStr;
+	authenticationPkt >> clientVersionStr;
+	oc::Version clientVersion = versionDecryptor.Decrypt(clientVersionStr);
 	if (oc::kVersion != clientVersion)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "!!!Version mismatch!!!\n");

@@ -93,8 +93,10 @@ oc::ReturnCode oc::Client::m_Handshake()
 
 oc::ReturnCode oc::Client::m_SendAuthenticationPacket()
 {
+	oc::Crypto::EncryptorDecryptor<oc::Version> versionEncryptor{};
 	oc::Packet authenticationPkt{};
-	authenticationPkt << oc::kVersion;
+	authenticationPkt << versionEncryptor.Encrypt(oc::kVersion);
+
 	if (this->send(authenticationPkt) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Client authentication FAILED.\n");

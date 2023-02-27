@@ -1,5 +1,7 @@
 #include <OneControl/Packet.h>
 
+// TODO: I wonder if we could stick the encryption/decryption in here instead.
+
 void oc::Packet::onReceive(const void* data, std::size_t size)
 {
 	append(data, size);

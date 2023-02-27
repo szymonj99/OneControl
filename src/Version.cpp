@@ -2,21 +2,44 @@
 
 namespace oc
 {
-    // TODO: Add string stream operators in the future.
     bool oc::Version::operator==(const oc::Version& kVersion)
     {
         return (this->Major == kVersion.Major && this->Minor == kVersion.Minor && this->Revision == kVersion.Revision);
     }
 
-    sf::Packet& operator<<(sf::Packet& packet, const oc::Version& kVersion)
+    std::istream& operator>>(std::istream& stream, oc::Version& version)
     {
-        packet << kVersion.Major << kVersion.Minor << kVersion.Revision;
-        return packet;
+        stream >> version.Major >> version.Minor >> version.Revision;
+        return stream;
     }
 
-    sf::Packet& operator>>(sf::Packet& packet, oc::Version& version)
+    std::ostream& operator<<(std::ostream& stream, const oc::Version& kVersion)
     {
-        packet >> version.Major >> version.Minor >> version.Revision;
-        return packet;
+        stream << kVersion.Major << " " << kVersion.Minor << " " << kVersion.Revision;
+        return stream;
+    }
+
+    std::stringstream& operator>>(std::stringstream& stream, oc::Version& version)
+    {
+        stream >> version.Major >> version.Minor >> version.Revision;
+        return stream;
+    }
+
+    std::istringstream& operator>>(std::istringstream& stream, oc::Version& version)
+    {
+        stream >> version.Major >> version.Minor >> version.Revision;
+        return stream;
+    }
+
+    std::stringstream& operator<<(std::stringstream& stream, const oc::Version& kVersion)
+    {
+        stream << kVersion.Major << " " << kVersion.Minor << " " << kVersion.Revision;
+        return stream;
+    }
+
+    std::ostringstream& operator<<(std::ostringstream& stream, const oc::Version& kVersion)
+    {
+        stream << kVersion.Major << " " << kVersion.Minor << " " << kVersion.Revision;
+        return stream;
     }
 }

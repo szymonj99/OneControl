@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 set(BINARY_NAME OneControl)
-set(BINARY_VERSION 0.0.3)
+set(BINARY_VERSION 0.0.4)
 set(TESTS_NAME Tests)
 
 # TODO: Enable this once it's implemented
