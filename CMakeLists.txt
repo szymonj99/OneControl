@@ -90,7 +90,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG f7a83a8b2bad71a1bb310c5ee405fe97d6d32a25
+            GIT_TAG cc122986353a5795c870656d2cbd8360e1e05f1a
             VERSION 0.0.2)
 endif()
 
@@ -128,7 +128,7 @@ if(result)
 endif()
 
 if(CMAKE_HOST_WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00 _UNICODE=1 UNICODE=1)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00 _UNICODE=1 UNICODE=1 WIN32_LEAN_AND_MEAN=1 NOMINMAX=1)
     target_compile_options(${PROJECT_NAME} PRIVATE "/MP")
 elseif(CMAKE_HOST_APPLE)
     target_compile_definitions(${PROJECT_NAME} PRIVATE OS_APPLE=1 _UNICODE=1 UNICODE=1)
