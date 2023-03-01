@@ -11,10 +11,6 @@ jobs:
   build-ubuntu-release:
     runs-on: ubuntu-latest
 
-    env:
-      VCPKG_DISABLE_METRICS: 1
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-
     steps:
     - uses: actions/checkout@v3
     
