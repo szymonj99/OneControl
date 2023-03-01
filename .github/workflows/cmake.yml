@@ -20,7 +20,7 @@ jobs:
     
     # I will change this to use matrix.os with an if statement in the future. //shrug
     - name: Download Packages
-      run: sudo apt update && sudo apt install autoconf libtool libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev libxrandr-dev libxi-dev libgl1-mesa-dev libevdev-dev
+      run: sudo apt update && sudo apt install cmake autoconf libtool libx11-dev libsfml-dev xorg-dev libopengl-dev mesa-common-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev libncurses-dev libxrandr-dev libxi-dev libgl1-mesa-dev libevdev-dev
       shell: bash
 
     - name: Copy libevdev to Directory
@@ -29,8 +29,9 @@ jobs:
         sudo mv libevdev ../
 
     - name: Set up VCPKG
-      run: git clone https://github.com/microsoft/vcpkg && cd ./vcpkg && chmod u+x ./bootstrap-vcpkg.sh && ./bootstrap-vcpkg.sh
-      shell: bash
+      uses: lukka/run-vcpkg@v10
+      with:
+        vcpkgGitCommitId: f3a39f1aaffe48b1190df69aab3a8657f91b632a
 
     - name: Set up Private SSH Key 
       uses: webfactory/ssh-agent@v0.7.0
@@ -46,16 +47,13 @@ jobs:
   build-windows-release:
     runs-on: windows-latest
 
-    env:
-      VCPKG_DISABLE_METRICS: 1
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-
     steps:
     - uses: actions/checkout@v3
     
     - name: Set up VCPKG
-      run: git clone https://github.com/microsoft/vcpkg && cd ./vcpkg && chmod u+x ./bootstrap-vcpkg.bat && ./bootstrap-vcpkg.bat
-      shell: bash
+      uses: lukka/run-vcpkg@v10
+      with:
+        vcpkgGitCommitId: f3a39f1aaffe48b1190df69aab3a8657f91b632a
 
     - name: Set up Private SSH Key 
       uses: webfactory/ssh-agent@v0.7.0
@@ -71,10 +69,6 @@ jobs:
 #  build-macos-release:
 #    runs-on: macos-latest
 #
-#    env:
-#      VCPKG_DISABLE_METRICS: 1
-#      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-#
 #    steps:
 #    - uses: actions/checkout@v3
 #   
@@ -82,8 +76,9 @@ jobs:
 #      run: brew install pkg-config
 #
 #    - name: Set up VCPKG
-#      run: git clone https://github.com/microsoft/vcpkg && cd ./vcpkg && chmod u+x ./bootstrap-vcpkg.sh && ./bootstrap-vcpkg.sh
-#      shell: bash
+#      uses: lukka/run-vcpkg@v10
+#        with:
+#           vcpkgGitCommitId: f3a39f1aaffe48b1190df69aab3a8657f91b632a
 #
 #    - name: Set up Private SSH Key 
 #      uses: webfactory/ssh-agent@v0.7.0
