@@ -23,7 +23,7 @@ namespace oc
 		Version() = default;
 		Version(const oc::VersionInt& kMajor, const oc::VersionInt& kMinor, const oc::VersionInt& kRevision) { this->Major = kMajor; this->Minor = kMinor; this->Revision = kRevision; }
 
-		bool operator==(const oc::Version& kVersion);
+		bool operator==(const oc::Version& kVersion) const = default;
 	};
 
 	static std::string VersionToString(const oc::Version& kVersion)

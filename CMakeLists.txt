@@ -2,10 +2,10 @@
 
 set(BINARY_NAME OneControl)
 set(BINARY_VERSION 0.0.4)
-set(TESTS_NAME Tests)
+set(ONECONTROL_LIB_NAME OneControlLib)
 
 # TODO: Enable this once it's implemented
-option(ONECONTROL_BUILD_TESTS "Build the tests" FALSE)
+option(ONECONTROL_BUILD_TESTS "Build the tests" TRUE)
 option(ONECONTROL_USE_LOCAL_ONELIBRARY "Use a local copy of OneLibrary" FALSE)
 option(ONECONTROL_USE_BACKWARDCPP "Compile OneControl including Backward-CPP (only active in `Debug` mode)" TRUE)
 option(ONECONTROL_USE_VCPKG "Use VCPKG to manage dependencies rather than the default CPM. Note: Some dependencies will still be downloaded with CPM if they are not available through VCPKG" TRUE)
@@ -67,6 +67,9 @@ set(ONELIBRARY_USE_BACKWARDCPP ${ONECONTROL_USE_BACKWARDCPP})
 # This lets a user create a new file and it will be automatically compiled.
 # Get all the files needed for the program
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/*.h" "${PROJECT_SOURCE_DIR}/src/*.cpp")
+# Remove main.cpp from here
+# This is because we build a OneControl_Library first so that we can test it, and then we build an executable with the main.cpp file.
+list(REMOVE_ITEM SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
 if(ONECONTROL_USE_VCPKG)
     find_package(SFML COMPONENTS network CONFIG REQUIRED)
@@ -99,17 +102,34 @@ if(ONECONTROL_USE_BACKWARDCPP AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Adding Backward-CPP to ${PROJECT_NAME}")
     # Backward-cpp is not available through vcpkg
     CPMAddPackage("gh:bombela/backward-cpp#90398eef20f4e7e0e939322d7e84f9c52078a325")
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${BACKWARD_ENABLE})
-    add_backward(${PROJECT_NAME})
+    add_library(${ONECONTROL_LIB_NAME} STATIC ${SOURCE_FILES} ${BACKWARD_ENABLE})
+    add_backward(${ONECONTROL_LIB_NAME})
 else()
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+    add_library(${ONECONTROL_LIB_NAME} STATIC ${SOURCE_FILES})
 endif()
 
+# Configure the library that OneControl creates
+target_compile_features(${ONECONTROL_LIB_NAME} PRIVATE cxx_std_20)
+target_include_directories(${ONECONTROL_LIB_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(${ONECONTROL_LIB_NAME} PUBLIC sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only cryptopp::cryptopp OneLibrary)
+
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
+
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES CMAKE_CXX_STANDARD 20)
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES UNICODE TRUE)
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES CMAKE_BUILD_PARALLEL_LEVEL 8)
+set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES USE_FOLDERS TRUE)
+
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/main.cpp)
+
+# Configure the OneControl executable
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 # I'm not sure if this is necessary when we use `find_package` :thinking:
 #target_include_directories(${PROJECT_NAME} PRIVATE SFML fmt args spdlog ${DBG_MACRO_INCLUDE_DIRS} OneLibrary ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-network fmt::fmt-header-only taywee::args spdlog::spdlog_header_only cryptopp::cryptopp OneLibrary)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${ONECONTROL_LIB_NAME})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "Debug")
 
@@ -125,27 +145,37 @@ include(CheckIPOSupported)
 check_ipo_supported(RESULT result)
 if(result)
     set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set_target_properties(${ONECONTROL_LIB_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 if(CMAKE_HOST_WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00 _UNICODE=1 UNICODE=1 WIN32_LEAN_AND_MEAN=1 NOMINMAX=1)
+    target_compile_definitions(${ONECONTROL_LIB_NAME} PRIVATE OS_WINDOWS=1 WINVER=0x0A00 _WIN32_WINNT=0x0A00 _UNICODE=1 UNICODE=1 WIN32_LEAN_AND_MEAN=1 NOMINMAX=1)
     target_compile_options(${PROJECT_NAME} PRIVATE "/MP")
+    target_compile_options(${ONECONTROL_LIB_NAME} PRIVATE "/MP")
 elseif(CMAKE_HOST_APPLE)
     target_compile_definitions(${PROJECT_NAME} PRIVATE OS_APPLE=1 _UNICODE=1 UNICODE=1)
+    target_compile_definitions(${ONECONTROL_LIB_NAME} PRIVATE OS_APPLE=1 _UNICODE=1 UNICODE=1)
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wfatal-errors")
+    target_compile_options(${ONECONTROL_LIB_NAME} PRIVATE "-Wfatal-errors")
 elseif(CMAKE_HOST_LINUX)
     target_compile_definitions(${PROJECT_NAME} PRIVATE OS_LINUX=1 _UNICODE=1 UNICODE=1)
+    target_compile_definitions(${ONECONTROL_LIB_NAME} PRIVATE OS_LINUX=1 _UNICODE=1 UNICODE=1)
     target_compile_options(${PROJECT_NAME} PRIVATE "-pthread" "-Wfatal-errors")
+    target_compile_options(${ONECONTROL_LIB_NAME} PRIVATE "-pthread" "-Wfatal-errors")
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE OS_ERROR=1)
+    target_compile_definitions(${ONECONTROL_LIB_NAME} PRIVATE OS_ERROR=1)
 endif()
 
 # TODO: Add `install` here.
 #install(TARGETS ${PROJECT_NAME})
 
 if(ONECONTROL_BUILD_TESTS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ONECONTROL_TESTS=1)
     # enable_testing() needs to be here.
     # Reasoning: https://stackoverflow.com/questions/64099136/visual-studio-2019-test-explorer-did-not-find-c-google-tests
-    #enable_testing()
-    #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    message(STATUS "Building tests for OneControl")
+    enable_testing()
+    add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 endif()
