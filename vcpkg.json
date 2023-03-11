@@ -5,7 +5,7 @@
   "description": "Control multiple devices with one mouse and keyboard.",
   "homepage": "https://github.com/szymonj99/OneControl",
   "license": "GPL-3.0",
-  "supports": "(windows | osx | linux) & x64",
+  "supports": "(windows | linux) & x64",
   "dependencies": [
     {
       "name": "vcpkg-cmake",
@@ -19,6 +19,7 @@
     "fmt",
     "args",
     "spdlog",
-    "cryptopp"
+    "cryptopp",
+    "catch2"
   ]
 }

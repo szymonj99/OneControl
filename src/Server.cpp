@@ -139,6 +139,25 @@ void oc::Server::ServerLoop()
 	{
 		oc::Packet pkt{};
 		const auto kInput = this->m_bufInputs.Get();
+
+        // Kill switch
+        if (kInput.keyboard.key == ol::eKeyCode::End)
+        {
+            oc::RuntimeGlobals::sendToClient = false;
+            // can't return here as we need to wait for the threads to join.
+            continue;
+        }
+
+        if (kInput.keyboard.key == ol::eKeyCode::Home)
+        {
+            if (kInput.eventType == ol::eEventType::KBKeyDown)
+            {
+                mouseInterface->Toggle();
+                keyboardInterface->Toggle();
+            }
+            continue;
+        }
+
 		pkt << inputEncryptor.Encrypt(kInput);
 
 		if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
