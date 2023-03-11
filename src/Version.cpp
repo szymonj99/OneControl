@@ -2,11 +2,6 @@
 
 namespace oc
 {
-    bool oc::Version::operator==(const oc::Version& kVersion)
-    {
-        return (this->Major == kVersion.Major && this->Minor == kVersion.Minor && this->Revision == kVersion.Revision);
-    }
-
     std::istream& operator>>(std::istream& stream, oc::Version& version)
     {
         stream >> version.Major >> version.Minor >> version.Revision;
