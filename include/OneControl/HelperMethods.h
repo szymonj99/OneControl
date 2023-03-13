@@ -99,13 +99,10 @@ namespace oc
 	{
         if (oc::RuntimeGlobals::isClient) { return oc::eMachineState::Client; }
         if (oc::RuntimeGlobals::isServer) { return oc::eMachineState::Server; }
-		const auto userValue = GetUserValue("Is this machine a Server or a Client?\n1. Server\n2. Client\n", (int32_t)1, (int32_t)2);
+		const auto userValue = GetUserValue("Is this machine a Server or a Client?\n1. Server\n2. Client\n", (int64_t)1, (int64_t)2);
 		return static_cast<oc::eMachineState>(userValue);
 	}
 
-    // TODO: Make this return an error code that we have specified
-    // true: Arguments parsed correctly
-    // false: Failure to parse arguments
     /**
      * Parse command line arguments/flags, and change runtime options.
      * @param argc The number of parameters passed in
@@ -131,9 +128,6 @@ namespace oc
 
         //TODO: Add args::CompletionFlag to allow for auto-completion when running under Bash.
         // https://github.com/Taywee/args/blob/master/examples/bash_completion.sh
-
-        args::Flag noKeyboard(exclusive, "no-keyboard", "Run OneControl without capturing the keyboard input", {"no-keyboard"});
-        args::Flag noMouse(exclusive, "no-mouse", "Run OneControl without capturing the mouse input", {"no-mouse"});
 
         args::ValueFlag<std::uint16_t> port(group, "port", "The port on which to connect to/listen on. If no port is set, it will use the default port of " + std::to_string(oc::kDefaultPort), {'p', "port"}, 40480);
         args::ValueFlag<std::string> type(group, "type", "Set this machine to act as either the server or the client. Use values [s, server] or [c, client].", {'t', "type"}, "server");
@@ -162,14 +156,12 @@ namespace oc
             return oc::ReturnCode::ValidationError;
         }
         // Set runtime values
-        if (noMouse) { std::cout << "OneControl will not share the mouse input.\n"; oc::RuntimeGlobals::mouseEnabled = false; }
-        if (noKeyboard) { std::cout << "OneControl will not share the keyboard input.\n"; oc::RuntimeGlobals::keyboardEnabled = false; }
         if (type)
         {
             // TODO: Figure out a way to convert the string to lowercase
             // We want to compare 'c', "client", 's', and "server".
             // Anything else would be considered a typo.
-            // However the issue arises when we use unicode.
+            // However, the issue arises when we use unicode.
             // Let's follow the practices defined by https://utf8everywhere.org/
             // We treat std::string as being unicode UTF-8
             // TODO: Future work here might involve the UTF8-CPP library.
