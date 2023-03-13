@@ -25,8 +25,6 @@ void oc::Server::Start()
 		}
 		catch (const ol::InterruptException& e)
 		{
-			this->m_bSendToClient = false;
-			std::cout << "Got interrupt exception from Mouse gatherer" << std::endl;
 			return;
 		}
 	}};
@@ -45,8 +43,6 @@ void oc::Server::Start()
 		}
 		catch (const ol::InterruptException& e)
 		{
-			this->m_bSendToClient = false;
-			std::cout << "Got interrupt exception from Mouse gatherer" << std::endl;
 			return;
 		}
 	}};
@@ -88,7 +84,6 @@ void oc::Server::Start()
 	}
 	catch (const ol::InterruptException& e)
 	{
-		std::cout << "Server exception" << std::endl;
 		return;
 	}
 }
