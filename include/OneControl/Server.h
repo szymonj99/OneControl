@@ -6,6 +6,9 @@
 #include <iostream>
 #include <vector>
 #include <mutex>
+#include <csignal>
+#include <exception>
+#include <stdexcept>
 
 #include <fmt/core.h>
 #include <fmt/color.h>
@@ -45,6 +48,8 @@ namespace oc
 		std::atomic<bool> m_bSendToClient = true;
 
 	public:
+		~Server() noexcept { this->m_bufInputs.Interrupt(); }
+
         /**
          * Start the server.
          */
@@ -59,12 +64,13 @@ namespace oc
 		 */
 		[[nodiscard]] oc::ReturnCode AuthenticateClient();
 
-		[[nodiscard]] ol::Input GetNextInput();
+		[[nodiscard]] ol::Input GetNextInput() noexcept(false);
 
 		[[nodiscard]] oc::ReturnCode SendPacket(oc::Packet& inPacket);
 
         [[nodiscard]] oc::ReturnCode ReceivePacket(oc::Packet& outPacket);
 
 		void Disconnect();
+		// TODO: Add Shutdown function here.
 	};
 }
