@@ -62,6 +62,7 @@ set(ARGS_BUILD_EXAMPLE FALSE)
 set(ARGS_BUILD_UNITTESTS FALSE)
 
 set(ONELIBRARY_USE_BACKWARDCPP ${ONECONTROL_USE_BACKWARDCPP})
+set(ONELIBRARY_BUILD_TESTS FALSE)
 
 # I use this to make development easier.
 # This lets a user create a new file and it will be automatically compiled.
@@ -93,7 +94,7 @@ else()
     # As OneLibrary is only available on GitHub and not through vcpkg, we need to include it separately.
     CPMAddPackage(NAME OneLibrary
             GIT_REPOSITORY git@github.com:szymonj99/OneLibrary.git
-            GIT_TAG 4dabbd81aad2394c6a550702fdae7a907b796769
+            GIT_TAG f5636f7f98cafcd5c75e63518fe0288fff93129c
             VERSION 0.0.3)
 endif()
 
