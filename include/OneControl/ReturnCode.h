@@ -18,7 +18,10 @@ namespace oc
 		ValidationError,
 		InvalidIPAddress,
 		FailedSendingPacket,
-		CheckParserOutput
+		CheckParserOutput,
+		NotAbleToBindOnPort,
+		NotAbleToAcceptClient,
+		NotAbleToConnectToServer
 	};
 
 	// TODO: Figure out if this is actaully needed at all.

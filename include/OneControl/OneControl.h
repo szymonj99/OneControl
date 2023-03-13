@@ -22,14 +22,12 @@ namespace oc
 	{
 	private:
 		eMachineState m_eState = eMachineState::Uninitialised;
-		void m_StartService();
+		void m_fStartService();
 
 	public:
 		/**
 		 * Start the program. If the state/type of the current machine was passed in as a command-line argument, it will be used here. Otherwise, prompt the user.
 		 */
 		void Start();
-		std::unique_ptr<oc::Client> pClient = nullptr;
-		std::unique_ptr<oc::Server> pServer = nullptr;
 	};
 }

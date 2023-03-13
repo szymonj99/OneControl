@@ -31,9 +31,13 @@ namespace oc
 	class Client : sf::TcpSocket
 	{
 	private:
-		ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
-		oc::ReturnCode m_SendAuthenticationPacket();
-		oc::ReturnCode m_Handshake();
+		// I have decided that the client does not need a buffer.
+		// A buffer would be a nice-to-have for when the network connection is drastically faster than the ability for the client to simulate the inputs.
+		// This will likely never occur, as local API calls for input emulation are faster than a network connection;
+		// Therefore, but the time a new input packet comes in, the client has performed the previous input already.
+		oc::ReturnCode m_fSendAuthenticationPacket();
+		oc::ReturnCode m_fHandshake();
+		std::atomic<bool> m_bReceiveFromServer = true;
 
 	public:
 		/**
@@ -43,10 +47,15 @@ namespace oc
 		/**
 		 * Reaches out to the server and tries to connect.
 		 */
-		void ConnectToServer(const sf::IpAddress& kIPAddress);
-		/**
-		 * Start the message loop. Messages will be sent by the server and input will be performed.
-		 */
-		void ClientLoop();
+		[[nodiscard]] oc::ReturnCode ConnectToServer(const sf::IpAddress& kIPAddress);
+
+		// In reality, the server authenticates the client.
+		[[nodiscard]] oc::ReturnCode AuthenticateToServer();
+
+		[[nodiscard]] oc::ReturnCode SendPacket(oc::Packet& inPacket);
+
+		[[nodiscard]] oc::ReturnCode ReceivePacket(oc::Packet& outPacket);
+
+		void Disconnect();
 	};
 }

@@ -2,24 +2,51 @@
 
 void oc::Client::Start()
 {
-	std::thread clientThread([&] {
-		const auto kServerIP = oc::RuntimeGlobals::customServerIP ? oc::RuntimeGlobals::serverIP : GetUserIP("Insert server IP\n");
-		ConnectToServer(kServerIP);
+	const auto kServerIP = oc::RuntimeGlobals::customServerIP ? oc::RuntimeGlobals::serverIP : oc::GetUserIP("Insert server IP\n");
+	if (this->ConnectToServer(kServerIP) != oc::ReturnCode::Success) { return; }
+	if (this->AuthenticateToServer() != oc::ReturnCode::Success) { return; }
 
-		if (this->m_Handshake() != oc::ReturnCode::Success)
+	const auto kSimulatorMouse = std::make_unique<ol::InputSimulatorMouse>();
+	const auto kSimulatorKeyboard = std::make_unique<ol::InputSimulatorKeyboard>();
+
+	oc::Crypto::EncryptorDecryptor<ol::Input> decryptor{};
+	while (this->m_bReceiveFromServer)
+	{
+		oc::Packet pkt{};
+		const auto kResult = this->ReceivePacket(pkt);
+		if (kResult != oc::ReturnCode::Success)
 		{
-			std::cerr << "Failed to perform handshake with the server." << std::endl;
-			this->disconnect();
+			this->m_bReceiveFromServer = false;
+			this->Disconnect();
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Lost connection with server.\n");
 			return;
 		}
 
-		ClientLoop();
-		});
-	clientThread.join();
-	fmt::print("Client thread finished.\n");
+		std::string encryptedInput;
+		pkt >> encryptedInput;
+		const ol::Input kInput = decryptor.Decrypt(encryptedInput);
+		switch (kInput.inputType)
+		{
+			case ol::eInputType::Mouse:
+			{
+				kSimulatorMouse->PerformInput(kInput);
+				break;
+			}
+			case ol::eInputType::Keyboard:
+			{
+				kSimulatorKeyboard->PerformInput(kInput);
+				break;
+			}
+			default:
+			{
+				fmt::print(stderr, fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<uint16_t>(kInput.inputType));
+				break;
+			}
+		}
+	}
 }
 
-void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
+oc::ReturnCode oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 {
 	const auto port = oc::RuntimeGlobals::customPort ? oc::RuntimeGlobals::port : oc::kDefaultPort;
 	// Enum class warning
@@ -27,12 +54,13 @@ void oc::Client::ConnectToServer(const sf::IpAddress& kIPAddress)
 	if (connect(kIPAddress, port) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Client can't connect to server.\n");
-		return;
+		return oc::ReturnCode::NotAbleToConnectToServer;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Connected to server successfully.\n");
+	return oc::ReturnCode::Success;
 }
 
-oc::ReturnCode oc::Client::m_Handshake()
+oc::ReturnCode oc::Client::m_fHandshake()
 {
 	std::cout << "Performing OneControl-specific Handshake with Server." << std::endl;
 
@@ -50,10 +78,11 @@ oc::ReturnCode oc::Client::m_Handshake()
 
 	// TODO: If we want to output more debug info, we can print out some of the parameters of the keys used, or base64 them.
 
-	if (this->send(clientPublicKeyPkt) != sf::Socket::Status::Done)
+	const auto kPubKeyResult = this->SendPacket(clientPublicKeyPkt);
+	if (kPubKeyResult != oc::ReturnCode::Success)
 	{
 		std::cerr << "Failed to send public key packet to server." << std::endl;
-		return oc::ReturnCode::FailedSendingPacket;
+		return kPubKeyResult;
 	}
 
 	// The encrypted AES key will be sent from the server to this, the client.
@@ -61,10 +90,11 @@ oc::ReturnCode oc::Client::m_Handshake()
 	// Here, we now will get the encrypted AES key from the server.
 
 	oc::Packet encryptedAESKPkt{};
-	if (this->receive(encryptedAESKPkt) != sf::Socket::Status::Done)
+	const auto kAESKeyResult = this->ReceivePacket(encryptedAESKPkt);
+	if (kAESKeyResult != oc::ReturnCode::Success)
 	{
 		std::cerr << "Failed to receive encrypted AES key from the server." << std::endl;
-		return oc::ReturnCode::NoPacketReceived;
+		return kAESKeyResult;
 	}
 
 	std::string encryptedAESK;
@@ -88,68 +118,46 @@ oc::ReturnCode oc::Client::m_Handshake()
 
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
-	return m_SendAuthenticationPacket();
+	return m_fSendAuthenticationPacket();
 }
 
-oc::ReturnCode oc::Client::m_SendAuthenticationPacket()
+oc::ReturnCode oc::Client::m_fSendAuthenticationPacket()
 {
 	oc::Crypto::EncryptorDecryptor<oc::Version> versionEncryptor{};
 	oc::Packet authenticationPkt{};
 	authenticationPkt << versionEncryptor.Encrypt(oc::kVersion);
 
-	if (this->send(authenticationPkt) != sf::Socket::Status::Done)
+	const auto kResult = this->SendPacket(authenticationPkt);
+	if (kResult != oc::ReturnCode::Success)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Client authentication FAILED.\n");
-		return oc::ReturnCode::FailedSendingPacket;
+		return kResult;
 	}
+
 	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
 	return oc::ReturnCode::Success;
 }
 
-void oc::Client::ClientLoop()
+oc::ReturnCode oc::Client::AuthenticateToServer()
 {
-	std::thread receiver([&]
-	{
-		oc::Crypto::EncryptorDecryptor<ol::Input> decryptor{};
-		while (oc::RuntimeGlobals::receiveFromServer)
-		{
-			oc::Packet pkt{};
-			if (this->receive(pkt) != sf::Socket::Status::Done)
-			{
-				this->disconnect();
-				fmt::print(stderr, fmt::fg(fmt::color::red), "Client lost connection with server.\n");
-				fmt::print(stderr, "Quitting.\n");
-				return;
-			}
-			std::string encryptedInput;
-			pkt >> encryptedInput;
-			const ol::Input kInput = decryptor.Decrypt(encryptedInput);
-			this->m_bufInputs.Add(kInput);
-		}
-	});
+	return this->m_fHandshake();
+}
 
-    // TODO: When adding in parameter parsing or compile options, add in an option/toggle to allow only mouse or keyboard
-    // That will potentially allow some users to compile with potentially less dependencies if they would like to.
-    auto mouseSimulator = std::make_unique<ol::InputSimulatorMouse>();
-    auto keyboardSimulator = std::make_unique<ol::InputSimulatorKeyboard>();
+void oc::Client::Disconnect()
+{
+	this->disconnect();
+}
 
-	while (oc::RuntimeGlobals::receiveFromServer)
+oc::ReturnCode oc::Client::SendPacket(oc::Packet& inPacket)
+{
+	return (this->send(inPacket) == sf::Socket::Status::Done ? oc::ReturnCode::Success : oc::ReturnCode::FailedSendingPacket);
+}
+
+oc::ReturnCode oc::Client::ReceivePacket(oc::Packet& outPacket)
+{
+	if (this->receive(outPacket) != sf::Socket::Status::Done)
 	{
-		const auto kInput = this->m_bufInputs.Get();
-		switch (kInput.inputType)
-		{
-		case ol::eInputType::Mouse:
-			mouseSimulator->PerformInput(kInput);
-			break;
-		case ol::eInputType::Keyboard:
-			keyboardSimulator->PerformInput(kInput);
-			break;
-		default:
-			// TODO: Make the static_cast a bit nicer.
-			fmt::print(stderr, fmt::fg(fmt::color::red), "Uh-oh. We got a packet with incorrect type: {}\n", static_cast<uint32_t>(kInput.inputType));
-			break;
-		}
+		return oc::ReturnCode::NoPacketReceived;
 	}
-
-	receiver.join();
+	return oc::ReturnCode::Success;
 }

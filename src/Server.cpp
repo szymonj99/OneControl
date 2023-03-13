@@ -1,51 +1,132 @@
 #include <OneControl/Server.h>
 
+// TODO: Refactor this more.
 void oc::Server::Start()
 {
-	std::thread listenerThread([&] {
-		WaitForClient();
+	if (this->WaitForClient() != oc::ReturnCode::Success) { return; }
+	if (this->AuthenticateClient() != oc::ReturnCode::Success) { return; }
 
-		if (this->m_Handshake() != oc::ReturnCode::Success)
+	// TODO: Validate the client here by asking the user to input a number that is present on the client machine to authenticate both machines.
+
+	const auto kGathererKeyboard = std::make_unique<ol::InputGathererKeyboard>(true);
+	const auto kGathererMouse = std::make_unique<ol::InputGathererMouse>(true);
+
+	// Fck it. There is no way that I know of to interrupt a semaphore.acquire in C++.
+	// Instead, I'll be busy-waiting in a few places that currently mess things up.
+
+	std::jthread mouseThread{[&](const std::stop_token& stopToken)
+	{
+		std::stop_callback stopCallback{stopToken, [&]{ this->m_bSendToClient = false; }};
+
+		while (this->m_bSendToClient)
 		{
-			std::cerr << "Failed to perform handshake with the client." << std::endl;
-			this->m_pClient->disconnect();
+			if (kGathererMouse->AvailableInputs() == 0)
+			{
+				// Busy-waiting, but I wasn't able to figure out how to interrupt an acquire() semaphore call.
+				// Potentially that could be done with native OS pthread_kill or TerminateThread? :thinking:
+				std::this_thread::sleep_for(std::chrono::milliseconds{10});
+				continue;
+			}
+
+			const auto kInput = kGathererMouse->GatherInput();
+			this->m_bufInputs.Add(kInput);
+		}
+	}};
+
+	std::jthread keyboardThread{[&](const std::stop_token& stopToken)
+	{
+		std::stop_callback stopCallback{stopToken, [&]{ this->m_bSendToClient = false; }};
+
+		while (this->m_bSendToClient)
+		{
+			if (kGathererKeyboard->AvailableInputs() == 0)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds{10});
+				continue;
+			}
+
+			const auto kInput = kGathererKeyboard->GatherInput();
+			this->m_bufInputs.Add(kInput);
+		}
+	}};
+
+	oc::Crypto::EncryptorDecryptor<ol::Input> inputEncryptor{};
+
+	while (this->m_bSendToClient)
+	{
+		if (this->m_bufInputs.Length() == 0) { std::this_thread::sleep_for(std::chrono::milliseconds{10}); continue; }
+
+		oc::Packet pkt{};
+		const auto kInput = this->GetNextInput();
+
+		// Kill switch
+		if (kInput.keyboard.key == ol::eKeyCode::End)
+		{
+			this->Disconnect();
 			return;
 		}
 
-		ServerLoop();
-		});
-	listenerThread.join();
-	fmt::print("Listener thread finished.\n");
+		if (kInput.keyboard.key == ol::eKeyCode::Home)
+		{
+			if (kInput.eventType == ol::eEventType::KBKeyDown)
+			{
+				kGathererMouse->Toggle();
+				kGathererKeyboard->Toggle();
+			}
+			continue;
+		}
+
+		pkt << inputEncryptor.Encrypt(kInput);
+		if (this->SendPacket(pkt) != oc::ReturnCode::Success)
+		{
+			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client\n");
+			return;
+		}
+	}
 }
 
-void oc::Server::WaitForClient()
+ol::Input oc::Server::GetNextInput()
+{
+	return this->m_bufInputs.Get();
+}
+
+oc::ReturnCode oc::Server::WaitForClient()
 {
 	const auto port = oc::RuntimeGlobals::customPort ? oc::RuntimeGlobals::port : oc::kDefaultPort;
 	// Enum class warning
 	#pragma warning(suppress: 26812)
+	// TODO: Since we wrapped other sfml calls like Disconnect, should we wrap this one too?
 	if (this->m_pListener->listen(port) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Can't listen using TCP listener on port {}\n", port);
-		return;
+		return oc::ReturnCode::NotAbleToBindOnPort;
 	}
 
 	fmt::print("Waiting for client.\n");
+	// TODO: Since we wrapped other sfml calls like Disconnect, should we wrap this one too?
 	if (this->m_pListener->accept(*m_pClient) != sf::Socket::Status::Done)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Can't accept client on port {}\n", port);
-		return;
+		return oc::ReturnCode::NotAbleToAcceptClient;
 	}
 
 	fmt::print(fmt::fg(fmt::color::green), "We have a client! {}:{}\n", this->m_pClient->getRemoteAddress().toString(), std::to_string(this->m_pClient->getRemotePort()));
+	return oc::ReturnCode::Success;
 }
 
-oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
+oc::ReturnCode oc::Server::AuthenticateClient()
+{
+	return this->m_fHandshake();
+}
+
+oc::ReturnCode oc::Server::m_fReceiveAuthenticationPacket()
 {
 	oc::Packet authenticationPkt{};
-	if (m_pClient->receive(authenticationPkt) != sf::Socket::Status::Done)
+	const auto kResult = this->ReceivePacket(authenticationPkt);
+	if (kResult != oc::ReturnCode::Success)
 	{
 		fmt::print(stderr, fmt::fg(fmt::color::red), "Failed at getting authentication packet.\nQuitting.\n");
-		return oc::ReturnCode::FailedSendingPacket;
+		return kResult;
 	}
 
 	oc::Crypto::EncryptorDecryptor<oc::Version> versionDecryptor{};
@@ -58,27 +139,28 @@ oc::ReturnCode oc::Server::m_ReceiveAuthenticationPacket()
 		fmt::print(stderr, fmt::fg(fmt::color::red), "!!!Version mismatch!!!\n");
 		fmt::print(stderr, "Client version : {}\n", oc::VersionToString(clientVersion));
 		fmt::print(stderr, "Server version : {}\nKicking client.\n", oc::VersionToString(oc::kVersion));
-		this->m_pClient->disconnect();
+		this->Disconnect();
 		return oc::ReturnCode::VersionMismatch;
 	}
 	fmt::print(fmt::fg(fmt::color::green), "Client authentication successful.\n");
 	return oc::ReturnCode::Success;
 }
 
-oc::ReturnCode oc::Server::m_Handshake()
+oc::ReturnCode oc::Server::m_fHandshake()
 {
 	std::cout << "Performing OneControl-specific Handshake with Client." << std::endl;
 
 	// The client will reach out to us, the server, with it's RSA public key.
 	// Let's not add an option to disable encryption for now. That may be potentially done in the future.
 	oc::Packet clientPublicKeyPkt{};
-	if (this->m_pClient->receive(clientPublicKeyPkt) != sf::Socket::Status::Done)
-	{
-		std::cerr << "Failed to receive public key packet from client." << std::endl;
-		return oc::ReturnCode::NoPacketReceived;
-	}
+    const auto kPubKeyResult = this->ReceivePacket(clientPublicKeyPkt);
+    if (kPubKeyResult != oc::ReturnCode::Success)
+    {
+        std::cerr << "Failed to receive public key packet from client." << std::endl;
+        return kPubKeyResult;
+    }
 
-	// This server doesn't actually need to create it's own RSA keys, as we get it from the client, and encrypt our AES key with it.
+	// This server doesn't actually need to create its own RSA keys, as we get it from the client, and encrypt our AES key with it.
 	std::string clientPubKStr;
 	clientPublicKeyPkt >> clientPubKStr;
 
@@ -103,10 +185,11 @@ oc::ReturnCode oc::Server::m_Handshake()
 	oc::Packet encryptedAESPkt{};
 	encryptedAESPkt << encryptedAESK << encryptedIV;
 
-	if (this->m_pClient->send(encryptedAESPkt) != sf::Socket::Status::Done)
+	const auto kAESResult = this->SendPacket(encryptedAESPkt);
+	if (kAESResult != oc::ReturnCode::Success)
 	{
 		std::cerr << "Failed to send encrypted AES key to client." << std::endl;
-		return oc::ReturnCode::FailedSendingPacket;
+		return kAESResult;
 	}
 
 	// Here we have an agreed-upon AES key that was sent securely.
@@ -117,59 +200,25 @@ oc::ReturnCode oc::Server::m_Handshake()
 
 	std::cout << "Established Hybrid Encryption Successfully." << std::endl;
 
-	return this->m_ReceiveAuthenticationPacket();
+	return this->m_fReceiveAuthenticationPacket();
 }
 
-void oc::Server::ServerLoop()
+oc::ReturnCode oc::Server::SendPacket(oc::Packet& inPacket)
 {
-	const auto mouseInterface = std::make_unique<ol::InputGathererMouse>(true);
-	const auto keyboardInterface = std::make_unique<ol::InputGathererKeyboard>(true);
-	oc::Crypto::EncryptorDecryptor<ol::Input> inputEncryptor{};
-	// Buffer the inputs in a single buffer.
-	// The reasoning for this is that the mouse and keyboard inputs are stored in separate buffers in OneLibrary
-	// Adding them to one buffer makes things more concise but is not necessary.
-	// Is this syntax better/worse than having it on multiple lines?
-	// TODO: Potentially rename the variable to addToBuffer?
-
-	std::thread mouseThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(mouseInterface->GatherInput()); }});
-	std::thread keyboardThread([&] { while (oc::RuntimeGlobals::sendToClient) { this->m_bufInputs.Add(keyboardInterface->GatherInput()); }});
-
-	// Send out the buffered inputs here
-	while (oc::RuntimeGlobals::sendToClient)
-	{
-		oc::Packet pkt{};
-		const auto kInput = this->m_bufInputs.Get();
-
-        // Kill switch
-        if (kInput.keyboard.key == ol::eKeyCode::End)
-        {
-            oc::RuntimeGlobals::sendToClient = false;
-            // can't return here as we need to wait for the threads to join.
-            continue;
-        }
-
-        if (kInput.keyboard.key == ol::eKeyCode::Home)
-        {
-            if (kInput.eventType == ol::eEventType::KBKeyDown)
-            {
-                mouseInterface->Toggle();
-                keyboardInterface->Toggle();
-            }
-            continue;
-        }
-
-		pkt << inputEncryptor.Encrypt(kInput);
-
-		if (this->m_pClient->send(pkt) != sf::Socket::Status::Done)
-		{
-			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client\n");
-			// TODO: Investigate if this needs to be wrapped in a mutex as it can be accessed by more than one thread at a time.
-			// Or change it to atomic.
-			oc::RuntimeGlobals::sendToClient = false;
-			break;
-		}
-	}
-
-    mouseThread.join();
-	keyboardThread.join();
+	return (this->m_pClient->send(inPacket) == sf::Socket::Status::Done ? oc::ReturnCode::Success : oc::ReturnCode::FailedSendingPacket);
 }
+
+void oc::Server::Disconnect()
+{
+    this->m_pClient->disconnect();
+}
+
+oc::ReturnCode oc::Server::ReceivePacket(oc::Packet& packet)
+{
+    if (this->m_pClient->receive(packet) != sf::Socket::Status::Done)
+    {
+        return oc::ReturnCode::NoPacketReceived;
+    }
+    return oc::ReturnCode::Success;
+}
+

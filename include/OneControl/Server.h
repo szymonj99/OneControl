@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef OS_WINDOWS
-    #include <Windows.h>
-#endif
-
 #include <memory>
 #include <thread>
 #include <string>
@@ -43,9 +39,10 @@ namespace oc
         std::unique_ptr<sf::TcpListener> m_pListener = std::make_unique<sf::TcpListener>();
         // TODO: Check if the client can be of type oc::Client, rather than a raw SFML TCP socket.
         std::unique_ptr<sf::TcpSocket> m_pClient = std::make_unique<sf::TcpSocket>();
-		oc::ReturnCode m_ReceiveAuthenticationPacket();
-        oc::ReturnCode m_Handshake();
+		oc::ReturnCode m_fReceiveAuthenticationPacket();
+        oc::ReturnCode m_fHandshake();
         ol::ThreadsafeQueue<ol::Input> m_bufInputs{};
+		std::atomic<bool> m_bSendToClient = true;
 
 	public:
         /**
@@ -55,10 +52,19 @@ namespace oc
         /**
          * Wait until a client has attempted a connection to this server.
          */
-		void WaitForClient();
-        /**
-         * Start the server loop where the mouse and/or keyboard input will be shared with the client.
-         */
-		void ServerLoop();
+		[[nodiscard]] oc::ReturnCode WaitForClient();
+
+		/**
+		 * Authenticate the client using a mutual handshake.
+		 */
+		[[nodiscard]] oc::ReturnCode AuthenticateClient();
+
+		[[nodiscard]] ol::Input GetNextInput();
+
+		[[nodiscard]] oc::ReturnCode SendPacket(oc::Packet& inPacket);
+
+        [[nodiscard]] oc::ReturnCode ReceivePacket(oc::Packet& outPacket);
+
+		void Disconnect();
 	};
 }
