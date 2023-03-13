@@ -11,77 +11,80 @@ void oc::Server::Start()
 	const auto kGathererKeyboard = std::make_unique<ol::InputGathererKeyboard>(true);
 	const auto kGathererMouse = std::make_unique<ol::InputGathererMouse>(true);
 
-	// Fck it. There is no way that I know of to interrupt a semaphore.acquire in C++.
-	// Instead, I'll be busy-waiting in a few places that currently mess things up.
-
 	std::jthread mouseThread{[&](const std::stop_token& stopToken)
 	{
-		std::stop_callback stopCallback{stopToken, [&]{ this->m_bSendToClient = false; }};
+		std::stop_callback stopCallback{stopToken, [&]{ kGathererMouse->Shutdown(); this->m_bufInputs.Interrupt(); this->m_bSendToClient = false; }};
 
-		while (this->m_bSendToClient)
+		try
 		{
-			if (kGathererMouse->AvailableInputs() == 0)
+			while (this->m_bSendToClient)
 			{
-				// Busy-waiting, but I wasn't able to figure out how to interrupt an acquire() semaphore call.
-				// Potentially that could be done with native OS pthread_kill or TerminateThread? :thinking:
-				std::this_thread::sleep_for(std::chrono::milliseconds{10});
-				continue;
+				const auto kInput = kGathererMouse->GatherInput();
+				this->m_bufInputs.Add(kInput);
 			}
-
-			const auto kInput = kGathererMouse->GatherInput();
-			this->m_bufInputs.Add(kInput);
+		}
+		catch (const ol::InterruptException& e)
+		{
+			return;
 		}
 	}};
 
 	std::jthread keyboardThread{[&](const std::stop_token& stopToken)
 	{
-		std::stop_callback stopCallback{stopToken, [&]{ this->m_bSendToClient = false; }};
+		std::stop_callback stopCallback{stopToken, [&]{ kGathererKeyboard->Shutdown(); this->m_bufInputs.Interrupt(); this->m_bSendToClient = false; }};
 
-		while (this->m_bSendToClient)
+		try
 		{
-			if (kGathererKeyboard->AvailableInputs() == 0)
+			while (this->m_bSendToClient)
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds{10});
-				continue;
+				const auto kInput = kGathererKeyboard->GatherInput();
+				this->m_bufInputs.Add(kInput);
 			}
-
-			const auto kInput = kGathererKeyboard->GatherInput();
-			this->m_bufInputs.Add(kInput);
+		}
+		catch (const ol::InterruptException& e)
+		{
+			return;
 		}
 	}};
 
 	oc::Crypto::EncryptorDecryptor<ol::Input> inputEncryptor{};
 
-	while (this->m_bSendToClient)
+	try
 	{
-		if (this->m_bufInputs.Length() == 0) { std::this_thread::sleep_for(std::chrono::milliseconds{10}); continue; }
-
-		oc::Packet pkt{};
-		const auto kInput = this->GetNextInput();
-
-		// Kill switch
-		if (kInput.keyboard.key == ol::eKeyCode::End)
+		while (this->m_bSendToClient)
 		{
-			this->Disconnect();
-			return;
-		}
+			oc::Packet pkt{};
+			const auto kInput = this->GetNextInput();
 
-		if (kInput.keyboard.key == ol::eKeyCode::Home)
-		{
-			if (kInput.eventType == ol::eEventType::KBKeyDown)
+			// Kill switch
+			if (kInput.keyboard.key == ol::eKeyCode::End)
 			{
-				kGathererMouse->Toggle();
-				kGathererKeyboard->Toggle();
+				this->Disconnect();
+				this->m_bufInputs.Interrupt();
+				return;
 			}
-			continue;
-		}
 
-		pkt << inputEncryptor.Encrypt(kInput);
-		if (this->SendPacket(pkt) != oc::ReturnCode::Success)
-		{
-			fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client\n");
-			return;
+			if (kInput.keyboard.key == ol::eKeyCode::Home)
+			{
+				if (kInput.eventType == ol::eEventType::KBKeyDown)
+				{
+					kGathererMouse->Toggle();
+					kGathererKeyboard->Toggle();
+				}
+				continue;
+			}
+
+			pkt << inputEncryptor.Encrypt(kInput);
+			if (this->SendPacket(pkt) != oc::ReturnCode::Success)
+			{
+				fmt::print(stderr, fmt::fg(fmt::color::red), "Unable to send packet to client\n");
+				return;
+			}
 		}
+	}
+	catch (const ol::InterruptException& e)
+	{
+		return;
 	}
 }
 
